@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useStudy } from "../../context/StudyContext";
 import { type Problem } from "../../data/mockData";
 import { ProblemModal } from "../../components/ProblemModal";
-import { PROBLEMSFix } from "../../data/mockData";
+import { PROBLEMS } from "../../data/mockData";
 import Calendar from "./components/Calendar";
 import Feed from "./components/Feed";
 
@@ -14,7 +14,7 @@ const TODAY_STR_LOCAL = new Intl.DateTimeFormat("sv-SE").format(new Date());
 export function Dashboard() {
   const ctx = useStudy();
   //   const problems = ctx?.problems;
-  const problems = PROBLEMSFix;
+  const problems = PROBLEMS;
   const members = ctx?.members;
 
   if (!members || !problems) return console.log("멤버 / 프라블럼 로딩 실패!!");

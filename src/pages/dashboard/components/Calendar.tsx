@@ -4,7 +4,6 @@ import type { Member, Problem } from "../../../data/mockData";
 interface calendarProp {
   viewYear: number;
   viewMonth: number;
-  // firstDay: number;
   daysInMonth: number;
   problemsByDate: Record<string, number>;
   selectedDate: string;
@@ -23,7 +22,6 @@ function mondayFirstDay(date: Date) {
 function Calendar({
   viewYear,
   viewMonth,
-  // firstDay,
   daysInMonth,
   problemsByDate,
   selectedDate,
@@ -36,7 +34,7 @@ function Calendar({
   me,
 }: calendarProp) {
   const DAYS_KOR_MON = ["월", "화", "수", "목", "금", "토", "일"];
-  // const me = members[0];
+  const firstDay = mondayFirstDay(new Date(viewYear, viewMonth, 1));
 
   const monthTotal = Object.entries(problemsByDate)
     .filter(([dateKey]) => {
@@ -46,23 +44,22 @@ function Calendar({
     })
     .reduce((s, [, v]) => s + v, 0);
 
-  const prevMonth = () => {
-    if (viewMonth === 0) {
-      setViewYear((y) => y - 1);
+  const changeMonth = (dir: 1 | -1) => {
+    const newMonth = viewMonth + dir;
+    console.log(newMonth);
+    if (newMonth < 0) {
+      setViewYear((y: number) => y - 1);
       setViewMonth(11);
-    } else setViewMonth((m) => m - 1);
-  };
-  const nextMonth = () => {
-    if (viewMonth === 11) {
-      setViewYear((y) => y + 1);
+    } else if (newMonth > 11) {
+      setViewYear((y: number) => y + 1);
       setViewMonth(0);
-    } else setViewMonth((m) => m + 1);
+    } else {
+      setViewMonth(newMonth);
+    }
   };
 
   const todaySolved = problems?.filter((p) => p.date === today_local).length;
   const totalSolved = problems?.length;
-
-  const firstDay = mondayFirstDay(new Date(viewYear, viewMonth, 1));
 
   return (
     <div className="w-85 min-w-85 border-r border-gray-100 flex flex-col h-full overflow-y-auto px-7 py-8">
@@ -132,18 +129,19 @@ function Calendar({
           )}
         </div>
         <div className="flex items-center gap-0.5">
-          <button
-            onClick={prevMonth}
-            className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
-          >
-            <ChevronLeft size={15} />
-          </button>
-          <button
-            onClick={nextMonth}
-            className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
-          >
-            <ChevronRight size={15} />
-          </button>
+          {([-1, 1] as const).map((dir) => (
+            <button
+              key={dir}
+              onClick={() => changeMonth(dir)}
+              className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
+            >
+              {dir === -1 ? (
+                <ChevronLeft size={15} />
+              ) : (
+                <ChevronRight size={15} />
+              )}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -203,7 +201,7 @@ function Calendar({
                 <div
                   className={`
                     w-9 h-9 rounded-full flex items-center justify-center transition-all
-                    ${isToday ? "bg-blue-200" : isSelected ? "bg-gray-100" : isFuture ? "" : "group-hover:bg-gray-50"}
+                    ${isToday ? "bg-indigo-600" : isSelected ? "bg-gray-100" : isFuture ? "" : "group-hover:bg-gray-50"}
                   `}
                 >
                   <span
