@@ -7,18 +7,35 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Node modules
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor directories and files
+# Editor folders and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript
+*.tsbuildinfo
+
+# Environmental variables
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Optional: Cypress/Playwright videos & screenshots
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+test-results/
