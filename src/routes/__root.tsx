@@ -7,12 +7,14 @@ import {
   Code2,
   CheckCircle2,
   Circle,
+  TestTubeDiagonal,
 } from "lucide-react";
 
 const navItems = [
   { to: "/", label: "대시보드", icon: LayoutDashboard },
   { to: "/problems", label: "문제풀이", icon: FileCode2 },
   { to: "/mypage", label: "마이페이지", icon: User },
+  { to: "/test", label: "테스트 페이지", icon: TestTubeDiagonal },
 ];
 
 export const Route = createRootRoute({
