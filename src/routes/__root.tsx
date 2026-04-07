@@ -1,4 +1,3 @@
-// src/routes/__root.tsx
 import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
 import { StudyProvider, useStudy } from "../context/StudyContext";
 import {
@@ -108,14 +107,8 @@ export function SidebarInner() {
           <Link
             key={to}
             to={to}
-            // end={to === "/"}
-            // className={({ isActive }) =>
-            //   `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
-            //     isActive
-            //       ? "bg-violet-50 text-violet-700"
-            //       : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-            //   }`
-            // }
+            activeProps={{ className: "bg-violet-50 text-violet-700" }}
+            className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           >
             {({ isActive }) => (
               <>
