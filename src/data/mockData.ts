@@ -763,33 +763,33 @@ export const PLATFORM_CONFIG: Record<
 > = {
   BOJ: {
     label: "백준",
-    bg: "bg-sky-100",
-    text: "text-sky-700",
-    color: "#0ea5e9",
+    bg: "bg-[#e8f3ff]", // 토스 블루
+    text: "text-[#3182f6]",
+    color: "#3182f6",
   },
   LeetCode: {
     label: "LeetCode",
-    bg: "bg-amber-100",
-    text: "text-amber-700",
-    color: "#f59e0b",
+    bg: "bg-[#fff4e6]", // 쨍한 옐로우/오렌지
+    text: "text-[#ff9500]",
+    color: "#ff9500",
   },
   Programmers: {
     label: "프로그래머스",
-    bg: "bg-emerald-100",
-    text: "text-emerald-700",
-    color: "#10b981",
+    bg: "bg-[#e7f9ed]", // 맑은 초록
+    text: "text-[#1da34d]",
+    color: "#1da34d",
   },
   Codeforces: {
     label: "Codeforces",
-    bg: "bg-blue-100",
-    text: "text-blue-700",
-    color: "#3b82f6",
+    bg: "bg-[#f0eaff]", // 세련된 보라
+    text: "text-[#7048e8]",
+    color: "#7048e8",
   },
   SWEA: {
     label: "SWEA",
-    bg: "bg-orange-100",
-    text: "text-orange-700",
-    color: "#f97316",
+    bg: "bg-[#feeef0]", // 연한 레드
+    text: "text-[#f04452]",
+    color: "#f04452",
   },
 };
 
@@ -802,27 +802,38 @@ export const DIFFICULTY_BY_PLATFORM: Record<Platform, string[]> = {
 };
 
 export const DIFFICULTY_CONFIG: Record<string, { bg: string; text: string }> = {
-  Bronze: { bg: "bg-amber-100", text: "text-amber-800" },
-  Silver: { bg: "bg-slate-100", text: "text-slate-600" },
-  Gold: { bg: "bg-yellow-100", text: "text-yellow-700" },
-  Platinum: { bg: "bg-cyan-100", text: "text-cyan-700" },
-  Diamond: { bg: "bg-indigo-100", text: "text-indigo-700" },
-  Ruby: { bg: "bg-rose-100", text: "text-rose-700" },
-  Easy: { bg: "bg-emerald-100", text: "text-emerald-700" },
-  Medium: { bg: "bg-yellow-100", text: "text-yellow-700" },
-  Hard: { bg: "bg-red-100", text: "text-red-700" },
-  "Lv.1": { bg: "bg-emerald-100", text: "text-emerald-700" },
-  "Lv.2": { bg: "bg-sky-100", text: "text-sky-700" },
-  "Lv.3": { bg: "bg-violet-100", text: "text-violet-700" },
-  "Lv.4": { bg: "bg-orange-100", text: "text-orange-700" },
-  "Lv.5": { bg: "bg-red-100", text: "text-red-700" },
-  "Div.3": { bg: "bg-green-100", text: "text-green-700" },
-  "Div.2": { bg: "bg-blue-100", text: "text-blue-700" },
-  "Div.1": { bg: "bg-purple-100", text: "text-purple-700" },
-  D2: { bg: "bg-green-100", text: "text-green-700" },
-  D3: { bg: "bg-sky-100", text: "text-sky-700" },
-  D4: { bg: "bg-orange-100", text: "text-orange-700" },
-  D5: { bg: "bg-red-100", text: "text-red-700" },
+  // 1단계: 차분한 시작 (그레이/슬레이트)
+  Bronze: { bg: "bg-[#f2f4f6]", text: "text-[#6b7684]" },
+  Silver: { bg: "bg-[#f2f4f6]", text: "text-[#4e5968]" },
+  "Div.3": { bg: "bg-[#f2f4f6]", text: "text-[#4e5968]" },
+
+  // 2단계: 긍정적인 초록 (민트/에메랄드)
+  Easy: { bg: "bg-[#e6f4f1]", text: "text-[#00ad7c]" },
+  "Lv.1": { bg: "bg-[#e6f4f1]", text: "text-[#00ad7c]" },
+  D2: { bg: "bg-[#e6f4f1]", text: "text-[#00ad7c]" },
+
+  // 3단계: 메인 블루 (토스 시그니처)
+  Gold: { bg: "bg-[#e8f3ff]", text: "text-[#3182f6]" },
+  "Lv.2": { bg: "bg-[#e8f3ff]", text: "text-[#3182f6]" },
+  Medium: { bg: "bg-[#e8f3ff]", text: "text-[#3182f6]" },
+  D3: { bg: "bg-[#e8f3ff]", text: "text-[#3182f6]" },
+
+  // 4단계: 고급스러운 보라 (인디고/퍼플)
+  Platinum: { bg: "bg-[#f0eaff]", text: "text-[#7048e8]" },
+  "Lv.3": { bg: "bg-[#f0eaff]", text: "text-[#7048e8]" },
+  "Div.2": { bg: "bg-[#f0eaff]", text: "text-[#7048e8]" },
+  D4: { bg: "bg-[#f0eaff]", text: "text-[#7048e8]" },
+
+  // 5단계: 강력한 레드 (토스 경고/포인트 레드)
+  Diamond: { bg: "bg-[#feeef0]", text: "text-[#f04452]" },
+  Hard: { bg: "bg-[#feeef0]", text: "text-[#f04452]" },
+  "Lv.4": { bg: "bg-[#feeef0]", text: "text-[#f04452]" },
+  "Div.1": { bg: "bg-[#feeef0]", text: "text-[#f04452]" },
+  D5: { bg: "bg-[#feeef0]", text: "text-[#f04452]" },
+
+  // 6단계: 끝판왕 (블랙/다크그레이)
+  Ruby: { bg: "bg-[#191f28]", text: "text-[#ffffff]" },
+  "Lv.5": { bg: "bg-[#191f28]", text: "text-[#ffffff]" },
 };
 
 export const ALL_TAGS = [
