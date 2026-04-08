@@ -43,10 +43,7 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
         <div className="p-7">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2
-                className="text-gray-900"
-                style={{ fontSize: 18, fontWeight: 800 }}
-              >
+              <h2 className="text-gray-900 text-xl font-extrabold">
                 새 문제 추가
               </h2>
               <p className="text-gray-400 text-xs mt-0.5">
@@ -63,12 +60,7 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
 
           <div className="flex flex-col gap-5">
             <div>
-              <label
-                className="text-xs text-gray-400 block mb-2"
-                style={{ fontWeight: 600 }}
-              >
-                플랫폼
-              </label>
+              <label className="text-xs text-gray-400 block mb-2">플랫폼</label>
               <div className="flex gap-2 flex-wrap">
                 {(Object.keys(PLATFORM_CONFIG) as Platform[]).map((p) => (
                   <button
@@ -86,7 +78,6 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
                         ? `${PLATFORM_CONFIG[p].bg} ${PLATFORM_CONFIG[p].text} border-transparent`
                         : "border-gray-200 text-gray-500 hover:border-gray-300"
                     }`}
-                    style={{ fontWeight: form.platform === p ? 600 : 400 }}
                   >
                     {PLATFORM_CONFIG[p].label}
                   </button>
@@ -94,29 +85,24 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="col-span-2">
-                <label
-                  className="text-xs text-gray-400 block mb-1.5"
-                  style={{ fontWeight: 600 }}
-                >
-                  제목 *
-                </label>
-                <input
-                  value={form.title}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, title: e.target.value }))
-                  }
-                  placeholder="제목"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-                />
-              </div>
+            <div className="col-span-2">
+              <label className="text-xs block mb-1.5">
+                제목 <span className="text-red-500">*</span>
+              </label>
+              <input
+                value={form.title}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, title: e.target.value }))
+                }
+                placeholder="제목"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+              />
             </div>
 
             <div className="grid grid-cols-3 gap-2.5">
               <div>
                 <label
-                  className="text-xs text-gray-400 block mb-1.5"
+                  className="text-xs block mb-1.5"
                   style={{ fontWeight: 600 }}
                 >
                   난이도
@@ -276,15 +262,13 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
               >
                 취소
               </button>
-              <Button>버튼~</Button>
-              <button
+              <Button
                 onClick={handleAdd}
                 disabled={!form.title.trim()}
-                className="px-5 py-2 rounded-xl text-sm bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 shadow-sm shadow-violet-200"
-                style={{ fontWeight: 600 }}
+                size={"md"}
               >
                 추가하기
-              </button>
+              </Button>
             </div>
           </div>
         </div>
