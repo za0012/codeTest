@@ -118,7 +118,7 @@ export function Problems() {
               setShowAddModal(true);
               setForm(emptyForm());
             }}
-            className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2.5 rounded-2xl hover:bg-violet-700 transition-colors shadow-sm shadow-violet-200"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-2xl hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200"
             style={{ fontSize: 13, fontWeight: 600 }}
           >
             <Plus size={15} />
@@ -135,7 +135,7 @@ export function Problems() {
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300"
             />
             <input
-              className="bg-gray-50 border border-gray-100 rounded-xl pl-8 pr-3 py-2 text-gray-700 focus:outline-none focus:border-violet-200 focus:ring-1 focus:ring-violet-100 w-44"
+              className="bg-gray-50 border border-gray-100 rounded-xl pl-8 pr-3 py-2 text-gray-700 focus:outline-none focus:border-blue-200 focus:ring-1 focus:ring-[#e8f3ff] w-44"
               style={{ fontSize: 13 }}
               placeholder="검색..."
               value={search}
@@ -173,7 +173,7 @@ export function Problems() {
             <select
               value={filterDifficulty}
               onChange={(e) => setFilterDifficulty(e.target.value)}
-              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-violet-200 cursor-pointer"
+              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-blue-200 cursor-pointer"
               style={{ fontSize: 12 }}
             >
               {difficultiesForFilter.map((d) => (
@@ -193,7 +193,7 @@ export function Problems() {
             <select
               value={filterMember}
               onChange={(e) => setFilterMember(e.target.value)}
-              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-violet-200 cursor-pointer"
+              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-blue-200 cursor-pointer"
               style={{ fontSize: 12 }}
             >
               <option value="all">전체 멤버</option>
@@ -214,7 +214,7 @@ export function Problems() {
             <select
               value={filterTag}
               onChange={(e) => setFilterTag(e.target.value)}
-              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-violet-200 cursor-pointer"
+              className="appearance-none bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 pr-7 text-gray-600 focus:outline-none focus:border-blue-200 cursor-pointer"
               style={{ fontSize: 12 }}
             >
               <option value="all">전체 태그</option>
@@ -270,11 +270,11 @@ export function Problems() {
                 <button
                   key={problem.id}
                   onClick={() => setDetailProblem(problem)}
-                  className="flex items-center gap-4 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-violet-100 hover:bg-violet-50/20 transition-all text-left group w-full"
+                  className="flex items-center gap-4 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-[#e8f3ff] hover:bg-blue-50/20 transition-all text-left group w-full"
                 >
-                  <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-500 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-[#e8f3ff] flex items-center justify-center shrink-0 group-hover:bg-blue-500 transition-colors">
                     <span
-                      className="text-violet-500 group-hover:text-white text-xs transition-colors"
+                      className="text-blue-500 group-hover:text-white text-xs transition-colors"
                       style={{ fontWeight: 700 }}
                     >
                       ✓
@@ -425,7 +425,7 @@ export function Problems() {
                         setForm((f) => ({ ...f, number: e.target.value }))
                       }
                       placeholder="1000"
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                     />
                   </div>
                   <div className="col-span-2">
@@ -441,7 +441,7 @@ export function Problems() {
                         setForm((f) => ({ ...f, title: e.target.value }))
                       }
                       placeholder="A+B"
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                     />
                   </div>
                 </div>
@@ -459,7 +459,7 @@ export function Problems() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, difficulty: e.target.value }))
                       }
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                     >
                       {DIFFICULTY_BY_PLATFORM[form.platform].map((d) => (
                         <option key={d} value={d}>
@@ -483,7 +483,7 @@ export function Problems() {
                           memberId: Number(e.target.value),
                         }))
                       }
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                     >
                       {members.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -508,7 +508,7 @@ export function Problems() {
                           timeSpent: Number(e.target.value),
                         }))
                       }
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                     />
                   </div>
                 </div>
@@ -535,8 +535,8 @@ export function Problems() {
                         }
                         className={`text-[11px] px-2.5 py-1 rounded-full transition-colors ${
                           form.tags.includes(tag)
-                            ? "bg-violet-600 text-white"
-                            : "bg-white text-gray-500 border border-gray-200 hover:border-violet-200"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-500 border border-gray-200 hover:border-blue-200"
                         }`}
                       >
                         {tag}
@@ -558,7 +558,7 @@ export function Problems() {
                       setForm((f) => ({ ...f, url: e.target.value }))
                     }
                     placeholder="https://..."
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                   />
                 </div>
 
@@ -576,7 +576,7 @@ export function Problems() {
                     }
                     rows={5}
                     placeholder="# 코드를 입력해주세요"
-                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-violet-300 resize-none bg-gray-950 text-gray-100"
+                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-blue-300 resize-none bg-gray-950 text-gray-100"
                     style={{
                       fontFamily: "'JetBrains Mono', Consolas, monospace",
                       lineHeight: 1.8,
@@ -598,7 +598,7 @@ export function Problems() {
                     }
                     rows={2}
                     placeholder="풀이 접근법, 주의사항, 배운 점 등..."
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300 resize-none"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300 resize-none"
                   />
                 </div>
 
@@ -612,7 +612,7 @@ export function Problems() {
                   <button
                     onClick={handleAdd}
                     disabled={!form.title.trim()}
-                    className="px-5 py-2 rounded-xl text-sm bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 shadow-sm shadow-violet-200"
+                    className="px-5 py-2 rounded-xl text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-40 shadow-sm shadow-blue-200"
                     style={{ fontWeight: 600 }}
                   >
                     추가하기

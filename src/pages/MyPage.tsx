@@ -185,7 +185,7 @@ export function MyPage() {
         {/* Profile card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-16 h-16 rounded-2xl bg-violet-50 flex items-center justify-center text-3xl border-2 border-violet-100">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl border-2 border-[#e8f3ff]">
               {me.emoji}
             </div>
             <div className="flex-1">
@@ -196,7 +196,7 @@ export function MyPage() {
                 >
                   {me.name}
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 bg-violet-600 text-white rounded-full">
+                <span className="text-[10px] px-2 py-0.5 bg-blue-600 text-white rounded-full">
                   {me.role}
                 </span>
               </div>
@@ -215,12 +215,12 @@ export function MyPage() {
                 value={tempBio}
                 onChange={(e) => setTempBio(e.target.value)}
                 rows={2}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300 resize-none mb-2"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300 resize-none mb-2"
               />
               <div className="flex gap-1.5">
                 <button
                   onClick={handleSaveBio}
-                  className="flex-1 flex items-center justify-center gap-1 bg-violet-600 text-white text-xs py-1.5 rounded-lg hover:bg-violet-700 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Check size={12} /> 저장
                 </button>
@@ -243,7 +243,7 @@ export function MyPage() {
                   setEditMode(true);
                   setTempBio(bio);
                 }}
-                className="text-gray-400 hover:text-violet-500 transition-colors shrink-0"
+                className="text-gray-400 hover:text-blue-500 transition-colors shrink-0"
               >
                 <Edit3 size={14} />
               </button>
@@ -271,7 +271,7 @@ export function MyPage() {
             </div>
             <div>
               <p
-                className="text-base text-violet-600"
+                className="text-base text-[#3182f6]"
                 style={{ fontWeight: 700 }}
               >
                 {activeDays}
@@ -537,7 +537,7 @@ export function MyPage() {
                         {p.solution && (
                           <StickyNote
                             size={11}
-                            className="text-violet-400 shrink-0"
+                            className="text-blue-400 shrink-0"
                           />
                         )}
                       </div>
@@ -575,7 +575,7 @@ export function MyPage() {
                           href={p.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-violet-500 transition-all"
+                          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-all"
                         >
                           <ExternalLink size={12} />
                         </a>

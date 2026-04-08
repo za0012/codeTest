@@ -314,7 +314,7 @@ export function Stacks() {
                   ))}
                   <td className="text-center py-2 px-3">
                     <span
-                      className="text-xs text-violet-600"
+                      className="text-xs text-[#3182f6]"
                       style={{ fontWeight: 700 }}
                     >
                       {count}

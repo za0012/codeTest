@@ -50,7 +50,7 @@ function Feed({
           {formatFeedDate(selectedDate)}
           {selectedDate === today_local && (
             <span
-              className="ml-2 text-violet-500 text-xs bg-violet-50 px-2 py-0.5 rounded-full"
+              className="ml-2 text-blue-500 text-xs bg-blue-50 px-2 py-0.5 rounded-full"
               style={{ fontWeight: 600 }}
             >
               오늘
@@ -80,7 +80,7 @@ function Feed({
             <div key={member.id}>
               {/* Member header */}
               <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-lg border border-violet-100">
+                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-lg border border-[#e8f3ff]">
                   {member.emoji}
                 </div>
                 <span
@@ -103,10 +103,10 @@ function Feed({
                     <button
                       key={problem.id}
                       onClick={() => setModalProblem(problem)}
-                      className="flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-violet-100 hover:bg-violet-50/30 transition-all text-left group w-full"
+                      className="flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-[#e8f3ff] hover:bg-blue-50/30 transition-all text-left group w-full"
                     >
                       {/* Check circle */}
-                      <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center shrink-0 shadow-sm shadow-violet-200 group-hover:bg-violet-600 transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0 shadow-sm shadow-blue-200 group-hover:bg-blue-600 transition-colors">
                         <span
                           className="text-white text-xs"
                           style={{ fontWeight: 700 }}

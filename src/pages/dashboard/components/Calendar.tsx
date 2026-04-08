@@ -65,7 +65,7 @@ function Calendar({
     <div className="w-85 min-w-85 border-r border-gray-100 flex flex-col h-full overflow-y-auto px-7 py-8">
       {/* User profile */}
       <div className="flex items-center gap-3 mb-7">
-        <div className="w-11 h-11 rounded-full bg-violet-100 flex items-center justify-center text-2xl border-2 border-violet-200 shrink-0">
+        <div className="w-11 h-11 rounded-full bg-[#e8f3ff] flex items-center justify-center text-2xl border-2 border-blue-200 shrink-0">
           {me.emoji}
         </div>
         <div>
@@ -81,14 +81,14 @@ function Calendar({
 
       {/* Quick stats */}
       <div className="flex items-center gap-2.5 mb-7">
-        <div className="flex-1 bg-violet-50 rounded-2xl p-3 text-center">
+        <div className="flex-1 bg-blue-50 rounded-2xl p-3 text-center">
           <p
-            className="text-violet-700"
+            className="text-blue-700"
             style={{ fontSize: 18, fontWeight: 700 }}
           >
             {todaySolved}
           </p>
-          <p className="text-violet-400 text-[11px] mt-0.5">오늘 풀었어요</p>
+          <p className="text-blue-400 text-[11px] mt-0.5">오늘 풀었어요</p>
         </div>
         <div className="flex-1 bg-gray-50 rounded-2xl p-3 text-center">
           <p
@@ -121,7 +121,7 @@ function Calendar({
           </span>
           {monthTotal > 0 && (
             <span
-              className="flex items-center gap-0.5 text-[12px] text-violet-500"
+              className="flex items-center gap-0.5 text-[12px] text-blue-500"
               style={{ fontWeight: 600 }}
             >
               ✓ {monthTotal}
@@ -183,15 +183,15 @@ function Calendar({
                     w-9 h-9 rounded-full flex items-center justify-center transition-all
                     ${
                       isToday
-                        ? "bg-violet-600 shadow-md shadow-violet-200"
+                        ? "bg-blue-600 shadow-md shadow-blue-200"
                         : isSelected
-                          ? "bg-violet-500"
-                          : "bg-violet-100 group-hover:bg-violet-200"
+                          ? "bg-blue-500"
+                          : "bg-[#e8f3ff] group-hover:bg-blue-200"
                     }
                   `}
                 >
                   <span
-                    className={`${isToday || isSelected ? "text-white" : "text-violet-600"}`}
+                    className={`${isToday || isSelected ? "text-white" : "text-[#3182f6]"}`}
                     style={{ fontSize: 12, fontWeight: 700 }}
                   >
                     {count > 1 ? count : "✓"}
@@ -214,7 +214,7 @@ function Calendar({
               )}
               {count > 0 && (
                 <span
-                  className={`text-[10px] mt-0.5 ${isSelected ? "text-violet-500" : "text-gray-400"}`}
+                  className={`text-[10px] mt-0.5 ${isSelected ? "text-blue-500" : "text-gray-400"}`}
                   style={{ fontWeight: isSelected ? 600 : 400 }}
                 >
                   {day}

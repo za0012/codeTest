@@ -62,7 +62,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                 {problem.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[11px] px-2.5 py-1 rounded-full bg-violet-50 text-violet-500"
+                    className="text-[11px] px-2.5 py-1 rounded-full bg-blue-50 text-blue-500"
                   >
                     {tag}
                   </span>
@@ -104,7 +104,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                       href={problem.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-600 transition-colors"
+                      className="flex items-center gap-1 text-xs text-blue-400 hover:text-[#3182f6] transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink size={12} />
@@ -120,7 +120,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-violet-500 hover:bg-violet-50 rounded-xl transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors"
                 >
                   <Edit3 size={15} />
                 </button>
@@ -218,8 +218,8 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                     }
                     className={`text-[11px] px-2.5 py-1 rounded-full transition-colors ${
                       form.tags.includes(tag)
-                        ? "bg-violet-600 text-white"
-                        : "bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-[#3182f6]"
                     }`}
                   >
                     {tag}
@@ -243,7 +243,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                         memberId: Number(e.target.value),
                       }))
                     }
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                   >
                     {members.map((m) => (
                       <option key={m.id} value={m.id}>
@@ -268,7 +268,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                         timeSpent: Number(e.target.value),
                       }))
                     }
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300"
                   />
                 </div>
               </div>
@@ -286,7 +286,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                     setForm((f) => ({ ...f, solution: e.target.value }))
                   }
                   rows={9}
-                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-violet-300 resize-none bg-gray-950 text-gray-100"
+                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-blue-300 resize-none bg-gray-950 text-gray-100"
                   style={{
                     fontFamily: "'JetBrains Mono', Consolas, monospace",
                     lineHeight: 1.8,
@@ -306,7 +306,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                     setForm((f) => ({ ...f, memo: e.target.value }))
                   }
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300 resize-none"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-300 resize-none"
                   placeholder="풀이 접근법, 주의사항, 배운 점 등..."
                 />
               </div>
@@ -320,7 +320,7 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                 </button>
                 <button
                   onClick={handleUpdate}
-                  className="px-5 py-2 rounded-xl text-sm bg-violet-600 text-white hover:bg-violet-700 transition-colors shadow-sm shadow-violet-200"
+                  className="px-5 py-2 rounded-xl text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200"
                   style={{ fontWeight: 600 }}
                 >
                   저장
