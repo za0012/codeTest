@@ -10,6 +10,7 @@ import {
 import { addProblem } from "../../../lib/api";
 import { emptyForm } from "../Problems";
 import { Button } from "../../../components/ui/button";
+import { SelectC } from "../../../components/custom/SelectC";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
@@ -107,7 +108,7 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
                 >
                   난이도
                 </label>
-                <select
+                {/* <select
                   value={form.difficulty}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, difficulty: e.target.value }))
@@ -119,7 +120,11 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
                       {d}
                     </option>
                   ))}
-                </select>
+                </select> */}
+                <SelectC
+                  placeholder="난이도"
+                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
+                />
               </div>
               <div>
                 <label
@@ -143,7 +148,11 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
                       {m.emoji} {m.name}
                     </option>
                   ))}
-                </select>
+                </select>{" "}
+                <SelectC
+                  placeholder="난이도"
+                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
+                />
               </div>
               <div>
                 <label
@@ -162,6 +171,10 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
                     }))
                   }
                   className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
+                />{" "}
+                <SelectC
+                  placeholder="난이도"
+                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
                 />
               </div>
             </div>

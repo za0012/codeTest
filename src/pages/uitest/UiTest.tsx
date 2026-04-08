@@ -1,9 +1,9 @@
-import { SelectC, ControlledSelect } from "../../components/custom/SelectC";
+import { SelectA, ControlledSelect } from "../../components/custom/SelectC";
 
 function UiTest() {
   return (
     <div className="bg-white h-screen">
-      <SelectC />
+      <SelectA />
       <ControlledSelect />
     </div>
   );

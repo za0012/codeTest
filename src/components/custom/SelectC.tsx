@@ -9,16 +9,48 @@ import {
   SelectValue,
 } from "../ui/select"; // 컴포넌트가 위치한 경로
 
-export function SelectC() {
+interface selectItemProps {
+  value: string;
+  name: string;
+  isDisabled?: boolean;
+}
+
+interface selectProps {
+  placeholder: string;
+  selectLabel?: string;
+  // selectItem: selectItemProps[];
+  selectItem: string[];
+}
+
+export function SelectC({ placeholder, selectLabel, selectItem }: selectProps) {
+  return (
+    <div className="w-auto">
+      <Select defaultValue={selectItem[0]}>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>{selectLabel}</SelectLabel>
+            {selectItem.map((select) => (
+              // <SelectItem value={select.value} {select.isDisabled}>{select.name}</SelectItem>
+              <SelectItem value={select}>{select}</SelectItem>
+              //disabled.. {select.isDisabled} 어떻게 할지 고민
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export function SelectA() {
   return (
     <div className="w-50 p-4">
       <Select defaultValue="apple">
-        {/* 드롭다운의 겉모습 (클릭하는 부분) */}
         <SelectTrigger>
           <SelectValue placeholder="과일을 선택하세요" />
         </SelectTrigger>
-
-        {/* 클릭했을 때 열리는 레이어 */}
         <SelectContent>
           <SelectGroup>
             <SelectLabel>과일 종류</SelectLabel>
