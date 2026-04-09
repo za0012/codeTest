@@ -3,6 +3,8 @@ import type { Problem } from "../data/mockData";
 import { PLATFORM_CONFIG, DIFFICULTY_CONFIG, ALL_TAGS } from "../data/mockData";
 import { X, ExternalLink, Edit3, Trash2 } from "lucide-react";
 import { useStudy } from "../context/StudyContext";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface Props {
   problem: Problem;
@@ -157,15 +159,14 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                   >
                     💻 풀이 코드
                   </p>
-                  <pre
-                    className="bg-gray-950 text-gray-100 rounded-2xl p-5 text-xs overflow-x-auto"
-                    style={{
-                      fontFamily: "'JetBrains Mono', Consolas, monospace",
-                      lineHeight: 1.8,
-                    }}
+                  <SyntaxHighlighter
+                    language="javascript"
+                    style={dracula}
+                    className="text-xs"
+                    customStyle={{ padding: 20, borderRadius: 10 }}
                   >
                     {problem.solution}
-                  </pre>
+                  </SyntaxHighlighter>
                 </div>
               )}
               {problem.memo && (
