@@ -18,7 +18,7 @@ interface modalProps {
   setShowAddModal: (show: boolean) => void;
 }
 
-export interface ArrayDataProps {
+interface ArrayDataProps {
   title: string;
   formName:
     | "tags"
@@ -45,23 +45,8 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     setValue,
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    addProblem(data);
-    setShowAddModal(false);
-    // API 호출 등의 로직
-  };
   const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
-
   const selectedTags = watch("tags") || [];
-
-  function toggleTag(tag: string) {
-    const nextTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t: string) => t !== tag)
-      : [...selectedTags, tag]; // 없으면 추가
-
-    setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
-  }
 
   const currentFlatform = (watch("platform") as Platform) || "BOJ";
 
@@ -79,6 +64,21 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
       selectItem: DIFFICULTY_BY_PLATFORM[currentFlatform],
     },
   ];
+
+  const onSubmit = function (data: FormData) {
+    console.log(data);
+    addProblem(data);
+    setShowAddModal(false);
+    // API 호출 등의 로직
+  };
+
+  const toggleTag = function (tag: string) {
+    const nextTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t: string) => t !== tag)
+      : [...selectedTags, tag]; // 없으면 추가
+
+    setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
+  };
 
   //마스터 계열로 신청
   return (
