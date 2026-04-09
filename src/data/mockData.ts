@@ -757,6 +757,7 @@ for i in range(M, N+1):
     url: "https://www.acmicpc.net/problem/1929",
   },
 ];
+
 export const PLATFORM_CONFIG: Record<
   Platform,
   { label: string; bg: string; text: string; color: string }
@@ -796,7 +797,7 @@ export const PLATFORM_CONFIG: Record<
 export const DIFFICULTY_BY_PLATFORM: Record<Platform, string[]> = {
   BOJ: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"],
   LeetCode: ["Easy", "Medium", "Hard"],
-  Programmers: ["Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"],
+  Programmers: ["Lv.0","Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"],
   Codeforces: ["Div.3", "Div.2", "Div.1"],
   SWEA: ["D2", "D3", "D4", "D5"],
 };
