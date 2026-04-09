@@ -20,21 +20,13 @@ interface modalProps {
 
 interface ArrayDataProps {
   title: string;
-  formName:
-    | "tags"
-    | "platform"
-    | "title"
-    | "difficulty"
-    | "solverName"
-    | "timeSpent"
-    | "url"
-    | "solution"
-    | "memo"
-    | `tags.${number}`;
+  formName: keyof FormData;
   defaultValue: string;
   selectItem: string[];
 }
 
+const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
+//추후 useMemo로 변경
 function ModalCustomProb({ setShowAddModal }: modalProps) {
   const {
     register,
@@ -45,23 +37,22 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     setValue,
   } = useForm<FormData>();
 
-  const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
   const selectedTags = watch("tags") || [];
-
   const currentFlatform = (watch("platform") as Platform) || "BOJ";
 
+  console.log(currentFlatform);
   const selectArray: ArrayDataProps[] = [
-    {
-      title: "풀이자",
-      formName: "solverName",
-      defaultValue: members[0],
-      selectItem: members,
-    },
     {
       title: "난이도",
       formName: "difficulty",
       defaultValue: DIFFICULTY_BY_PLATFORM[currentFlatform][0],
       selectItem: DIFFICULTY_BY_PLATFORM[currentFlatform],
+    },
+    {
+      title: "풀이자",
+      formName: "solverName",
+      defaultValue: members[0],
+      selectItem: members,
     },
   ];
 
@@ -78,6 +69,10 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
       : [...selectedTags, tag]; // 없으면 추가
 
     setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
+  };
+
+  const handleclose = function () {
+    setShowAddModal(false);
   };
 
   //마스터 계열로 신청
@@ -106,7 +101,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                 </p>
               </div>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={handleclose}
                 className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-xl transition-colors"
               >
                 <X size={16} />
@@ -119,32 +114,22 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                 <div className="flex gap-2 flex-wrap">
                   {(Object.keys(PLATFORM_CONFIG) as Platform[]).map(
                     (platform) => (
-                      <div>
-                        <Controller
-                          control={control}
-                          name="platform"
-                          rules={{ required: true }}
-                          defaultValue={Object.keys(PLATFORM_CONFIG)[0]}
-                          render={({ field }) => (
-                            <Button
-                              key={platform}
-                              type="button"
-                              size="xs"
-                              variant={"blueOut"}
-                              className={`${currentFlatform === platform ? `${PLATFORM_CONFIG[platform].bg} ${PLATFORM_CONFIG[platform].text}` : `hover:${PLATFORM_CONFIG[platform].text}!`}`}
-                              onClick={() => {
-                                field.onChange(platform);
-                                setValue(
-                                  "difficulty",
-                                  DIFFICULTY_BY_PLATFORM[platform][0],
-                                );
-                              }}
-                            >
-                              {PLATFORM_CONFIG[platform].label}
-                            </Button>
-                          )}
-                        />
-                      </div>
+                      <Button
+                        key={platform}
+                        type="button"
+                        size="xs"
+                        variant={"blueOut"}
+                        className={`${currentFlatform === platform ? `${PLATFORM_CONFIG[platform].bg} ${PLATFORM_CONFIG[platform].text}` : ""}`}
+                        onClick={() => {
+                          setValue("platform", platform);
+                          setValue(
+                            "difficulty",
+                            DIFFICULTY_BY_PLATFORM[platform][0],
+                          );
+                        }}
+                      >
+                        {PLATFORM_CONFIG[platform].label}
+                      </Button>
                     ),
                   )}
                 </div>
@@ -239,7 +224,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
               </div>
               <div className="flex gap-2 justify-end pt-1 border-t border-gray-50">
                 <button
-                  onClick={() => setShowAddModal(false)}
+                  onClick={handleclose}
                   className="px-4 py-2 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors"
                 >
                   취소
