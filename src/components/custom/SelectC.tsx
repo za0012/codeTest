@@ -16,16 +16,22 @@ interface selectItemProps {
 }
 
 interface selectProps {
-  placeholder: string;
+  placeholder?: string;
   selectLabel?: string;
   // selectItem: selectItemProps[];
   selectItem: string[];
+  onSelect: (item: string) => void;
 }
 
-export function SelectC({ placeholder, selectLabel, selectItem }: selectProps) {
+export function SelectC({
+  placeholder,
+  selectLabel,
+  selectItem,
+  onSelect,
+}: selectProps) {
   return (
     <div className="w-auto">
-      <Select defaultValue={selectItem[0]}>
+      <Select value={selectItem[0]} onValueChange={onSelect}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -33,9 +39,8 @@ export function SelectC({ placeholder, selectLabel, selectItem }: selectProps) {
           <SelectGroup>
             <SelectLabel>{selectLabel}</SelectLabel>
             {selectItem.map((select) => (
-              // <SelectItem value={select.value} {select.isDisabled}>{select.name}</SelectItem>
               <SelectItem value={select}>{select}</SelectItem>
-              //disabled.. {select.isDisabled} 어떻게 할지 고민
+              //disabled.. {select.isDisabled}
             ))}
           </SelectGroup>
         </SelectContent>
@@ -56,7 +61,7 @@ export function SelectA() {
             <SelectLabel>과일 종류</SelectLabel>
             <SelectItem value="apple">사과</SelectItem>
             <SelectItem value="banana">바나나</SelectItem>
-            <SelectItem value="blueberry" disabled>
+            <SelectItem value="blue-berry" disabled>
               블루베리 (품절)
             </SelectItem>
             <SelectItem value="grapes">포도</SelectItem>
