@@ -9,7 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-blue600 hover:bg-blue700 transition-colors text-white disabled:opacity-40",
+        // default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        blue: "bg-blue-600 hover:bg-blue-700 transition-colors text-white disabled:opacity-40",
+        blueOut:
+          "border bg-white hover:border-blue-600 transition-colors text-white disabled:opacity-40 text-gray-700",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
@@ -22,9 +27,17 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        xss: "text-[11px] px-2.5 py-1 rounded-full transition-colors",
+        xs: "text-xs px-3 py-1.5 rounded-xl border transition-colors",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        md: "px-5 py-2 rounded-xl text-sm",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9 rounded-md",
+      },
+      color: {
+        default:
+          "bg-blue600 hover:bg-blue700 transition-colors text-white disabled:opacity-40",
+        blue: "bg-blue-600 hover:bg-blue-700 transition-colors text-white disabled:opacity-40",
       },
     },
     defaultVariants: {

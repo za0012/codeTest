@@ -11,6 +11,9 @@ import { addProblem } from "../../../lib/api";
 import { emptyForm } from "../Problems";
 import { Button } from "../../../components/ui/button";
 import { SelectC } from "../../../components/custom/SelectC";
+import { Controller, useForm } from "react-hook-form";
+import { Input } from "../../../components/ui/input";
+import { Textarea } from "../../../components/ui/textarea";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
@@ -18,272 +21,245 @@ interface modalProps {
   setForm: (forms: Omit<Problem, "id">) => void;
 }
 
+interface FormData {
+  platform: string;
+  title: string;
+  difficulty: string;
+  solve: string;
+  timeSpent: number;
+  tags: string[];
+  url: string;
+  solution: string;
+  memo: string;
+}
+
 function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
-  const members = MEMBERS;
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { isValid },
+    watch,
+    setValue,
+  } = useForm<FormData>();
+
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+    setShowAddModal(false);
+    // API 호출 등의 로직
+  };
+
+  const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
 
   const handleAdd = () => {
-    if (!form.title.trim()) return;
     addProblem(form);
     setShowAddModal(false);
     setForm(emptyForm());
   };
 
+  const selectedTags = watch("tags") || [];
+
+  function toggleTag(tag: string) {
+    const currentTags = selectedTags || [];
+    const nextTags = currentTags.includes(tag)
+      ? currentTags.filter((t: string) => t !== tag)
+      : [...selectedTags, tag]; // 없으면 추가
+
+    setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
+  }
+
+  const currentFlatform = (watch("platform") as Platform) || "BOJ";
+
+  //마스터 계열로 신청
   return (
     <div
       className="fixed inset-0 bg-black/25 backdrop-blur-[2px] flex items-center justify-center z-50 p-6"
-      onClick={() => setShowAddModal(false)}
+      // onClick={() => setShowAddModal(false)} 작성하다가 배경화면 눌러서 날라갈 바에야 없애는 게 낫다고 단
     >
       <div
-        className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar"
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
-        onClick={(e) => e.stopPropagation()}
+        // onClick={(e) => e.stopPropagation()}
       >
         <div className="p-7">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-gray-900 text-xl font-extrabold">
-                새 문제 추가
-              </h2>
-              <p className="text-gray-400 text-xs mt-0.5">
-                풀었던 문제를 기록해보세요
-              </p>
-            </div>
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-xl transition-colors"
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          <div className="flex flex-col gap-5">
-            <div>
-              <label className="text-xs text-gray-400 block mb-2">플랫폼</label>
-              <div className="flex gap-2 flex-wrap">
-                {(Object.keys(PLATFORM_CONFIG) as Platform[]).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() =>
-                      setForm((f) => ({
-                        ...f,
-                        platform: p,
-                        difficulty: DIFFICULTY_BY_PLATFORM[p][0],
-                      }))
-                    }
-                    className={`text-xs px-3 py-1.5 rounded-xl border transition-colors ${
-                      form.platform === p
-                        ? `${PLATFORM_CONFIG[p].bg} ${PLATFORM_CONFIG[p].text} border-transparent`
-                        : "border-gray-200 text-gray-500 hover:border-gray-300"
-                    }`}
-                  >
-                    {PLATFORM_CONFIG[p].label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <label className="text-xs block mb-1.5">
-                제목 <span className="text-red-500">*</span>
-              </label>
-              <input
-                value={form.title}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, title: e.target.value }))
-                }
-                placeholder="제목"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-2.5">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <label
-                  className="text-xs block mb-1.5"
-                  style={{ fontWeight: 600 }}
-                >
-                  난이도
-                </label>
-                {/* <select
-                  value={form.difficulty}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, difficulty: e.target.value }))
-                  }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-                >
-                  {DIFFICULTY_BY_PLATFORM[form.platform].map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select> */}
-                <SelectC
-                  placeholder="난이도"
-                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
-                />
+                <h2 className="text-gray-900 text-xl font-extrabold">
+                  새 문제 추가
+                </h2>
+                <p className="text-gray-400 text-xs mt-0.5">
+                  풀었던 문제를 기록해보세요
+                </p>
               </div>
-              <div>
-                <label
-                  className="text-xs text-gray-400 block mb-1.5"
-                  style={{ fontWeight: 600 }}
-                >
-                  풀이자
-                </label>
-                <select
-                  value={form.memberId}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      memberId: Number(e.target.value),
-                    }))
-                  }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-                >
-                  {members.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.emoji} {m.name}
-                    </option>
-                  ))}
-                </select>{" "}
-                <SelectC
-                  placeholder="난이도"
-                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
-                />
-              </div>
-              <div>
-                <label
-                  className="text-xs text-gray-400 block mb-1.5"
-                  style={{ fontWeight: 600 }}
-                >
-                  시간(분)
-                </label>
-                <input
-                  type="number"
-                  value={form.timeSpent}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      timeSpent: Number(e.target.value),
-                    }))
-                  }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-                />{" "}
-                <SelectC
-                  placeholder="난이도"
-                  selectItem={DIFFICULTY_BY_PLATFORM[form.platform]}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="text-xs text-gray-400 block mb-2"
-                style={{ fontWeight: 600 }}
-              >
-                태그
-              </label>
-              <div className="flex flex-wrap gap-1.5 p-3 border border-gray-100 rounded-2xl bg-gray-50/50">
-                {ALL_TAGS.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() =>
-                      setForm((f) => ({
-                        ...f,
-                        tags: f.tags.includes(tag)
-                          ? f.tags.filter((t) => t !== tag)
-                          : [...f.tags, tag],
-                      }))
-                    }
-                    className={`text-[11px] px-2.5 py-1 rounded-full transition-colors ${
-                      form.tags.includes(tag)
-                        ? "bg-violet-600 text-white"
-                        : "bg-white text-gray-500 border border-gray-200 hover:border-violet-200"
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="text-xs text-gray-400 block mb-1.5"
-                style={{ fontWeight: 600 }}
-              >
-                문제 링크
-              </label>
-              <input
-                value={form.url}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, url: e.target.value }))
-                }
-                placeholder="https://..."
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300"
-              />
-            </div>
-
-            <div>
-              <label
-                className="text-xs text-gray-400 block mb-1.5"
-                style={{ fontWeight: 600 }}
-              >
-                풀이 코드
-              </label>
-              <textarea
-                value={form.solution}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, solution: e.target.value }))
-                }
-                rows={5}
-                placeholder="# 코드를 입력해주세요"
-                className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-violet-300 resize-none bg-gray-950 text-gray-100"
-                style={{
-                  fontFamily: "'JetBrains Mono', Consolas, monospace",
-                  lineHeight: 1.8,
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                className="text-xs text-gray-400 block mb-1.5"
-                style={{ fontWeight: 600 }}
-              >
-                메모
-              </label>
-              <textarea
-                value={form.memo}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, memo: e.target.value }))
-                }
-                rows={2}
-                placeholder="풀이 접근법, 주의사항, 배운 점 등..."
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-violet-300 resize-none"
-              />
-            </div>
-
-            <div className="flex gap-2 justify-end pt-1 border-t border-gray-50">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-xl transition-colors"
               >
-                취소
+                <X size={16} />
               </button>
-              <Button
-                onClick={handleAdd}
-                disabled={!form.title.trim()}
-                size={"md"}
-              >
-                추가하기
-              </Button>
             </div>
-          </div>
+
+            <div className="flex flex-col gap-5">
+              <div>
+                <label className="text-xs block mb-2">플랫폼</label>
+                <div className="flex gap-2 flex-wrap">
+                  {(Object.keys(PLATFORM_CONFIG) as Platform[]).map(
+                    (platform) => (
+                      <div>
+                        <Controller
+                          control={control}
+                          name="platform"
+                          rules={{ required: true }}
+                          defaultValue={Object.keys(PLATFORM_CONFIG)[0]}
+                          render={({ field }) => (
+                            <Button
+                              key={platform}
+                              type="button"
+                              size="xs"
+                              variant={"blueOut"}
+                              className={`${currentFlatform === platform ? `${PLATFORM_CONFIG[platform].bg} ${PLATFORM_CONFIG[platform].text}` : `hover:${PLATFORM_CONFIG[platform].text}!`}`}
+                              onClick={() => {
+                                field.onChange(platform);
+                                setValue(
+                                  "difficulty",
+                                  DIFFICULTY_BY_PLATFORM[platform][0],
+                                );
+                              }}
+                            >
+                              {PLATFORM_CONFIG[platform].label}
+                            </Button>
+                          )}
+                        />
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-xs block mb-1.5">
+                  제목 <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="제목"
+                  {...register("title", {
+                    required: "제목을 작성해주세요",
+                  })}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label
+                    className="text-xs block mb-1.5"
+                    style={{ fontWeight: 600 }}
+                  >
+                    난이도
+                  </label>
+                  <Controller
+                    control={control}
+                    name="difficulty"
+                    rules={{ required: true }}
+                    defaultValue={DIFFICULTY_BY_PLATFORM[currentFlatform][0]}
+                    render={({ field }) => (
+                      <SelectC
+                        {...field}
+                        selectLabel="난이도"
+                        selectItem={DIFFICULTY_BY_PLATFORM[currentFlatform]}
+                        onSelect={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs block mb-1.5">풀이자</label>
+                  <Controller
+                    control={control}
+                    name="solve"
+                    rules={{ required: true }}
+                    defaultValue={members[0]}
+                    render={({ field }) => (
+                      <SelectC
+                        {...field}
+                        selectLabel="풀이자"
+                        selectItem={members}
+                        onSelect={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs block mb-1.5">시간(분)</label>
+                  <Input
+                    placeholder="시간(분)"
+                    type="number"
+                    {...register("timeSpent")}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs block mb-2">태그</label>
+                <div className="flex flex-wrap gap-1.5 p-3 border border-gray-100 rounded-2xl bg-gray-50/50">
+                  {ALL_TAGS.map((tag) => (
+                    <Button
+                      key={tag}
+                      type="button"
+                      size="xss"
+                      variant={selectedTags.includes(tag) ? "blue" : "blueOut"}
+                      onClick={() => toggleTag(tag)}
+                      {...register("tags")}
+                    >
+                      {tag}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs block mb-1.5">문제 링크</label>
+                <Input
+                  placeholder="https://..."
+                  {...register("url", {
+                    required: "URL을 입력해주세요",
+                  })}
+                />
+              </div>
+              <div>
+                <label className="text-xs block mb-1.5">풀이 코드</label>
+                <Textarea
+                  placeholder="코드를 입력해주세요"
+                  rows={16}
+                  className="text-xs! field-sizing-fixed! font-mono py-3"
+                  {...register("solution", {
+                    required: "코드를 입력해주세요",
+                  })}
+                />
+              </div>
+              <div>
+                <label className="text-xs block mb-1.5">메모</label>
+                <Textarea
+                  placeholder="풀이 접근법, 주의사항, 배운 점 등..."
+                  rows={5}
+                  className="field-sizing-fixed! py-3"
+                  {...register("memo")}
+                />
+              </div>
+              <div className="flex gap-2 justify-end pt-1 border-t border-gray-50">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+                >
+                  취소
+                </button>
+                <Button variant={"blue"} size={"md"} disabled={!isValid}>
+                  추가하기
+                </Button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
