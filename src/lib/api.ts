@@ -1,6 +1,6 @@
 // lib/api.ts
 import { supabase } from "./supabase";
-import type { Member, Problem } from "../data/mockData"; // 기존 타입 재사용
+import type { Member, Problem,FormData } from "../data/mockData"; // 기존 타입 재사용
 
 // 멤버 전체 조회
 export const getMembers = async (): Promise<Member[]> => {
@@ -24,7 +24,8 @@ export const getProblems = async (): Promise<Problem[]> => {
 
 // 문제 추가
 export const addProblem = async (
-  problem: Omit<Problem, "id" | "created_at">,
+  // problem: Omit<FormData, "id" | "created_at">,
+  problem: FormData,
 ) => {
   const { data, error } = await supabase
     .from("problems")

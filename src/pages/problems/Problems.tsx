@@ -349,13 +349,7 @@ export function Problems() {
       )}
 
       {/* Add Modal */}
-      {showAddModal && (
-        <ModalCustomProb
-          setShowAddModal={setShowAddModal}
-          form={form}
-          setForm={setForm}
-        />
-      )}
+      {showAddModal && <ModalCustomProb setShowAddModal={setShowAddModal} />}
     </div>
   );
 }

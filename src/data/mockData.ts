@@ -36,6 +36,18 @@ export interface Problem {
   url: string;
 }
 
+export interface FormData {
+  platform: string;
+  title: string;
+  difficulty: string;
+  solverName: string;
+  timeSpent: number;
+  tags: string[];
+  url: string;
+  solution: string;
+  memo: string;
+}
+
 export const MEMBERS: Member[] = [
   {
     id: 1,

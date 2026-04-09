@@ -4,11 +4,10 @@ import {
   DIFFICULTY_BY_PLATFORM,
   ALL_TAGS,
   type Platform,
-  type Problem,
+  type FormData,
   MEMBERS,
 } from "../../../data/mockData";
 import { addProblem } from "../../../lib/api";
-import { emptyForm } from "../Problems";
 import { Button } from "../../../components/ui/button";
 import { SelectC } from "../../../components/custom/SelectC";
 import { Controller, useForm } from "react-hook-form";
@@ -17,23 +16,26 @@ import { Textarea } from "../../../components/ui/textarea";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
-  form: Omit<Problem, "id">;
-  setForm: (forms: Omit<Problem, "id">) => void;
 }
 
-interface FormData {
-  platform: string;
+export interface ArrayDataProps {
   title: string;
-  difficulty: string;
-  solve: string;
-  timeSpent: number;
-  tags: string[];
-  url: string;
-  solution: string;
-  memo: string;
+  formName:
+    | "tags"
+    | "platform"
+    | "title"
+    | "difficulty"
+    | "solverName"
+    | "timeSpent"
+    | "url"
+    | "solution"
+    | "memo"
+    | `tags.${number}`;
+  defaultValue: string;
+  selectItem: string[];
 }
 
-function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
+function ModalCustomProb({ setShowAddModal }: modalProps) {
   const {
     register,
     control,
@@ -45,30 +47,38 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
 
   const onSubmit = (data: FormData) => {
     console.log(data);
+    addProblem(data);
     setShowAddModal(false);
     // API 호출 등의 로직
   };
-
   const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
-
-  const handleAdd = () => {
-    addProblem(form);
-    setShowAddModal(false);
-    setForm(emptyForm());
-  };
 
   const selectedTags = watch("tags") || [];
 
   function toggleTag(tag: string) {
-    const currentTags = selectedTags || [];
-    const nextTags = currentTags.includes(tag)
-      ? currentTags.filter((t: string) => t !== tag)
+    const nextTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t: string) => t !== tag)
       : [...selectedTags, tag]; // 없으면 추가
 
     setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
   }
 
   const currentFlatform = (watch("platform") as Platform) || "BOJ";
+
+  const selectArray: ArrayDataProps[] = [
+    {
+      title: "풀이자",
+      formName: "solverName",
+      defaultValue: members[0],
+      selectItem: members,
+    },
+    {
+      title: "난이도",
+      formName: "difficulty",
+      defaultValue: DIFFICULTY_BY_PLATFORM[currentFlatform][0],
+      selectItem: DIFFICULTY_BY_PLATFORM[currentFlatform],
+    },
+  ];
 
   //마스터 계열로 신청
   return (
@@ -153,45 +163,25 @@ function ModalCustomProb({ setShowAddModal, form, setForm }: modalProps) {
               </div>
 
               <div className="grid grid-cols-3 gap-2.5">
-                <div>
-                  <label
-                    className="text-xs block mb-1.5"
-                    style={{ fontWeight: 600 }}
-                  >
-                    난이도
-                  </label>
-                  <Controller
-                    control={control}
-                    name="difficulty"
-                    rules={{ required: true }}
-                    defaultValue={DIFFICULTY_BY_PLATFORM[currentFlatform][0]}
-                    render={({ field }) => (
-                      <SelectC
-                        {...field}
-                        selectLabel="난이도"
-                        selectItem={DIFFICULTY_BY_PLATFORM[currentFlatform]}
-                        onSelect={field.onChange}
-                      />
-                    )}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs block mb-1.5">풀이자</label>
-                  <Controller
-                    control={control}
-                    name="solve"
-                    rules={{ required: true }}
-                    defaultValue={members[0]}
-                    render={({ field }) => (
-                      <SelectC
-                        {...field}
-                        selectLabel="풀이자"
-                        selectItem={members}
-                        onSelect={field.onChange}
-                      />
-                    )}
-                  />
-                </div>
+                {selectArray.map((form) => (
+                  <div>
+                    <label className="text-xs block mb-1.5">{form.title}</label>
+                    <Controller
+                      control={control}
+                      name={form.formName}
+                      rules={{ required: true }}
+                      defaultValue={form.defaultValue}
+                      render={({ field }) => (
+                        <SelectC
+                          {...field}
+                          selectLabel={form.title}
+                          selectItem={form.selectItem}
+                          onSelect={field.onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                ))}
                 <div>
                   <label className="text-xs block mb-1.5">시간(분)</label>
                   <Input
