@@ -14,7 +14,8 @@ const navItems = [
   { to: "/", label: "대시보드", icon: LayoutDashboard },
   { to: "/problems", label: "문제풀이", icon: FileCode2 },
   { to: "/mypage", label: "마이페이지", icon: User },
-  { to: "/test", label: "테스트 페이지", icon: TestTubeDiagonal },
+  { to: "/test", label: "테스트", icon: TestTubeDiagonal },
+  { to: "/test2", label: "UI 테스트", icon: TestTubeDiagonal },
 ];
 
 export const Route = createRootRoute({
@@ -43,7 +44,7 @@ export function SidebarInner() {
       {/* Logo */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm">
             <Code2 size={16} className="text-white" />
           </div>
           <div>
@@ -60,9 +61,9 @@ export function SidebarInner() {
 
       {/* My Profile */}
       <div className="px-4 pb-4">
-        <div className="bg-violet-50 rounded-2xl p-3">
+        <div className="bg-blue-50 rounded-2xl p-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-sm border border-violet-100">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-sm border border-[#e8f3ff]">
               {me.emoji}
             </div>
             <div className="flex-1 min-w-0">
@@ -73,7 +74,7 @@ export function SidebarInner() {
                 >
                   {me.name}
                 </p>
-                <span className="text-[10px] px-1.5 py-0.5 bg-violet-600 text-white rounded-full shrink-0">
+                <span className="text-[10px] px-1.5 py-0.5 bg-blue-600 text-white rounded-full shrink-0">
                   {me.role}
                 </span>
               </div>
@@ -81,16 +82,13 @@ export function SidebarInner() {
             </div>
           </div>
           <div className="flex gap-2 mt-2.5">
-            <div className="flex-1 bg-white rounded-xl p-1.5 text-center border border-violet-100">
-              <p
-                className="text-xs text-violet-700"
-                style={{ fontWeight: 700 }}
-              >
+            <div className="flex-1 bg-white rounded-xl p-1.5 text-center border border-[#e8f3ff]">
+              <p className="text-xs text-blue-700" style={{ fontWeight: 700 }}>
                 {me.solvedCount}
               </p>
               <p className="text-[10px] text-gray-400">풀었어요</p>
             </div>
-            <div className="flex-1 bg-white rounded-xl p-1.5 text-center border border-violet-100">
+            <div className="flex-1 bg-white rounded-xl p-1.5 text-center border border-[#e8f3ff]">
               <p
                 className="text-xs text-orange-500"
                 style={{ fontWeight: 700 }}
@@ -109,17 +107,13 @@ export function SidebarInner() {
           <Link
             key={to}
             to={to}
-            activeProps={{ className: "bg-violet-50 text-violet-700" }}
+            activeProps={{ className: "bg-blue-50 text-violet-700" }}
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           >
-            {({ isActive }) => (
-              <>
-                <Icon size={16} style={{ strokeWidth: isActive ? 2.5 : 1.8 }} />
-                <span style={{ fontWeight: isActive ? 600 : 400 }}>
-                  {label}
-                </span>
-              </>
-            )}
+            <>
+              <Icon size={16} strokeWidth={1.8} />
+              {label}
+            </>
           </Link>
         ))}
       </nav>
@@ -171,8 +165,8 @@ export function SidebarInner() {
 
       {/* Bottom hint */}
       <div className="p-4">
-        <div className="bg-violet-50 rounded-xl p-2.5 text-center">
-          <p className="text-[10px] text-violet-500">오늘도 한 문제씩! 💪</p>
+        <div className="bg-blue-50 rounded-xl p-2.5 text-center">
+          <p className="text-[10px] text-blue-500">오늘도 한 문제씩! 💪</p>
         </div>
       </div>
     </aside>

@@ -8,37 +8,49 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
+
+  /* 보라색(#030213)에서 깊은 네이비/인디고(#020617)로 변경 */
+  --primary: #020617;
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
-  --destructive: #d4183d;
+
+  /* 연한 블루 톤으로 변경 */
+  --secondary: oklch(0.96 0.015 240);
+  --secondary-foreground: #020617;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #020617;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: rgba(0, 0, 0, 0.1);
   --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
+  --input-background: #f8fafc;
+  --switch-background: #cbd5e1;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* 보라색 링에서 인디고 링으로 변경 */
+  --ring: oklch(0.585 0.233 277.117);
+
+  /* 차트 색상: 보라색 계열을 블루/시안/인디고로 교체 */
+  --chart-1: oklch(0.585 0.233 277.117); /* Indigo */
+  --chart-2: oklch(0.623 0.214 259.815); /* blue- */
+  --chart-3: oklch(0.477 0.182 256.788); /* Deep blue- */
+  --chart-4: oklch(0.746 0.16 232.661); /* Sky */
+  --chart-5: oklch(0.842 0.132 210.454); /* Cyan-ish */
+
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
+  --sidebar-primary: #020617;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* --color-50:  */
 }
 
 .dark {
@@ -48,29 +60,31 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
+
+  --primary: oklch(0.707 0.165 254.624); /* 밝은 블루 */
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --secondary: oklch(0.25 0.05 250);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(0.25 0.05 250);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.25 0.05 250);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
+  --border: oklch(0.25 0.05 250);
+  --input: oklch(0.25 0.05 250);
+  --ring: oklch(0.585 0.233 277.117);
+
+  /* 다크모드 차트 색상 (블루/인디고 테마) */
+  --chart-1: oklch(0.585 0.233 277.117);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-4: oklch(0.627 0.15 220);
   --chart-5: oklch(0.645 0.246 16.439);
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.585 0.233 277.117);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -177,6 +191,45 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+
+  /* 1. 스크롤바 전체 설정 (두께 키움) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* 2. 스크롤바 배경 (깔끔하게 유지) */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(49, 130, 246, 0.7);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(49, 130, 246, 1); /* 마우스 올렸을 때만 꽉 찬 파란색 */
+  }
+
+  ::selection {
+    background-color: rgba(49, 130, 246, 0.2);
+    color: inherit; /* 글자색은 원래 색상 유지 (또는 특정 색상 지정 가능) */
+  }
+
+  /* Firefox 대응 */
+  ::-moz-selection {
+    background-color: rgba(49, 130, 246, 0.2);
+    color: inherit;
+  }
+
+  /* Firefox 대응 (파란색 적용) */
+  * {
+    scrollbar-width: auto; /* 두께 키움 */
+    scrollbar-color: #3182f6 transparent;
   }
 }
 
