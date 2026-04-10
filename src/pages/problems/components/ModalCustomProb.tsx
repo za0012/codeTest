@@ -10,9 +10,10 @@ import {
 import { addProblem } from "../../../lib/api";
 import { Button } from "../../../components/ui/button";
 import { SelectC } from "../../../components/custom/SelectC";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
+import WrapWithLabel from "../../../components/custom/LabelC";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
@@ -26,7 +27,7 @@ interface ArrayDataProps {
 }
 
 const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
-//추후 useMemo로 변경
+
 function ModalCustomProb({ setShowAddModal }: modalProps) {
   const {
     register,
@@ -37,20 +38,14 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     setValue,
   } = useForm<FormData>({
     defaultValues: {
+      platform: "BOJ",
       tags: [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "tags",
-  });
+  const selectedTags = watch("tags");
+  const currentFlatform = watch("platform") as Platform;
 
-  const selectedTags = watch("tags") || [];
-  const currentFlatform = (watch("platform") as Platform) || "BOJ";
-
-  console.log(currentFlatform);
-  console.log(selectedTags);
   const selectArray: ArrayDataProps[] = [
     {
       title: "난이도",
@@ -64,25 +59,19 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
       defaultValue: members[0],
       selectItem: members,
     },
-  ];
+  ]; //추후 useMemo로 변경
 
   const onSubmit = function (data: FormData) {
     console.log(data);
-    data.solver_name =
-      MEMBERS.find((p) => p.name === data.solver_name)?.id || 1;
     addProblem(data);
     setShowAddModal(false);
     // API 호출 등의 로직
   };
 
-  const toggleTag = function (tag: string, index: number) {
-    console.log("tagtag", tag);
-    console.log("selectedTagsselectedTags", selectedTags);
-
+  const toggleTag = function (tag: string) {
     const nextTags = selectedTags.includes(tag)
-      ? // ? selectedTags.filter((t: string) => t !== tag)
-        remove(index)
-      : append(tag); // 없으면 추가
+      ? selectedTags.filter((t: string) => t !== tag)
+      : [...selectedTags, tag]; // 없으면 추가
 
     setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
   };
@@ -117,6 +106,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                 </p>
               </div>
               <button
+                type="button"
                 onClick={handleclose}
                 className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-xl transition-colors"
               >
@@ -125,48 +115,39 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
             </div>
 
             <div className="flex flex-col gap-5">
-              <div>
-                <label className="text-xs block mb-2">플랫폼</label>
-                <div className="flex gap-2 flex-wrap">
-                  {(Object.keys(PLATFORM_CONFIG) as Platform[]).map(
-                    (platform) => (
-                      <Button
-                        key={platform}
-                        type="button"
-                        size="xs"
-                        variant={"blueOut"}
-                        className={`${currentFlatform === platform ? `${PLATFORM_CONFIG[platform].bg} ${PLATFORM_CONFIG[platform].text}` : ""}`}
-                        onClick={() => {
-                          setValue("platform", platform);
-                          setValue(
-                            "difficulty",
-                            DIFFICULTY_BY_PLATFORM[platform][0],
-                          );
-                        }}
-                      >
-                        {PLATFORM_CONFIG[platform].label}
-                      </Button>
-                    ),
-                  )}
-                </div>
-              </div>
-
-              <div className="col-span-2">
-                <label className="text-xs block mb-1.5">
-                  제목 <span className="text-red-500">*</span>
-                </label>
+              <WrapWithLabel title={"플랫폼"}>
+                {(Object.keys(PLATFORM_CONFIG) as Platform[]).map(
+                  (platform) => (
+                    <Button
+                      key={platform}
+                      type="button"
+                      size="xs"
+                      variant={"blueOut"}
+                      className={`${currentFlatform === platform ? `${PLATFORM_CONFIG[platform].bg} ${PLATFORM_CONFIG[platform].text}` : ""}`}
+                      onClick={() => {
+                        setValue("platform", platform);
+                        setValue(
+                          "difficulty",
+                          DIFFICULTY_BY_PLATFORM[platform][0],
+                        );
+                      }}
+                    >
+                      {PLATFORM_CONFIG[platform].label}
+                    </Button>
+                  ),
+                )}
+              </WrapWithLabel>
+              <WrapWithLabel title={"제목"}>
                 <Input
                   placeholder="제목"
                   {...register("title", {
                     required: "제목을 작성해주세요",
                   })}
                 />
-              </div>
-
+              </WrapWithLabel>
               <div className="grid grid-cols-3 gap-2.5">
                 {selectArray.map((form) => (
-                  <div key={form.formName}>
-                    <label className="text-xs block mb-1.5">{form.title}</label>
+                  <WrapWithLabel title={form.title} key={form.title}>
                     <Controller
                       control={control}
                       name={form.formName}
@@ -181,45 +162,41 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                         />
                       )}
                     />
-                  </div>
+                  </WrapWithLabel>
                 ))}
-                <div>
-                  <label className="text-xs block mb-1.5">시간(분)</label>
+                <WrapWithLabel title={"시간(분)"}>
                   <Input
                     placeholder="시간(분)"
                     type="number"
-                    {...register("time_spent")}
+                    {...register("time_spent", { valueAsNumber: true })}
                   />
-                </div>
+                </WrapWithLabel>
               </div>
-              <div>
-                <label className="text-xs block mb-2">태그</label>
+              <WrapWithLabel title={"태그"}>
                 <div className="flex flex-wrap gap-1.5 p-3 border border-gray-100 rounded-2xl bg-gray-50/50">
-                  {ALL_TAGS.map((tag, index) => (
+                  {ALL_TAGS.map((tag) => (
                     <Button
                       key={tag}
                       type="button"
                       size="xss"
                       variant={selectedTags.includes(tag) ? "blue" : "blueOut"}
-                      onClick={() => toggleTag(tag, index)}
-                      {...register("tags")}
+                      onClick={() => toggleTag(tag)}
+                      // {...register("tags")}
                     >
                       {tag}
                     </Button>
                   ))}
                 </div>
-              </div>
-              <div>
-                <label className="text-xs block mb-1.5">문제 링크</label>
+              </WrapWithLabel>
+              <WrapWithLabel title={"문제 링크"}>
                 <Input
                   placeholder="https://..."
                   {...register("url", {
                     required: "URL을 입력해주세요",
                   })}
                 />
-              </div>
-              <div>
-                <label className="text-xs block mb-1.5">풀이 코드</label>
+              </WrapWithLabel>
+              <WrapWithLabel title={"풀이 코드"}>
                 <Textarea
                   placeholder="코드를 입력해주세요"
                   rows={16}
@@ -228,18 +205,18 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                     required: "코드를 입력해주세요",
                   })}
                 />
-              </div>
-              <div>
-                <label className="text-xs block mb-1.5">메모</label>
+              </WrapWithLabel>
+              <WrapWithLabel title={"메모"}>
                 <Textarea
                   placeholder="풀이 접근법, 주의사항, 배운 점 등..."
                   rows={5}
                   className="field-sizing-fixed! py-3"
                   {...register("memo")}
                 />
-              </div>
+              </WrapWithLabel>
               <div className="flex gap-2 justify-end pt-1 border-t border-gray-50">
                 <button
+                  type="button"
                   onClick={handleclose}
                   className="px-4 py-2 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors"
                 >
