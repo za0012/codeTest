@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useStudy } from "../../context/StudyContext";
 import {
   PLATFORM_CONFIG,
@@ -11,6 +11,7 @@ import {
 import { Plus, Search, X, Clock, ChevronDown, FileCode2 } from "lucide-react";
 import { ProblemModal } from "../../components/ProblemModal";
 import ModalCustomProb from "./components/ModalCustomProb";
+import { getProblems } from "../../lib/api";
 
 type FilterPlatform = Platform | "all";
 
@@ -40,6 +41,7 @@ export function Problems() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [detailProblem, setDetailProblem] = useState<Problem | null>(null);
   const [form, setForm] = useState<Omit<Problem, "id">>(emptyForm());
+  const [problems2, setProblems2] = useState<FormData>([]);
 
   const filtered = useMemo(() => {
     return [...problems]
@@ -69,12 +71,15 @@ export function Problems() {
     search,
   ]);
 
-  // const handleAdd = () => {
-  //   if (!form.title.trim()) return;
-  //   addProblem(form);
-  //   setShowAddModal(false);
-  //   setForm(emptyForm());
-  // };
+  useEffect(() => {
+    try {
+      const res = getProblems();
+      // setProblems2(res);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   const hasFilter =
     filterPlatform !== "all" ||

@@ -17,7 +17,7 @@ export const getProblems = async (): Promise<Problem[]> => {
   const { data, error } = await supabase
     .from("problems")
     .select("*, members(name, emoji)")
-    .order("date", { ascending: false });
+    // .order("date", { ascending: false });
   if (error) throw error;
   return data;
 };

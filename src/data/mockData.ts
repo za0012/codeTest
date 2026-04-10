@@ -47,6 +47,8 @@ export interface FormData {
   url: string;
   solution: string;
   memo: string;
+  created_at?: string;
+  members?: { name: string; emoji: string };
 }
 
 export const MEMBERS: Member[] = [
@@ -810,7 +812,7 @@ export const PLATFORM_CONFIG: Record<
 export const DIFFICULTY_BY_PLATFORM: Record<Platform, string[]> = {
   BOJ: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"],
   LeetCode: ["Easy", "Medium", "Hard"],
-  Programmers: ["Lv.0","Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"],
+  Programmers: ["Lv.0", "Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"],
   Codeforces: ["Div.3", "Div.2", "Div.1"],
   SWEA: ["D2", "D3", "D4", "D5"],
 };
