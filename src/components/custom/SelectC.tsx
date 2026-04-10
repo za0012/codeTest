@@ -10,9 +10,8 @@ import {
 } from "../ui/select"; // 컴포넌트가 위치한 경로
 
 interface selectItemProps {
-  value: string;
+  id: number;
   name: string;
-  isDisabled?: boolean;
 }
 
 interface selectProps {
@@ -38,8 +37,10 @@ export function SelectC({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>{selectLabel}</SelectLabel>
-            {selectItem.map((select) => (
-              <SelectItem value={select}>{select}</SelectItem>
+            {selectItem.map((select, i) => (
+              <SelectItem key={i} value={select}>
+                {select}
+              </SelectItem>
               //disabled.. {select.isDisabled}
             ))}
           </SelectGroup>
