@@ -10,7 +10,7 @@ import {
 import { addProblem } from "../../../lib/api";
 import { Button } from "../../../components/ui/button";
 import { SelectC } from "../../../components/custom/SelectC";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
 
@@ -35,12 +35,22 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     formState: { isValid },
     watch,
     setValue,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      tags: [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "tags",
+  });
 
   const selectedTags = watch("tags") || [];
   const currentFlatform = (watch("platform") as Platform) || "BOJ";
 
   console.log(currentFlatform);
+  console.log(selectedTags);
   const selectArray: ArrayDataProps[] = [
     {
       title: "난이도",
@@ -50,7 +60,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     },
     {
       title: "풀이자",
-      formName: "solverName",
+      formName: "solver_name",
       defaultValue: members[0],
       selectItem: members,
     },
@@ -58,15 +68,21 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
 
   const onSubmit = function (data: FormData) {
     console.log(data);
+    data.solver_name =
+      MEMBERS.find((p) => p.name === data.solver_name)?.id || 1;
     addProblem(data);
     setShowAddModal(false);
     // API 호출 등의 로직
   };
 
-  const toggleTag = function (tag: string) {
+  const toggleTag = function (tag: string, index: number) {
+    console.log("tagtag", tag);
+    console.log("selectedTagsselectedTags", selectedTags);
+
     const nextTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t: string) => t !== tag)
-      : [...selectedTags, tag]; // 없으면 추가
+      ? // ? selectedTags.filter((t: string) => t !== tag)
+        remove(index)
+      : append(tag); // 없으면 추가
 
     setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
   };
@@ -149,7 +165,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
 
               <div className="grid grid-cols-3 gap-2.5">
                 {selectArray.map((form) => (
-                  <div>
+                  <div key={form.formName}>
                     <label className="text-xs block mb-1.5">{form.title}</label>
                     <Controller
                       control={control}
@@ -172,20 +188,20 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                   <Input
                     placeholder="시간(분)"
                     type="number"
-                    {...register("timeSpent")}
+                    {...register("time_spent")}
                   />
                 </div>
               </div>
               <div>
                 <label className="text-xs block mb-2">태그</label>
                 <div className="flex flex-wrap gap-1.5 p-3 border border-gray-100 rounded-2xl bg-gray-50/50">
-                  {ALL_TAGS.map((tag) => (
+                  {ALL_TAGS.map((tag, index) => (
                     <Button
                       key={tag}
                       type="button"
                       size="xss"
                       variant={selectedTags.includes(tag) ? "blue" : "blueOut"}
-                      onClick={() => toggleTag(tag)}
+                      onClick={() => toggleTag(tag, index)}
                       {...register("tags")}
                     >
                       {tag}

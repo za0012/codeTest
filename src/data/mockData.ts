@@ -37,11 +37,12 @@ export interface Problem {
 }
 
 export interface FormData {
+  id: number;
   platform: string;
   title: string;
   difficulty: string;
-  solverName: string;
-  timeSpent: number;
+  solver_name: number | string;
+  time_spent: number;
   tags: string[];
   url: string;
   solution: string;
