@@ -18,7 +18,7 @@ export const getMembers = async (): Promise<Member[]> => {
 };
 
 // 문제 전체 조회 (멤버 정보 JOIN)
-export const getProblems = async (): Promise<Problem[]> => {
+export const getProblems = async (): Promise<FormData[]> => {
   const { data, error } = await supabase
     .from("problems")
     .select("*, members(name, emoji)")
@@ -33,7 +33,7 @@ export const addProblem = async (
   // problem: FormData,
 ) => {
   problem.solver_name =
-    MEMBERS.find((p) => p.name === data.solver_name)?.id || 1;
+    MEMBERS.find((p) => p.name === problem.solver_name)?.id || 1;
   const { data, error } = await supabase
     .from("problems")
     .insert(problem)

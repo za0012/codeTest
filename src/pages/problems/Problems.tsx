@@ -40,8 +40,7 @@ export function Problems() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [detailProblem, setDetailProblem] = useState<Problem | null>(null);
-  const [form, setForm] = useState<Omit<Problem, "id">>(emptyForm());
-  const [problems2, setProblems2] = useState<FormData>([]);
+  const [problems2, setProblems2] = useState<FormData[]>([]);
 
   const filtered = useMemo(() => {
     return [...problems]
@@ -74,7 +73,12 @@ export function Problems() {
   useEffect(() => {
     try {
       const res = getProblems();
-      // setProblems2(res);
+      const getData = () => {
+        res.then((appData) => {
+          setProblems2(appData);
+        });
+      };
+      getData();
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -122,7 +126,6 @@ export function Problems() {
           <button
             onClick={() => {
               setShowAddModal(true);
-              setForm(emptyForm());
             }}
             className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2.5 rounded-2xl hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200"
             style={{ fontSize: 13, fontWeight: 600 }}
