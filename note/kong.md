@@ -122,3 +122,49 @@ setValue와 watch를 조합해서 사용하였는데, onClick시 watch로 데이
 
 onSubmit와 handleSubmit으로 폼 제출 관리,
 controler 와 register으로는 폼의 값을 넣어주는 작업을 하였다.
+
+### 2026.04.10
+
+//백준일 때, 플랫폼 변경할 때 해당 오류가 일어남... 즉 플랫폼과 밀접한 관련이 있음
+태그 클릭 후 플랫폼을 변경하거나 플랫폼이 백준일 때 코드블록에 텍스트를 처음 넣었을 때, 전부 지웠다가 다시 넣었을 때 배열이 깨져버리는 문제가 일어남.
+
+우선 원인부터 설명하자면, register 때문이었다.
+
+```ts
+<Button
+  key={tag}
+  type="button"
+  size="xss"
+  variant={selectedTags.includes(tag) ? "blue" : "blueOut"}
+  onClick={() => toggleTag(tag)}
+  {...register("tags")}
+>
+{tag}
+</Button>
+```
+
+claude야 요약해저ㅜ~ 아무튼 설명해보겠다..
+
+내가 하려던 건 string 배열을 tags에 반환하는 것이었다. 그런데 기존에 내가 이해하던 방식으로는 각 폼의 값들을 관리할 때 SelectC같이 여러 개의 컴포넌트들을 혼합해서 사용하는 경우에는 Conteroller를, 단일 컴포넌트의 경우에는 register를 였다. 그래서 Button에도 사용하게 되었던 것이었다.
+
+근데 위와 같은 문제가 일어나, 아는 개발자분께 여쭤보니 해당 문제는 register로 인해 발생하는 것이라고 하였다.
+간단하게 말하자면 register의 강제 형변환 때문이라고 해야할까?
+register는 Dom ref기반이라 string으로 읽음.
+
+간단하게 비슷한 예제를 들어보자면,
+
+```ts
+<button
+  value={[1, 2, 3, 4, 5]}
+  ref={btnRef}
+  onClick{(e) => {console.log(btnRef.current.value, typeof btnRef.current.value)}}
+/>
+```
+
+이렇게 하면 콘솔로그에 string 과 "1, 2, 3, 4, 5" 가 뜬다.
+이건 dom의 value값을 읽어올때 발생하는 강제 형변환 때문이다.
+
+그래서 정리 ->
+단일 값을 읽어올 때: register
+배열을 register로 관리하고 싶을 때: setValue
+복잡한 배열 / 값: useFieldArray
