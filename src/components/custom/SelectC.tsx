@@ -19,6 +19,7 @@ interface selectProps {
   selectLabel?: string;
   // selectItem: selectItemProps[];
   selectItem: string[];
+  defaultValue?: boolean;
   onSelect: (item: string) => void;
 }
 
@@ -29,8 +30,8 @@ export function SelectC({
   onSelect,
 }: selectProps) {
   return (
-    <div className="w-auto">
-      <Select value={selectItem[0]} onValueChange={onSelect}>
+    <div className="w-full">
+      <Select defaultValue={selectItem[0]} onValueChange={onSelect}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

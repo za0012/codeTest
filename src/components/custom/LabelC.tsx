@@ -8,7 +8,7 @@ interface labelProps {
 
 function WrapWithLabel({ title, children }: PropsWithChildren<labelProps>) {
   return (
-    <div>
+    <div className="w-full">
       <label className="text-xs block mb-2">{title}</label>
       <div className="flex gap-2 flex-wrap">{children}</div>
     </div>

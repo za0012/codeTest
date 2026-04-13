@@ -7,13 +7,10 @@ import {
   type FormData,
   MEMBERS,
 } from "../../../data/mockData";
-import { addProblem } from "../../../lib/api";
-import { Button } from "../../../components/ui/button";
-import { SelectC } from "../../../components/custom/SelectC";
+import { addProblem } from "@/lib/api";
+import { SelectC, WrapWithLabel } from "@/components/custom/index";
 import { Controller, useForm } from "react-hook-form";
-import { Input } from "../../../components/ui/input";
-import { Textarea } from "../../../components/ui/textarea";
-import WrapWithLabel from "../../../components/custom/LabelC";
+import { Button, Input, Textarea } from "@/components/index";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
@@ -166,6 +163,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                 ))}
                 <WrapWithLabel title={"시간(분)"}>
                   <Input
+                    className="w-full"
                     placeholder="시간(분)"
                     type="number"
                     {...register("time_spent", { valueAsNumber: true })}
