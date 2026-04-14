@@ -27,14 +27,16 @@ export function SelectC({
   onSelect,
 }: selectProps) {
   // const controlledValue = value ?? undefined;
+  const resetKey = selectItem[0] || "empty";
   // console.log(value);
-  // console.log(controlledValue);
+  // console.log(onSelect);
   return setDefaultValue ? (
     <div className="w-full">
       <Select
+        key={resetKey}
         defaultValue={selectItem[0]}
-        // value={controlledValue}
         onValueChange={onSelect}
+        // value={selectItem[0]}
       >
         <SelectTrigger className="data-placeholder:text-xs">
           <SelectValue placeholder={placeholder} />
@@ -55,7 +57,7 @@ export function SelectC({
   ) : (
     <div className="w-full">
       {/*  value={controlledValue} */}
-      <Select onValueChange={onSelect}>
+      <Select value={undefined} onValueChange={onSelect}>
         <SelectTrigger className="data-placeholder:text-xs">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

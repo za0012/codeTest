@@ -150,10 +150,12 @@ function ModalCustomProb({ setShowAddModal, members }: modalProps) {
                       render={({ field }) => (
                         <SelectC
                           {...field}
+                          key={form.defaultValue}
                           selectLabel={form.title}
                           selectItem={form.selectItem}
                           setDefaultValue={true}
                           onSelect={field.onChange}
+                          placeholder="난이도"
                         />
                       )}
                     />
