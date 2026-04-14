@@ -19,11 +19,12 @@
       "recommended": true
     }
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  },
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"indentStyle": "space"
+		}
+	},
   "assist": {
     "enabled": true,
     "actions": {
