@@ -2,8 +2,8 @@
 export * from "./ui/button";
 export * from "./ui/textarea";
 export * from "./ui/input";
+export * from "./ui/skeleton";
 
-// export * from "./ui/button";
 // export * from "./ui/button";
 // export * from "./ui/button";
 // export * from "./ui/button";

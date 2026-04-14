@@ -102,18 +102,16 @@ export function SidebarInner() {
       </div>
 
       {/* Navigation */}
-      <nav className="px-3 flex flex-col gap-0.5">
+      <nav className="px-3 flex flex-col gap-0.5 font-medium">
         {navItems.map(({ to, label, icon: Icon }) => (
           <Link
             key={to}
             to={to}
-            activeProps={{ className: "bg-blue-50 text-violet-700" }}
+            activeProps={{ className: "bg-blue-50 text-blue-700!" }}
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           >
-            <>
-              <Icon size={16} strokeWidth={1.8} />
-              {label}
-            </>
+            <Icon size={16} strokeWidth={1.8} />
+            {label}
           </Link>
         ))}
       </nav>
@@ -166,7 +164,9 @@ export function SidebarInner() {
       {/* Bottom hint */}
       <div className="p-4">
         <div className="bg-blue-50 rounded-xl p-2.5 text-center">
-          <p className="text-[10px] text-blue-500">오늘도 한 문제씩! 💪</p>
+          <p className="text-[11px] text-blue-500 font-bold">
+            오늘도 한 문제씩! 💪
+          </p>
         </div>
       </div>
     </aside>

@@ -5,16 +5,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
-          "bg-blue600 hover:bg-blue700 transition-colors text-white disabled:opacity-40",
+          "bg-blue-600 hover:bg-blue-700 transition-colors text-white disabled:opacity-40",
         // default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        blue_500:
+          "bg-blue-500 hover:bg-blue-700 transition-colors text-white disabled:opacity-40",
         blue: "bg-blue-600 hover:bg-blue-700 transition-colors text-white disabled:opacity-40",
         blueOut:
-          "border bg-white hover:border-blue-600 transition-colors text-white disabled:opacity-40 text-gray-700",
+          "border bg-white hover:border-blue-500/50 transition-colors text-white disabled:opacity-40 text-gray-700",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
