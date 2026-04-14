@@ -1,19 +1,19 @@
-import { X } from "lucide-react";
+import { addProblem } from "@/lib/api";
+import { SelectC, WrapWithLabel } from "@/components/custom/index";
+import { Button, Input, Textarea } from "@/components/index";
+import { Controller, useForm } from "react-hook-form";
 import {
   PLATFORM_CONFIG,
   DIFFICULTY_BY_PLATFORM,
   ALL_TAGS,
   type Platform,
   type FormData,
-  MEMBERS,
 } from "../../../data/mockData";
-import { addProblem } from "@/lib/api";
-import { SelectC, WrapWithLabel } from "@/components/custom/index";
-import { Controller, useForm } from "react-hook-form";
-import { Button, Input, Textarea } from "@/components/index";
+import { X } from "lucide-react";
 
 interface modalProps {
   setShowAddModal: (show: boolean) => void;
+  members: string[];
 }
 
 interface ArrayDataProps {
@@ -23,9 +23,7 @@ interface ArrayDataProps {
   selectItem: string[];
 }
 
-const members = MEMBERS.map((m) => `${m.emoji} ${m.name}`);
-
-function ModalCustomProb({ setShowAddModal }: modalProps) {
+function ModalCustomProb({ setShowAddModal, members }: modalProps) {
   const {
     register,
     control,
@@ -58,14 +56,14 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     },
   ]; //추후 useMemo로 변경
 
-  const onSubmit = function (data: FormData) {
+  const onSubmit = (data: FormData) => {
     console.log(data);
     addProblem(data);
     setShowAddModal(false);
     // API 호출 등의 로직
   };
 
-  const toggleTag = function (tag: string) {
+  const toggleTag = (tag: string) => {
     const nextTags = selectedTags.includes(tag)
       ? selectedTags.filter((t: string) => t !== tag)
       : [...selectedTags, tag]; // 없으면 추가
@@ -73,11 +71,10 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
     setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
   };
 
-  const handleclose = function () {
+  const handleclose = () => {
     setShowAddModal(false);
   };
 
-  //마스터 계열로 신청
   return (
     <div
       className="fixed inset-0 bg-black/25 backdrop-blur-[2px] flex items-center justify-center z-50 p-6"
@@ -155,6 +152,7 @@ function ModalCustomProb({ setShowAddModal }: modalProps) {
                           {...field}
                           selectLabel={form.title}
                           selectItem={form.selectItem}
+                          setDefaultValue={true}
                           onSelect={field.onChange}
                         />
                       )}

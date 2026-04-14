@@ -9,17 +9,12 @@ import {
   SelectValue,
 } from "../ui/select"; // 컴포넌트가 위치한 경로
 
-interface selectItemProps {
-  id: number;
-  name: string;
-}
-
 interface selectProps {
   placeholder?: string;
   selectLabel?: string;
-  // selectItem: selectItemProps[];
   selectItem: string[];
-  defaultValue?: boolean;
+  setDefaultValue?: boolean;
+  // value?: string | null; // 추가
   onSelect: (item: string) => void;
 }
 
@@ -27,19 +22,28 @@ export function SelectC({
   placeholder,
   selectLabel,
   selectItem,
+  setDefaultValue,
+  // value,
   onSelect,
 }: selectProps) {
-  return (
+  // const controlledValue = value ?? undefined;
+  // console.log(value);
+  // console.log(controlledValue);
+  return setDefaultValue ? (
     <div className="w-full">
-      <Select defaultValue={selectItem[0]} onValueChange={onSelect}>
-        <SelectTrigger>
+      <Select
+        defaultValue={selectItem[0]}
+        // value={controlledValue}
+        onValueChange={onSelect}
+      >
+        <SelectTrigger className="data-placeholder:text-xs">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             <SelectLabel>{selectLabel}</SelectLabel>
-            {selectItem.map((select, i) => (
-              <SelectItem key={i} value={select}>
+            {selectItem.map((select) => (
+              <SelectItem key={select} value={select}>
                 {select}
               </SelectItem>
               //disabled.. {select.isDisabled}
@@ -48,7 +52,49 @@ export function SelectC({
         </SelectContent>
       </Select>
     </div>
+  ) : (
+    <div className="w-full">
+      {/*  value={controlledValue} */}
+      <Select onValueChange={onSelect}>
+        <SelectTrigger className="data-placeholder:text-xs">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>{selectLabel}</SelectLabel>
+            {selectItem.map((select) => (
+              <SelectItem key={select} value={select}>
+                {select}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
+  // return (
+  //   <div className="w-full">
+  //     <Select
+  //       // ❌ defaultValue 제거 — value와 혼용 불가
+  //       value={controlledValue}
+  //       onValueChange={onSelect}
+  //     >
+  //       <SelectTrigger>
+  //         <SelectValue placeholder={placeholder} />
+  //       </SelectTrigger>
+  //       <SelectContent>
+  //         <SelectGroup>
+  //           <SelectLabel>{selectLabel}</SelectLabel>
+  //           {selectItem.map((select, i) => (
+  //             <SelectItem key={select} value={select}>
+  //               {select}
+  //             </SelectItem>
+  //           ))}
+  //         </SelectGroup>
+  //       </SelectContent>
+  //     </Select>
+  //   </div>
+  // );
 }
 
 export function SelectA() {
