@@ -1,24 +1,21 @@
 // lib/api.ts
 import { supabase } from "./supabase";
-import {
-  type Member,
-  type Problem,
-  type FormData,
-  MEMBERS,
-} from "../data/mockData"; // 기존 타입 재사용
+import { type FormData, MEMBERS } from "../data/mockData"; // 기존 타입 재사용
 
 // 멤버 전체 조회
-export const getMembers = async (): Promise<Member[]> => {
+// export const getMembers = async (): Promise<Member[]> => {
+export const getMembers = async () => {
   const { data, error } = await supabase
     .from("members")
     .select("*")
-    .order("solved_count", { ascending: false });
+    .order("name", { ascending: true });
   if (error) throw error;
   return data;
 };
 
 // 문제 전체 조회 (멤버 정보 JOIN)
-export const getProblems = async (): Promise<FormData[]> => {
+// export const getProblems = async (): Promise<FormData[]> => {
+export const getProblems = async () => {
   const { data, error } = await supabase
     .from("problems")
     .select("*, members(name, emoji)")

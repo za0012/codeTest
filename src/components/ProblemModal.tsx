@@ -1,24 +1,28 @@
 import { useState } from "react";
-import type { Problem } from "../data/mockData";
-import { PLATFORM_CONFIG, DIFFICULTY_CONFIG, ALL_TAGS } from "../data/mockData";
+import {
+  PLATFORM_CONFIG,
+  DIFFICULTY_CONFIG,
+  ALL_TAGS,
+  type FormData,
+} from "../data/mockData";
 import { X, ExternalLink, Edit3, Trash2 } from "lucide-react";
 import { useStudy } from "../context/StudyContext";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface Props {
-  problem: Problem;
+  problem: FormData;
   onClose: () => void;
   onDelete?: (id: number) => void;
-  onUpdate?: (p: Problem) => void;
+  onUpdate?: (p: FormData) => void;
 }
 
 export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
   const { members, updateProblem, deleteProblem } = useStudy();
   const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState<Problem>({ ...problem });
+  const [form, setForm] = useState<FormData>({ ...problem });
 
-  const member = members.find((m) => m.id === problem.memberId);
+  const member = problem.members;
   const pc = PLATFORM_CONFIG[problem.platform];
   const dc = DIFFICULTY_CONFIG[problem.difficulty];
 
@@ -79,7 +83,6 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                   letterSpacing: "-0.3px",
                 }}
               >
-                {problem.number ? `${problem.number}. ` : ""}
                 {problem.title}
               </h2>
               {/* Meta */}
@@ -94,10 +97,12 @@ export function ProblemModal({ problem, onClose, onDelete, onUpdate }: Props) {
                   </span>
                 </div>
                 <span className="text-gray-200">·</span>
-                <span className="text-gray-400 text-xs">{problem.date}</span>
+                <span className="text-gray-400 text-xs">
+                  {new Date(problem.created_at).toLocaleDateString()}
+                </span>
                 <span className="text-gray-200">·</span>
                 <span className="text-gray-400 text-xs">
-                  ⏱ {problem.timeSpent}분
+                  ⏱ {problem.time_spent}분
                 </span>
                 {problem.url && (
                   <>
