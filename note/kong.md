@@ -168,3 +168,9 @@ register는 Dom ref기반이라 string으로 읽음.
 단일 값을 읽어올 때: register
 배열을 register로 관리하고 싶을 때: setValue
 복잡한 배열 / 값: useFieldArray
+
+### 2026.04.13
+
+배럴 익스포트, Path Alias작업 진행 완료...
+배럴 익스포트는 import 할 때 각 컴포넌트별로 하면 쓸데없이 길어지기도 하고 해서 넣었다!
+Path Alias도 비슷하게 import 할 때 ../ 이게 너무 많으면 복잡해보여서 넣어주었다.
