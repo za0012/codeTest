@@ -60,6 +60,7 @@ function ModalCustomProb({ setShowAddModal, members }: modalProps) {
     console.log(data);
     addProblem(data);
     setShowAddModal(false);
+    window.location.reload();
     // API 호출 등의 로직
   };
 
