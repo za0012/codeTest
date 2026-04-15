@@ -41,7 +41,7 @@ export interface FormData {
   platform: string;
   title: string;
   difficulty: string;
-  solver_name: number | string;
+  solver_name: string;
   time_spent: number;
   tags: string[];
   url: string;
@@ -451,10 +451,14 @@ for i in range(M, N+1):
   },
 ];
 
-export const PLATFORM_CONFIG: Record<
-  Platform,
-  { label: string; bg: string; text: string; color: string }
-> = {
+export interface PlatformConfig {
+  label: string;
+  bg: string;
+  text: string;
+  color: string;
+}
+
+export const PLATFORM_CONFIG: Record<Platform, PlatformConfig> = {
   BOJ: {
     label: "백준",
     bg: "bg-[#e8f3ff]", // 토스 블루
@@ -495,7 +499,12 @@ export const DIFFICULTY_BY_PLATFORM: Record<Platform, string[]> = {
   SWEA: ["D2", "D3", "D4", "D5"],
 };
 
-export const DIFFICULTY_CONFIG: Record<string, { bg: string; text: string }> = {
+export interface DifficultyConfig {
+  bg: string;
+  text: string;
+}
+
+export const DIFFICULTY_CONFIG: Record<string, DifficultyConfig> = {
   // 1단계: 차분한 시작 (그레이/슬레이트)
   Bronze: { bg: "bg-[#f2f4f6]", text: "text-[#6b7684]" },
   Silver: { bg: "bg-[#f2f4f6]", text: "text-[#4e5968]" },
