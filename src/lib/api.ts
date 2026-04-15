@@ -1,6 +1,6 @@
 // lib/api.ts
 import { supabase } from "./supabase";
-import { type FormData, MEMBERS } from "../data/mockData"; // 기존 타입 재사용
+import { type FormData, MEMBERS, type Problem } from "../data/mockData"; // 기존 타입 재사용
 
 // 멤버 전체 조회
 // export const getMembers = async (): Promise<Member[]> => {
@@ -29,15 +29,49 @@ export const addProblem = async (
   problem: Omit<FormData, "id" | "created_at">,
   // problem: FormData,
 ) => {
-  problem.solver_name =
-    MEMBERS.find((p) => p.name === problem.solver_name)?.id || 1;
   const { data, error } = await supabase
     .from("problems")
-    .insert(problem)
+    .insert({
+      ...problem,
+      solver_name:
+        MEMBERS.find((p) => problem.solver_name.includes(p.name))?.id ?? 1,
+    })
     .select()
     .single();
   if (error) throw error;
   return data;
+};
+
+// 문제 상세 조회
+export const getProblemById = async (id: number): Promise<FormData> => {
+  const { data, error } = await supabase
+    .from("problems")
+    .select("*, members(name, emoji)")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+// 문제 수정
+export const updateProblem = async (
+  id: number,
+  updates: Partial<Omit<FormData, "id" | "created_at">>,
+): Promise<FormData> => {
+  const { data, error } = await supabase
+    .from("problems")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+// 문제 삭제
+export const deleteProblem = async (id: number): Promise<void> => {
+  const { error } = await supabase.from("problems").delete().eq("id", id);
+  if (error) throw error;
 };
 
 // 멤버별 문제 조회
