@@ -24,16 +24,20 @@ export function Problems() {
   const [filterTag, setFilterTag] = useState("all");
   const [filterMember, setFilterMember] = useState("all");
 
-  const [filter, setFilter] = useState({
+  const [filters, setFilters] = useState({
     search: "",
-    platform: "all" as Platform,
+    platform: "all" as FilterPlatform,
     difficulty: "all",
     tag: "all",
     member: "all",
   });
 
+  const handleFilter = (key: keyof typeof filters, value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }));
+
   const [showAddModal, setShowAddModal] = useState(false);
-  const [detailProblem, setDetailProblem] = useState<FormData | null>(null);
+  // const [detailProblem, setDetailProblem] = useState<FormData | null>(null);
+  const [detailProblem, setDetailProblem] = useState(0);
   const [problems, setProblems] = useState<FormData[]>([]);
   const [member, setMember] = useState<Member[]>([]);
 
@@ -41,25 +45,24 @@ export function Problems() {
 
   const filtered = useMemo(() => {
     return [...problems].filter((p) => {
-      if (filterPlatform !== "all" && p.platform !== filterPlatform)
+      if (filters.platform !== "all" && p.platform !== filters.platform)
         return false;
-      if (filterDifficulty !== "all" && p.difficulty !== filterDifficulty)
+      if (filters.difficulty !== "all" && p.difficulty !== filters.difficulty)
         return false;
-      if (filterTag !== "all" && !p.tags.includes(filterTag)) return false;
-      if (filterMember !== "all" && String(p.members?.name) !== filterMember)
+      if (filters.tag !== "all" && !p.tags.includes(filters.tag)) return false;
+      if (
+        filters.member !== "all" &&
+        String(p.members?.name) !== filters.member
+      )
         return false;
-      if (search && !p.title.toLowerCase().includes(search.toLowerCase()))
+      if (
+        filters.search &&
+        !p.title.toLowerCase().includes(filters.search.toLowerCase())
+      )
         return false;
       return true;
     });
-  }, [
-    problems,
-    filterPlatform,
-    filterDifficulty,
-    filterTag,
-    filterMember,
-    search,
-  ]);
+  }, [problems, filters]);
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -69,6 +72,7 @@ export function Problems() {
         setProblems(resProblem);
         setMember(resMembers);
         setIsLoading(false);
+        console.log(resProblem);
       } catch (error) {
         console.log(error);
         alert(
@@ -81,10 +85,10 @@ export function Problems() {
   }, []);
 
   const difficultiesForFilter = useMemo(() => {
-    return filterPlatform === "all"
+    return filters.platform === "all"
       ? ["all", ...Object.values(DIFFICULTY_BY_PLATFORM).flat()]
-      : ["all", ...DIFFICULTY_BY_PLATFORM[filterPlatform as Platform]];
-  }, [filterPlatform]);
+      : ["all", ...DIFFICULTY_BY_PLATFORM[filters.platform as Platform]];
+  }, [filters.platform]);
 
   const members = useMemo(() => {
     return member.map((m) => `${m.emoji} ${m.name}`);
@@ -129,7 +133,7 @@ export function Problems() {
             <Input
               placeholder="검색"
               className="text-[11px] pl-8 pr-3 py-2 w-44"
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleFilter("search", e.target.value)}
             />
           </div>
 
@@ -141,11 +145,12 @@ export function Problems() {
                 size="xs"
                 variant="blueOut"
                 onClick={() => {
-                  setFilterPlatform(p as FilterPlatform);
-                  setFilterDifficulty("all");
+                  handleFilter("platform", p as FilterPlatform);
+                  handleFilter("difficulty", "all");
+                  // setFilterDifficulty("all");
                 }}
                 className={`font-normal! ${
-                  filterPlatform === p
+                  filters.platform === p
                     ? p === "all"
                       ? "font-semibold! bg-gray-800 text-white"
                       : `font-semibold! ${PLATFORM_CONFIG[p as Platform].bg} ${PLATFORM_CONFIG[p as Platform].text} border-transparent`
@@ -160,6 +165,7 @@ export function Problems() {
           <div className="grid grid-cols-3 gap-2">
             {/* Difficulty select */}
             <SelectC
+              key={filters.platform}
               selectLabel={"난이도"}
               selectItem={difficultiesForFilter}
               placeholder="전체 난이도"
@@ -170,7 +176,7 @@ export function Problems() {
               selectLabel={"멤버"}
               selectItem={["all", ...members]}
               placeholder="전체 멤버"
-              onSelect={setFilterMember}
+              onSelect={(item) => handleFilter("member", item)}
             />
             {/* Tag select */}
             <SelectC
@@ -208,7 +214,7 @@ export function Problems() {
             {filtered.map((problem) => (
               <ListCatd
                 problem={problem}
-                onClicks={setDetailProblem}
+                onClickCard={setDetailProblem}
                 key={problem.id}
               />
             ))}
@@ -218,7 +224,8 @@ export function Problems() {
       {/* Detail Modal */}
       {detailProblem && (
         <ProblemModal
-          problem={detailProblem}
+          // problem={detailProblem}
+          id={detailProblem}
           onClose={() => setDetailProblem(null)}
           onDelete={() => setDetailProblem(null)}
           onUpdate={(updated) => setDetailProblem(updated)}
