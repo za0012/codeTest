@@ -9,7 +9,7 @@ import {
   type Problem,
 } from "../data/mockData";
 import { Plus, Search, X, Clock, ChevronDown, FileCode2 } from "lucide-react";
-import { ProblemModal } from "../components/ProblemModal";
+import { ProblemModal } from "./ProblemModal";
 
 type FilterPlatform = Platform | "all";
 
