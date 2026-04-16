@@ -38,7 +38,7 @@ export interface Problem {
 
 export interface FormData {
   id: number;
-  platform: string;
+  platform: "BOJ" | "LeetCode" | "Programmers" | "Codeforces" | "SWEA";
   title: string;
   difficulty: string;
   solver_name: string;
