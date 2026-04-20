@@ -11,9 +11,10 @@ import { Plus, Search, FileCode2 } from "lucide-react";
 import { ProblemModal } from "@/components/ProblemModal";
 import ModalCustomProb from "./components/ModalCustomProb";
 import { getMembers, getProblems } from "@/lib/api";
-import ListCatd from "./components/ListCatd";
+import ListCard from "./components/ListCard";
 import { SelectC } from "@/components/custom";
 import { Button, Input, Skeleton } from "@/components/index";
+import { useQuery } from "@tanstack/react-query";
 
 type FilterPlatform = Platform | "all";
 
@@ -36,13 +37,27 @@ export function Problems() {
     setFilters((prev) => ({ ...prev, [key]: value }));
 
   const [showAddModal, setShowAddModal] = useState(false);
-  // const [detailProblem, setDetailProblem] = useState<FormData | null>(null);
-  const [detailProblem, setDetailProblem] = useState(0);
-  const [problems, setProblems] = useState<FormData[]>([]);
-  const [member, setMember] = useState<Member[]>([]);
+  const [detailProblem, setDetailProblem] = useState<number | null>(0);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: member,
+    isLoading: isMemberLoading,
+    error: isMemberError,
+  } = useQuery({
+    queryKey: ["Members", detailProblem, showAddModal],
+    queryFn: getMembers,
+  });
 
+  const {
+    data: problems,
+    isLoading: isProblemLoading,
+    error: isProblemError,
+  } = useQuery<FormData[]>({
+    queryKey: ["Problems"],
+    queryFn: getProblems,
+    initialData: [], //초기값 설정으로 [Symbol.iterator]() 메서드 에러 해결
+  });
+  //나중에 필터링도 수정할 수 있음 하기...ㅎㅎ
   const filtered = useMemo(() => {
     return [...problems].filter((p) => {
       if (filters.platform !== "all" && p.platform !== filters.platform)
@@ -64,26 +79,6 @@ export function Problems() {
     });
   }, [problems, filters]);
 
-  useEffect(() => {
-    const fetchProblems = async () => {
-      try {
-        const resProblem = await getProblems();
-        const resMembers = await getMembers();
-        setProblems(resProblem);
-        setMember(resMembers);
-        setIsLoading(false);
-        console.log(resProblem);
-      } catch (error) {
-        console.log(error);
-        alert(
-          "데이터를 불러오던 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-        );
-        setIsLoading(false);
-      }
-    };
-    fetchProblems();
-  }, []);
-
   const difficultiesForFilter = useMemo(() => {
     return filters.platform === "all"
       ? ["all", ...Object.values(DIFFICULTY_BY_PLATFORM).flat()]
@@ -91,8 +86,12 @@ export function Problems() {
   }, [filters.platform]);
 
   const members = useMemo(() => {
-    return member.map((m) => `${m.emoji} ${m.name}`);
+    return member?.map((m) => `${m.emoji} ${m.name}`);
   }, [member]);
+
+  if (isMemberError || isProblemError) return alert("에러발생");
+
+  if (!problems || !members) return;
 
   return (
     <div className="flex flex-col h-screen bg-white overflow-hidden">
@@ -197,7 +196,7 @@ export function Problems() {
 
       {/* ─── Problem list ─── */}
       <div className="flex-1 overflow-y-auto px-8 py-5">
-        {isLoading ? (
+        {isMemberLoading && isProblemLoading ? (
           new Array(3)
             .fill(0)
             .map((_, i) => <Skeleton key={i} className="h-18 w-full my-3" />)
@@ -212,7 +211,7 @@ export function Problems() {
         ) : (
           <div className="flex flex-col gap-2">
             {filtered.map((problem) => (
-              <ListCatd
+              <ListCard
                 problem={problem}
                 onClickCard={setDetailProblem}
                 key={problem.id}
@@ -221,14 +220,12 @@ export function Problems() {
           </div>
         )}
       </div>
+
       {/* Detail Modal */}
       {detailProblem && (
         <ProblemModal
-          // problem={detailProblem}
           id={detailProblem}
           onClose={() => setDetailProblem(null)}
-          onDelete={() => setDetailProblem(null)}
-          onUpdate={(updated) => setDetailProblem(updated)}
         />
       )}
 

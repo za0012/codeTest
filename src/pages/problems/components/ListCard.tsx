@@ -10,7 +10,7 @@ interface dataType {
   onClickCard: (problem: number) => void;
 }
 
-function ListCatd({ problem, onClickCard }: dataType) {
+function ListCard({ problem, onClickCard }: dataType) {
   const member = problem.members;
   const pc = PLATFORM_CONFIG[problem.platform];
   const dc = DIFFICULTY_CONFIG[problem.difficulty];
@@ -83,4 +83,4 @@ function ListCatd({ problem, onClickCard }: dataType) {
   );
 }
 
-export default ListCatd;
+export default ListCard;

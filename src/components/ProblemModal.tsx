@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   PLATFORM_CONFIG,
   DIFFICULTY_CONFIG,
   ALL_TAGS,
   type FormData,
-  type PlatformConfig,
-  type DifficultyConfig,
 } from "../data/mockData";
 import { X, ExternalLink, Edit3, Trash2 } from "lucide-react";
-import { useStudy } from "../context/StudyContext";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { getProblemById, updateProblem } from "@/lib/api";
+import { deleteProblem, getProblemById, updateProblem } from "@/lib/api";
 import { WrapWithLabel } from "./custom";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
@@ -20,65 +17,16 @@ import { Button } from "./ui/button";
 import { useQuery } from "@tanstack/react-query";
 
 interface Props {
-  // problem: FormData;
   onClose: () => void;
-  onDelete?: (id: number) => void;
-  onUpdate?: (p: FormData) => void;
   id: number;
 }
 
 export function ProblemModal({
   // problem,
   onClose,
-  onDelete,
-  onUpdate,
   id,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState<FormData>();
-  // const [problem, setProblem] = useState<FormData>();
-  const [platform, setPlatform] = useState<PlatformConfig>();
-  const [difficulty, setDifficulty] = useState<DifficultyConfig>();
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { isValid },
-    watch,
-    setValue,
-  } = useForm<FormData>({
-    defaultValues: {
-      platform: "BOJ",
-      tags: [],
-    },
-  });
-
-  // const pc = PLATFORM_CONFIG[problem.platform];
-  // const dc = DIFFICULTY_CONFIG[problem.difficulty];
-
-  const handleUpdate = () => {
-    // updateProblem(form);
-    // onUpdate?.(form);
-    setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    // deleteProblem(problem?.id);
-    // onDelete?.(problem?.id);
-    onClose();
-  };
-
-  const selectedTags = watch("tags");
-
-  const toggleTag = (tag: string) => {
-    const nextTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t: string) => t !== tag)
-      : [...selectedTags, tag]; // 없으면 추가
-
-    setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
-  };
-
   const {
     data: problem,
     error: isError,
@@ -88,30 +36,39 @@ export function ProblemModal({
     queryFn: () => getProblemById(id),
   });
 
+  const handleDelete = async () => {
+    try {
+      deleteProblem(id);
+      alert("삭제되었습니다");
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { register, handleSubmit, watch, setValue } = useForm<FormData>({
+    defaultValues: {
+      tags: problem?.tags || [],
+    },
+  });
+
+  const selectedTags = watch("tags");
+
+  console.log(problem);
+
+  const toggleTag = (tag: string) => {
+    const nextTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t: string) => t !== tag)
+      : [...selectedTags, tag]; // 없으면 추가
+    setValue("tags", nextTags, { shouldValidate: true }); //실시간 유효성 검사
+  };
+
   const onSubmit = (data: FormData) => {
     console.log(data);
     updateProblem(id, data);
     setIsEditing(false);
     // API 호출 등의 로직
   };
-
-  // useEffect(() => {
-  //   if (!id) return;
-  //   const fetchData = async () => {
-  //     try {
-  //       // const res = await getProblemById(id);
-  //       // console.log(res);
-  //       // useUpdateEdit(isEditing);
-  //       // setProblem(res);
-  //       setPlatform(PLATFORM_CONFIG[res.platform]);
-  //       setDifficulty(DIFFICULTY_CONFIG[res.difficulty]);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   console.log(isEditing);
-  //   fetchData();
-  // }, [id]);
 
   if (isLoading) {
     return <p>로딩중...</p>;
@@ -121,7 +78,7 @@ export function ProblemModal({
     return alert("데이터를 불러오던 중 문제가 발생했습니다.");
   }
 
-  if (!problem) return;
+  if (!problem) return alert("데이터를 불러오던 중 문제가 발생했습니다.");
 
   if (!isLoading)
     return (
@@ -209,12 +166,13 @@ export function ProblemModal({
                     <Edit3 size={15} />
                   </button>
                 )}
-                {/* <button
-                onClick={handleDelete}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-50 rounded-xl transition-colors"
-              >
-                <Trash2 size={15} />
-              </button>*/}
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-50 rounded-xl transition-colors"
+                >
+                  <Trash2 size={15} />
+                </button>
                 <button
                   type="button"
                   onClick={onClose}

@@ -1,5 +1,5 @@
 import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
-import { StudyProvider, useStudy } from "../context/StudyContext";
+import { StudyProvider } from "../context/StudyContext";
 import {
   LayoutDashboard,
   FileCode2,
@@ -9,6 +9,7 @@ import {
   Circle,
   TestTubeDiagonal,
 } from "lucide-react";
+import { MEMBERS } from "@/data/mockData";
 
 const navItems = [
   { to: "/", label: "대시보드", icon: LayoutDashboard },
@@ -36,8 +37,7 @@ function RootComponent() {
 }
 
 export function SidebarInner() {
-  const { members } = useStudy();
-  const me = members[0];
+  const me = MEMBERS[0];
 
   return (
     <aside className="w-55 min-w-55 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 overflow-y-auto">
@@ -84,7 +84,7 @@ export function SidebarInner() {
           <div className="flex gap-2 mt-2.5">
             <div className="flex-1 bg-white rounded-xl p-1.5 text-center border border-[#e8f3ff]">
               <p className="text-xs text-blue-700" style={{ fontWeight: 700 }}>
-                {me.solvedCount}
+                {me.solved_count}
               </p>
               <p className="text-[10px] text-gray-400">풀었어요</p>
             </div>
@@ -125,10 +125,10 @@ export function SidebarInner() {
           className="text-[11px] text-gray-400 px-1 mb-2"
           style={{ fontWeight: 600 }}
         >
-          스터디원 {members.length}
+          스터디원 {MEMBERS.length}
         </p>
         <div className="flex flex-col gap-1">
-          {members.map((member) => (
+          {MEMBERS.map((member) => (
             <div
               key={member.id}
               className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-gray-50 transition-colors"
@@ -138,7 +138,7 @@ export function SidebarInner() {
                   {member.emoji}
                 </div>
                 <div
-                  className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${member.todaySolved ? "bg-emerald-400" : "bg-gray-300"}`}
+                  className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${member.today_solved ? "bg-emerald-400" : "bg-gray-300"}`}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -150,7 +150,7 @@ export function SidebarInner() {
                 </p>
               </div>
               <div className="shrink-0">
-                {member.todaySolved ? (
+                {member.today_solved ? (
                   <CheckCircle2 size={13} className="text-emerald-500" />
                 ) : (
                   <Circle size={13} className="text-gray-300" />
