@@ -1,6 +1,6 @@
 // lib/api.ts
 import { supabase } from "./supabase";
-import { type FormData, MEMBERS, type Problem } from "../data/mockData"; // 기존 타입 재사용
+import { type FormData, MEMBERS, type Problem } from "./src/data/mockData"; // 기존 타입 재사용
 
 // 멤버 전체 조회
 // export const getMembers = async (): Promise<Member[]> => {
