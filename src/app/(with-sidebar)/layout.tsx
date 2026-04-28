@@ -7,7 +7,7 @@ export default function WithSidebarLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="min-h-screen bg-gray-100 flex flex-row">
+    <section className="min-h-screen flex flex-row">
       <Sidebar />
       <div className="w-full">{children}</div>
     </section>
