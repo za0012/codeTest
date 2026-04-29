@@ -2,14 +2,41 @@
 import { supabase } from "../supabase";
 
 // 로그인 후 → 내 스터디 찾기 (라우팅용)
+// export const getMyStudy = async () => {
+//   const { data, error } = await supabase
+//     .from("study_members")
+//     .select("study_id, studies(id, name, emoji, description)")
+//     .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+//     .single();
+//   if (error) return null; // 스터디 없으면 null → 스터디 생성/참여 페이지로
+//   return data;
+// };
+
 export const getMyStudy = async () => {
-  const { data, error } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  // 1. study_members에서 study_id만 먼저 조회
+  const { data: member, error: memberError } = await supabase
     .from("study_members")
-    .select("study_id, studies(id, name, emoji, description)")
-    .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+    .select("study_id")
+    .eq("user_id", user.id)
     .single();
-  if (error) return null; // 스터디 없으면 null → 스터디 생성/참여 페이지로
-  return data;
+
+  if (memberError || !member) return null;
+
+  // 2. study_id로 studies 따로 조회
+  const { data: study, error: studyError } = await supabase
+    .from("studies")
+    .select("*")
+    .eq("id", member.study_id)
+    .single();
+
+  if (studyError) return null;
+
+  return study;
 };
 
 // 스터디 생성
