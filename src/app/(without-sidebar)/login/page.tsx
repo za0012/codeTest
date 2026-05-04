@@ -36,69 +36,69 @@ function page() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-dvh p-4">
-      <div className="w-full max-w-110 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-100 flex flex-col items-center">
         <Link
           href={"/"}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-[16px] font-medium"
+          className="w-full flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-[16px] font-medium mb-4"
         >
           <ArrowLeft size={18} />
-          <span>돌아가기</span>
+
+          <span>About Us</span>
         </Link>
-      </div>
-      <div className="w-full max-w-md bg-white rounded-3xl p-9.5 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-        <div className="mb-8">
+
+        {/* 상단 로고 섹션 */}
+        {/* <div className="flex flex-col items-center mb-10">
           <Logo />
+        </div> */}
+        <div className="w-full mb-10 px-1">
+          <h1 className="text-[32px] font-extrabold text-slate-900 mb-3 leading-[1.2]">
+            다시 만나서 <br /> 반가워요 👋
+          </h1>
+          <p className="text-slate-400 text-[16px] font-medium">
+            로그인하고 오늘의 문제를 풀어봐요
+          </p>
         </div>
-        <div className="mb-8">
-          <h3 className="text-[28px] font-black text-slate-900 leading-tight">
-            다시 만나서 반가워요
-          </h3>
-          <p className="text-slate-400 mt-2 font-medium">계정에 로그인하세요</p>
-        </div>
-        <form className="space-y-1" onSubmit={onSubmit}>
-          <div className="space-y-2 mb-4">
-            <p className="text-sm font-bold text-slate-700 ml-1 mb-2">이메일</p>
+
+        {/* 폼 섹션 - 입력창 너비 최적화 */}
+        <form className="w-full space-y-3" onSubmit={onSubmit}>
+          <div className="relative">
             <input
               type="email"
               onChange={(e) => setEmail(e.currentTarget.value)}
               value={email}
-              placeholder="example@email.com"
-              className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
+              placeholder="이메일"
+              className="w-full px-6 py-4.5 bg-[#F8F9FB] border-none rounded-2xl focus:ring-2 focus:bg-blue-50 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
             />
           </div>
-          <div className="space-y-2 mb-2">
-            <p className="text-sm font-bold text-slate-700 ml-1 mb-2">
-              비밀번호
-            </p>
-            <div className="relative">
-              <input
-                type={`${isPasswordVisible ? "password" : "text"}`}
-                onChange={(e) => setPassword(e.currentTarget.value)}
-                value={password}
-                placeholder="비밀번호를 입력하세요"
-                className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" // 위치만 지정
-                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              >
-                {isPasswordVisible ? <Eye size={20} /> : <EyeOff size={20} />}
-              </Button>
-            </div>
+
+          <div className="relative">
+            <input
+              type={`${isPasswordVisible ? "password" : "text"}`}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              value={password}
+              placeholder="비밀번호"
+              className="w-full px-6 py-4.5 bg-[#F8F9FB] border-none rounded-2xl focus:ring-2 focus:bg-blue-50 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
+            />
+            <button
+              type="button"
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? <Eye size={20} /> : <EyeOff size={20} />}
+            </button>
           </div>
-          <Button
+
+          <button
             type="submit"
-            size="full"
-            variant={"blue"}
-            label="로그인"
-            // label={isLoading ? "로그인 중 ..." : "로그인"}
-          />
+            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all mt-4 text-lg"
+          >
+            로그인
+          </button>
         </form>
-        <div className="mt-5 p-5 bg-slate-50 rounded-2xl">
+
+        {/* 데모 계정 채우기 - 깔끔한 스타일로 추가 */}
+        <div className="w-full mt-5 p-5 bg-slate-50 rounded-2xl">
           <p className="text-sm text-slate-500 font-normal">
             테스트 계정으로 빠르게 시작하기
           </p>
@@ -110,9 +110,18 @@ function page() {
             onClick={handleFill}
           />
         </div>
-        <div className="mt-8 text-center">
-          <p className="text-slate-400 font-normal text-sm">
-            계정이 없으신가요?
+
+        {/* 하단 구분선 및 회원가입 */}
+        <div className="w-full mt-10 text-center">
+          <div className="relative flex items-center justify-center mb-8">
+            <div className="absolute w-full h-px bg-slate-100"></div>
+            <span className="relative px-4 bg-white text-slate-300 text-xs font-medium">
+              또는
+            </span>
+          </div>
+
+          <p className="text-slate-400 text-[15px]">
+            아직 계정이 없으신가요?
             <Link
               href="/register"
               className="text-blue-600 font-bold ml-2 hover:underline"
@@ -122,8 +131,6 @@ function page() {
           </p>
         </div>
       </div>
-      {/* alert 팝업!! */}
-      {/* <AlertDemo alert={alertData} onClose={closeAlert} /> */}
     </div>
   );
 }
