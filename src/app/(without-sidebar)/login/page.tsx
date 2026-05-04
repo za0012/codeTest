@@ -131,6 +131,8 @@ function page() {
           </p>
         </div>
       </div>
+      {/* alert 팝업!! */}
+      {/* <AlertDemo alert={alertData} onClose={closeAlert} /> */}
     </div>
   );
 }
