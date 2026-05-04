@@ -39,6 +39,16 @@ export const getMyStudy = async () => {
   return study;
 };
 
+export const getMyStudyInfo = async () => {
+  const { data, error } = await supabase
+    .from("study_members")
+    .select("*")
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+    .single();
+  if (error) return null; // 스터디 없으면 null → 스터디 생성/참여 페이지로
+  return data;
+};
+
 // 스터디 생성
 export const createStudy = async (
   name: string,

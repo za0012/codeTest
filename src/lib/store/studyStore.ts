@@ -1,14 +1,6 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-
-interface Study {
-  created_at: string | null;
-  description: string | null;
-  emoji: string | null;
-  id: number | null;
-  invite_code: string | null;
-  name: string | null;
-}
+import type { Study } from "../types/study";
 
 const studyAtom = atomWithStorage<Study>("study_storage", {
   created_at: null,
