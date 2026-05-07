@@ -1,22 +1,26 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { signOut } from "@/lib/api/auth";
+import { useState } from "react";
+import Logo from "@/components/Logo";
+import FirstStep from "./component/FirstStep";
+import JoinStudy from "./component/JoinStudy";
+import MakeStudy from "./component/MakeStudy";
 
 function page() {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await signOut();
-    alert("로그아웃 되었습니다");
-    router.push("/login");
-  };
+  const [step, setStep] = useState(0);
 
   return (
-    <div>
-      <button type="button" className="bg-violet-300" onClick={handleLogout}>
-        로그아웃
-      </button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
+      <div className="mb-2">
+        <Logo size={100} />
+      </div>
+      {step === 0 ? (
+        <FirstStep moveStep={setStep} />
+      ) : step === 1 ? (
+        <JoinStudy moveStep={setStep} />
+      ) : (
+        <MakeStudy moveStep={setStep} />
+      )}
     </div>
   );
 }
