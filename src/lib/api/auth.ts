@@ -2,14 +2,19 @@
 import { supabase } from "../supabase";
 
 // 회원가입
-export const signUp = async (email: string, password: string, name: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  name: string,
+  emoji: string,
+) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         name,
-        emoji: "💩",
+        emoji,
       },
     },
   });
