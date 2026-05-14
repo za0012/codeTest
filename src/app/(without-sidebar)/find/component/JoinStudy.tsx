@@ -1,9 +1,8 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
-import { getUser } from "@/lib/api/auth";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import { joinStudy } from "@/lib/api/study";
 import type { phaseType } from "@/lib/types/step";
 
@@ -12,10 +11,8 @@ function JoinStudy({ moveStep }: phaseType) {
   const router = useRouter();
 
   const handleJoinStudy = async () => {
-    const userName = await getUser();
-    console.log(userName?.user_metadata.name);
     try {
-      await joinStudy(inviteCode, userName?.user_metadata.name);
+      await joinStudy(inviteCode);
       alert("스터디에 입장되었습니다.");
       router.push("/home");
     } catch (error) {
