@@ -1,40 +1,171 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --background-beige: #f8fafc;
-  --foreground: #171717;
-}
+/* @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"); */
+/* 1. 커스텀 다크모드 변형 및 테마 정의 */
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* 기본 색상 매핑 - shadcn 컴포넌트 핵심 변수 */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* Select, Popover 핵심 배경색 */
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Skeleton UI & Muted 톤 */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Hover & Selected 상태색 */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* 차트 및 기타 */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* 반지름 설정 */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* 애니메이션 설정 (Skeleton & Select Popover용) */
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
   }
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-in: fade-in 0.2s ease-out;
+  --animate-out: fade-out 0.2s ease-in;
+  --animate-zoom-in: zoom-in 0.2s ease-out;
+  --animate-zoom-out: zoom-out 0.2s ease-in;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    "Pretendard Variable",
-    "Pretendard",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "Roboto",
-    "Oxygen",
-    "Ubuntu",
-    "Cantarell",
-    "Fira Sans",
-    "Droid Sans",
-    "Helvetica Neue",
-    sans-serif;
+/* 2. 변수 정의 (Light Mode) */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --card: #ffffff;
+  --card-foreground: #171717;
+
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+
+  /* 포인트 컬러 */
+  --primary: #020617;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f5f9;
+  --secondary-foreground: #020617;
+
+  /* 스켈레톤 및 무채색 (여기서 라이트모드 muted 색상 보정) */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  /* Select 아이템 호버 시 색상 */
+  --accent: #e5f0ff; /* 006eff 계열의 연한 블루 */
+  --accent-foreground: #020617;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #94a3b8;
+
+  --radius: 0.625rem;
+
+  /* 차트 (기존 oklch 유지) */
+  --chart-1: oklch(0.585 0.233 277.117);
+  --chart-2: oklch(0.623 0.214 259.815);
+  --chart-3: oklch(0.477 0.182 256.788);
+  --chart-4: oklch(0.746 0.16 232.661);
+  --chart-5: oklch(0.842 0.132 210.454);
+}
+
+/* 3. 다크 모드 (Dark Mode) */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
+
+  --primary: #f8fafc;
+  --primary-foreground: #020617;
+
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f8fafc;
+
+  --border: #262626;
+  --input: #262626;
+  --ring: #475569;
+}
+
+/* 4. 베이스 스타일 및 커스텀 */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "Pretendard Variable", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 스크롤바 커스텀 (#006eff 반영) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 110, 255, 0.4);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #006eff;
+  }
+
+  /* 텍스트 선택 효과 */
+  ::selection {
+    background-color: rgba(0, 110, 255, 0.2);
+  }
 }
