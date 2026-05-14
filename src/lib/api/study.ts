@@ -50,29 +50,28 @@ export const getMyStudyInfo = async () => {
 };
 
 // 스터디 생성
-export const createStudy = async (
-  name: string,
-  description: string,
-  emoji: string,
-) => {
+export const createStudy = async (name: string, description: string) => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) throw new Error("로그인 필요");
 
-  // 랜덤 초대코드 생성
+  // metadata에서 꺼내기
+  const memberName = user.user_metadata.name;
+  const emoji = user.user_metadata.emoji;
+
   const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
   const { data: study, error } = await supabase
     .from("studies")
-    .insert({ name, description, emoji, invite_code: inviteCode })
+    .insert({ name, description, emoji: "🐹", invite_code: inviteCode })
     .select()
     .single();
   if (error) throw error;
 
-  // 스터디장으로 참여
   await supabase.from("study_members").insert({
     study_id: study.id,
     user_id: user.id,
-    name: user.email?.split("@")[0] ?? "스터디장",
+    name: memberName,
+    emoji,
     role: "스터디장",
   });
 
@@ -80,9 +79,13 @@ export const createStudy = async (
 };
 
 // 초대코드로 스터디 참여
-export const joinStudy = async (inviteCode: string, memberName: string) => {
+export const joinStudy = async (inviteCode: string) => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) throw new Error("로그인 필요");
+
+  // metadata에서 꺼내기
+  const name = user.user_metadata.name;
+  const emoji = user.user_metadata.emoji;
 
   const { data: study, error } = await supabase
     .from("studies")
@@ -94,9 +97,49 @@ export const joinStudy = async (inviteCode: string, memberName: string) => {
   await supabase.from("study_members").insert({
     study_id: study.id,
     user_id: user.id,
-    name: memberName,
+    name,
+    emoji,
     role: "멤버",
   });
 
   return study;
+};
+
+// 스터디 정보 조회
+// export const getStudyMembers = async (studyId: number | undefined) => {
+//   const { data, error } = await supabase
+//     .from("study_members")
+//     .select("*")
+//     .eq("study_id", studyId); // study_id로 필터
+//   if (error) throw error;
+//   return data;
+// };
+
+export const getStudyMembers = async (studyId: number) => {
+  const { data, error } = await supabase
+    .from("study_members")
+    .select("*")
+    .eq("study_id", studyId)
+    .order("role", { ascending: true }); // 스터디장 먼저
+  if (error) throw error;
+  return data;
+};
+
+// 스터디 정보 수정 (스터디장만)
+export const updateStudyInfo = async (
+  studyId: number,
+  updates: {
+    name?: string;
+    description?: string;
+    emoji?: string;
+  },
+) => {
+  const { data, error } = await supabase
+    .from("studies")
+    .update(updates)
+    .eq("id", studyId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
 };
