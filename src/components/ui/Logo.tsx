@@ -1,5 +1,5 @@
 import Image from "next/image";
-import LogoImg from "../../public/Logo.png";
+import LogoImg from "../../../public/Logo.png";
 
 interface LogoType {
   size: number;
