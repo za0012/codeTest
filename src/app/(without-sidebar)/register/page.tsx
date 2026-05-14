@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import Logo from "@/components/Logo";
+import Logo from "@/components/ui/Logo";
 import { signUp } from "@/lib/api/auth";
 import RegisterPhase1 from "./components/RegisterPhase1";
 import RegisterPhase2 from "./components/RegisterPhase2";

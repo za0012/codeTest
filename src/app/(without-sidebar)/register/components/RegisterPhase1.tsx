@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useFormContext } from "react-hook-form";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import type { phaseType } from "@/lib/types/step";
 
 function RegisterPhase1({ moveStep }: phaseType) {
