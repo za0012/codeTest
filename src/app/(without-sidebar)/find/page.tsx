@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Logo from "@/components/Logo";
+import Logo from "@/components/ui/Logo";
 import FirstStep from "./component/FirstStep";
 import JoinStudy from "./component/JoinStudy";
 import MakeStudy from "./component/MakeStudy";
