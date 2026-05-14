@@ -1,43 +1,67 @@
 "use client";
 
-import Button from "@/components/Button";
-import Logo from "@/components/Logo";
-import { signIn } from "@/lib/api/auth";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Button from "@/components/ui/Button";
+import Logo from "@/components/ui/Logo";
+import { signIn } from "@/lib/api/auth";
+import { getMyStudy } from "@/lib/api/study";
+import { AlertCustom } from "@/components/AlertCustom";
+import { useSetAtom } from "jotai";
+import { alertAtom } from "@/lib/store/alertStore";
+import { useForm } from "react-hook-form";
+import Input from "@/components/ui/Input";
+// import { useAlert } from "@/util/hook/useAlert";
+
+interface loginType {
+  email: string;
+  password: string;
+}
 
 function page() {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const router = useRouter();
+  const setAlert = useSetAtom(alertAtom);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<loginType>();
 
   const handleFill = () => {
-    setEmail("test123@test.com");
-    setPassword("test123!@");
+    setValue("email", "test123@test.com");
+    setValue("password", "test123!@");
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!email || !password) {
-      return console.log("모든 필드를 채워주세요");
-    }
+  const onSubmit = async (data: loginType) => {
     try {
-      const res = await signIn(email, password);
-      console.log(res.session.access_token);
-      console.log(res.session.user.user_metadata);
-      alert("로그인 성공");
-      router.push("/home");
+      await signIn(data.email, data.password);
+      const study = await getMyStudy();
+      if (study) {
+        return router.replace("/home");
+      } else {
+        return router.replace("/find");
+      }
     } catch (error) {
-      console.log(error);
+      return setAlert({
+        title: "로그인 실패",
+        content: "이메일 또는 비밀번호를 확인해주세요",
+        variant: true,
+      });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <div className="w-full max-w-100 flex flex-col items-center">
+        {/* 상단 로고 섹션 */}
+        <div className="flex flex-col items-center mb-2">
+          <Logo size={100} />
+        </div>
         <Link
           href={"/"}
           className="w-full flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-[16px] font-medium mb-4"
@@ -47,13 +71,9 @@ function page() {
           <span>About Us</span>
         </Link>
 
-        {/* 상단 로고 섹션 */}
-        {/* <div className="flex flex-col items-center mb-10">
-          <Logo />
-        </div> */}
         <div className="w-full mb-10 px-1">
           <h1 className="text-[32px] font-extrabold text-slate-900 mb-3 leading-[1.2]">
-            다시 만나서 <br /> 반가워요 👋
+            다시 만나서 <br /> 반가워요
           </h1>
           <p className="text-slate-400 text-[16px] font-medium">
             로그인하고 오늘의 문제를 풀어봐요
@@ -61,34 +81,54 @@ function page() {
         </div>
 
         {/* 폼 섹션 - 입력창 너비 최적화 */}
-        <form className="w-full space-y-3" onSubmit={onSubmit}>
+        <form className="w-full space-y-3" onSubmit={handleSubmit(onSubmit)}>
           <div className="relative">
-            <input
+            <Input
+              {...register("email", {
+                required: "이메일은 필수입니다",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "이메일 형식이 아닙니다",
+                },
+              })}
               type="email"
-              onChange={(e) => setEmail(e.currentTarget.value)}
-              value={email}
               placeholder="이메일"
-              className="w-full px-6 py-4.5 bg-[#F8F9FB] border-none rounded-2xl focus:ring-2 focus:bg-blue-50 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
             />
           </div>
-
+          {errors.email && (
+            <p className="ml-2 text-red-400 text-sm">
+              {errors.email?.message?.toString()}
+            </p>
+          )}
           <div className="relative">
-            <input
-              type={`${isPasswordVisible ? "password" : "text"}`}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-              value={password}
+            <Input
+              {...register("password", {
+                required: "비밀번호는 필수입니다",
+                minLength: {
+                  value: 6,
+                  message: "비밀번호는 6자 이상이어야 합니다.",
+                },
+              })}
+              type={`${isPasswordHidden ? "password" : "text"}`}
               placeholder="비밀번호"
-              className="w-full px-6 py-4.5 bg-[#F8F9FB] border-none rounded-2xl focus:ring-2 focus:bg-blue-50 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-300 text-slate-700"
             />
             <button
               type="button"
               className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
-              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+              onClick={() => setIsPasswordHidden(!isPasswordHidden)}
             >
-              {isPasswordVisible ? <Eye size={20} /> : <EyeOff size={20} />}
+              {isPasswordHidden ? (
+                <Eye size={20} aria-label={"비밀번호 보기"} />
+              ) : (
+                <EyeOff size={20} aria-label={"비밀번호 숨기기"} />
+              )}
             </button>
           </div>
-
+          {errors.password && (
+            <p className="ml-2 text-red-400 text-sm">
+              {errors.password?.message?.toString()}
+            </p>
+          )}
           <button
             type="submit"
             className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all mt-4 text-lg"
@@ -97,20 +137,21 @@ function page() {
           </button>
         </form>
 
-        {/* 데모 계정 채우기 - 깔끔한 스타일로 추가 */}
-        <div className="w-full mt-5 p-5 bg-slate-50 rounded-2xl">
-          <p className="text-sm text-slate-500 font-normal">
-            테스트 계정으로 빠르게 시작하기
-          </p>
-          <Button
-            type="button"
-            variant="link"
-            size="normal"
-            label="데모 계정 채우기 →"
-            onClick={handleFill}
-          />
-        </div>
-
+        {/* 데모 계정 채우기 - 깔끔한 스타일로 추가, dev일 때만 보이도록 수정 */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="w-full mt-5 p-5 bg-slate-50 rounded-2xl">
+            <p className="text-sm text-slate-500 font-normal">
+              테스트 계정으로 빠르게 시작하기
+            </p>
+            <Button
+              type="button"
+              variant="link"
+              size="normal"
+              label="데모 계정 채우기 →"
+              onClick={handleFill}
+            />
+          </div>
+        )}
         {/* 하단 구분선 및 회원가입 */}
         <div className="w-full mt-10 text-center">
           <div className="relative flex items-center justify-center mb-8">
@@ -131,8 +172,6 @@ function page() {
           </p>
         </div>
       </div>
-      {/* alert 팝업!! */}
-      {/* <AlertDemo alert={alertData} onClose={closeAlert} /> */}
     </div>
   );
 }
