@@ -1,14 +1,16 @@
 "use client";
 
-import { getMyStudy, getMyStudyInfo } from "@/lib/api/study";
+import { getMyStudy, getMyStudyInfo, getStudyMembers } from "@/lib/api/study";
 import { getUser, signOut } from "@/lib/api/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FileCode2,
   User,
   Code2,
   TestTubeDiagonal,
+  CircleCheckBig,
+  Circle,
 } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -16,8 +18,10 @@ import type { Study, UserProfile } from "@/lib/types/study";
 
 function Sidebar() {
   const router = useRouter();
+  const pathname = usePathname();
 
-  const { data: study } = useQuery<Study>({
+  const { data: study } = useQuery({
+    // 타입으로 <Study>를 붙이면 undifined일 수도 있다고 나옴...
     queryKey: ["studyInfo"],
     queryFn: getMyStudy,
   });
@@ -27,22 +31,21 @@ function Sidebar() {
     queryFn: getMyStudyInfo,
   });
 
-  console.log(user);
+  const { data: members } = useQuery({
+    queryKey: ["getMembers"],
+    queryFn: () => getStudyMembers(study.id),
+    enabled: !!study,
+  });
 
+  console.log(user);
   const handleLogout = async () => {
     await signOut();
     alert("로그아웃 되었습니다");
     router.push("/login");
   };
-  console.log(study);
-
-  const members = [
-    { name: "더미데이터", status: "online", completed: true, emoji: "🦊" },
-    { name: "이서연", status: "online", completed: true, emoji: "🐰" },
-    { name: "박지호", status: "offline", completed: false, emoji: "🐻" },
-    { name: "최유나", status: "online", completed: true, emoji: "🦋" },
-    { name: "정태양", status: "offline", completed: false, emoji: "🐯" },
-  ];
+  console.log("getMyStudy", study);
+  console.log("getMyStudyInfo", user);
+  console.log("membersmembers", members);
 
   const navItems = [
     { to: "/home", label: "대시보드", icon: LayoutDashboard },
@@ -113,7 +116,7 @@ function Sidebar() {
           <Link
             key={to}
             href={to}
-            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-gray-500 transition-all hover:bg-gray-50 hover:text-gray-700"
+            className={`${to.includes(pathname) ? "bg-blue-50 font-bold! text-blue-600!" : ""} flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-gray-500 transition-all hover:bg-gray-50 hover:text-gray-700`}
           >
             <Icon size={16} strokeWidth={1.8} />
             {label}
@@ -125,24 +128,35 @@ function Sidebar() {
       <div className="mx-4 my-3 border-t border-gray-100" />
 
       {/* Members Section */}
+      {/* 나중에 스터디원 클릭하면 스터디원 정보 뜨게 할거임!!!! */}
       <div className="flex-1 px-4">
         <p className="mb-2 px-1 text-[11px] font-semibold text-gray-400">
-          스터디원 {members.length}
+          스터디원 {members?.length}
         </p>
         <div className="flex flex-col gap-1">
-          {members.map((member) => (
+          {members?.map((member) => (
             <div
               key={member.name}
-              className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-gray-50"
+              className="flex items-center gap-2.5 rounded-xl px-1 py-1.5 transition-colors hover:bg-gray-50"
             >
               <div className="relative">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-base">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-gray-100 text-base">
                   {member.emoji}
                 </div>
                 <div className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs text-gray-700">{member.name}</p>
+                <p className="truncate text-xs font-medium text-gray-700">
+                  {member.name}
+                </p>
+              </div>
+              {/* Lucide 아이콘 적용 영역 */}
+              <div className="flex items-center justify-center pr-1">
+                {member.isCompleted ? (
+                  <CircleCheckBig className="h-3 w-3 text-emerald-500 stroke-[1.5px]" />
+                ) : (
+                  <Circle className="h-3 w-3 text-gray-400 stroke-[1.5px]" />
+                )}
               </div>
             </div>
           ))}
