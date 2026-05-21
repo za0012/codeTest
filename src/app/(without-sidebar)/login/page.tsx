@@ -8,12 +8,10 @@ import Button from "@/components/ui/Button";
 import Logo from "@/components/ui/Logo";
 import { signIn } from "@/lib/api/auth";
 import { getMyStudy } from "@/lib/api/study";
-import { AlertCustom } from "@/components/AlertCustom";
 import { useSetAtom } from "jotai";
 import { alertAtom } from "@/lib/store/alertStore";
 import { useForm } from "react-hook-form";
 import Input from "@/components/ui/Input";
-// import { useAlert } from "@/util/hook/useAlert";
 
 interface loginType {
   email: string;
@@ -41,11 +39,7 @@ function page() {
     try {
       await signIn(data.email, data.password);
       const study = await getMyStudy();
-      if (study) {
-        return router.replace("/home");
-      } else {
-        return router.replace("/find");
-      }
+      router.replace(study ? "/home" : "/find");
     } catch (error) {
       return setAlert({
         title: "로그인 실패",
@@ -114,14 +108,13 @@ function page() {
             />
             <button
               type="button"
+              aria-label={
+                isPasswordHidden ? "비밀번호 보기" : "비밀번호 숨기기"
+              }
               className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
               onClick={() => setIsPasswordHidden(!isPasswordHidden)}
             >
-              {isPasswordHidden ? (
-                <Eye size={20} aria-label={"비밀번호 보기"} />
-              ) : (
-                <EyeOff size={20} aria-label={"비밀번호 숨기기"} />
-              )}
+              {isPasswordHidden ? <Eye size={20} /> : <EyeOff size={20} />}
             </button>
           </div>
           {errors.password && (
@@ -129,12 +122,8 @@ function page() {
               {errors.password?.message?.toString()}
             </p>
           )}
-          <button
-            type="submit"
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all mt-4 text-lg"
-          >
-            로그인
-          </button>
+          <div className="mb-5"></div>
+          <Button type="submit" variant="blue" size="full2" label="로그인" />
         </form>
 
         {/* 데모 계정 채우기 - 깔끔한 스타일로 추가, dev일 때만 보이도록 수정 */}
