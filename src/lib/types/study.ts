@@ -1,10 +1,10 @@
 export interface Study {
-  created_at: string | null;
-  description: string | null;
-  emoji: string | null;
-  id: number | null;
-  invite_code: string | null;
-  name: string | null;
+  created_at: string;
+  description: string;
+  emoji: string;
+  id: number;
+  invite_code: string;
+  name: string;
 }
 
 export interface UserProfile {
@@ -31,3 +31,40 @@ export interface UserProfile {
   join_date: string;
   last_solved_date: string | null;
 }
+
+export interface memberNickname {
+  name: string;
+  emoji: string;
+}
+
+export interface Problem {
+  created_at: string;
+  date: string;
+  difficulty: string;
+  id: number;
+  member_id: number;
+  memo: string;
+  platform: string;
+  solution: string;
+  study_id: number;
+  study_members: memberNickname;
+  tags: string[];
+  time_spent: number;
+  title: string;
+  url: string;
+}
+
+export interface ProblemCardType {
+  id: number;
+  title: string;
+  tags: string[];
+  study_members: memberNickname;
+  time_spent: number;
+  difficulty: string;
+  platform: string;
+  date: string;
+  onClick: () => void;
+}
+
+// difficulty: "Medium";
+// platform: "LeetCode"; 이렇게 2개 리터럴로 수정
