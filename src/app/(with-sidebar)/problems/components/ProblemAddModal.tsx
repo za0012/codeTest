@@ -37,9 +37,9 @@ const ProblemAddModal = ({
   });
 
   const onSubmit = async (data: problemType) => {
-    console.log(study_id);
-    console.log(member_id);
-    console.log(data);
+    // console.log(study_id);
+    // console.log(member_id);
+    // console.log(data);
     await addProblem({
       study_id: study_id,
       member_id: member_id,
