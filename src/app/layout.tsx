@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { AlertManager } from "@/util/hook/useAlert";
+import { alertAtom } from "@/lib/store/alertStore";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -31,6 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
+        {alertAtom && <AlertManager />}
       </body>
     </html>
   );

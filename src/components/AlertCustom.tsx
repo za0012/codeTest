@@ -36,14 +36,21 @@ export function AlertCustom({ alert, onClose }: alertProps) {
             className="w-full max-w-md px-4"
           >
             <div className="grid gap-4">
-              <Alert variant={`${alert.variant ? "destructive" : "default"}`}>
+              <Alert
+                className={`${alert.variant ? "" : "text-blue-600"}`}
+                variant={`${alert.variant ? "destructive" : "default"}`}
+              >
                 {alert.variant ? (
                   <AlertCircleIcon className="h-4 w-4" />
                 ) : (
                   <CheckCircle2Icon className="h-4 w-4" />
                 )}
 
-                <AlertTitle>{alert.title}</AlertTitle>
+                <AlertTitle
+                  className={`${alert.variant ? "" : "text-blue-600"}`}
+                >
+                  {alert.title}
+                </AlertTitle>
                 <button
                   type="button"
                   onClick={hadleClick}
