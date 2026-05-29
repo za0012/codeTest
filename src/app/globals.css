@@ -150,22 +150,31 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* 스크롤바 커스텀 (#006eff 반영) */
+  /* 스크롤바 커스텀 (#006eff 반영 - 시인성 개선 버전) */
   ::-webkit-scrollbar {
-    width: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 110, 255, 0.4);
-    border-radius: 10px;
-    border: 3px solid transparent;
-    background-clip: padding-box;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #006eff;
+    width: 14px; /* 전체 너비를 살짝 넓혀서 답답함을 해소합니다 (기본 10px -> 14px) */
+    height: 14px; /* 가로 스크롤바도 대응 */
   }
 
-  /* 텍스트 선택 효과 */
-  ::selection {
-    background-color: rgba(0, 110, 255, 0.2);
+  ::-webkit-scrollbar-track {
+    background: transparent; /* 트랙은 투명하게 유지하여 깔끔함 유지 */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    /* 기본 상태에서도 잘 보이도록 알파값을 0.4에서 0.6으로 올리고, 호버 시 확실하게 피드백 */
+    background: rgba(0, 110, 255, 0.6);
+    border-radius: 10px;
+
+    /* 패딩 역할을 하는 border를 3px에서 4px로 조절하여 둥근 막대 느낌을 살립니다 */
+    border: 4px solid transparent;
+    background-clip: padding-box;
+
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    /* 마우스를 올렸을 때는 여백(border)을 줄여서 스크롤바가 일시적으로 두꺼워지게 만듭니다 (꿀팁!) */
+    border: 2px solid transparent;
+    background: #006eff;
   }
 }

@@ -101,7 +101,7 @@ function page() {
   ];
 
   return (
-    <div className="px-8 pt-8 pb-0 shrink-0 h-screen overflow-hidden">
+    <div className="px-8 pt-8 pb-0 min-h-screen">
       <div>
         <h1
           className="text-gray-900"
