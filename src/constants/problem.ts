@@ -28,8 +28,11 @@ export const PLATFORM_TAGS = {
 
 export const DIFFICULT_TAGS = {
   백준: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"],
+
   프로그래머스: ["Lv.0", "Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"],
+
   LeetCode: ["Easy", "Medium", "Hard"],
+
   Codeforces: [
     "Newbie",
     "Pupil",
@@ -37,9 +40,14 @@ export const DIFFICULT_TAGS = {
     "Expert",
     "Candidate Master",
     "Master",
+    "International Master", // [추가] Master와 Grandmaster 사이 등급
     "Grandmaster",
+    "International Grandmaster", // [추가] 천상계 등급 1
+    "Legendary Grandmaster", // [추가] 코드포스 최고 존엄 등급 (적색/흑색)
+    "Headquarters", // [추가] 간혹 관리자/출제자 계정 난이도로 잡히는 태그
   ],
-  SWEA: ["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8"],
+
+  SWEA: ["D1", "D2", "D3", "D4", "D5", "D6", "D7"], // [수정] 공식 최고 등급은 D7(혹은 D6)까지입니다.
 } as const;
 
 export const ALGORITHM_TAGS = [
