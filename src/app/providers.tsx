@@ -1,7 +1,6 @@
-// app/providers.jsx
 "use client";
-
 // 서버 컴포넌트에선 usehook 을 사용할수 없기에 'use client' 를 포함한 별도의 파일로 분리
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function makeQueryClient() {
@@ -16,7 +15,7 @@ function makeQueryClient() {
   });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
 function getQueryClient() {
   if (typeof window === "undefined") {
