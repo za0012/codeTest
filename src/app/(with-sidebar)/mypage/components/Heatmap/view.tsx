@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getHeatmapDataDaily } from "./model";
+import { getHeatmapDataDaily } from "./service";
 import { Skeleton } from "@/components/ui/skeleton";
 import Tooltip from "@/components/ui/Tooltip";
-import { createAndFillHeatmap, getColor } from "./controller";
+import { createAndFillHeatmap, getColor } from "./hook";
 
 const CELL = 12; // 원 지름 느낌
 const GAP = 4; // 원 사이 간격
@@ -11,7 +11,7 @@ const STEP = CELL + GAP; // 한 칸이 차지하는 거리
 const HEATMAP_WIDTH = 53 * STEP; // 53주 * 16 = 848
 const HEATMAP_HEIGHT = 8 * STEP; // 7요일 * 16 = 112
 
-function History2({ id }: { id: number }) {
+function History({ id }: { id: number }) {
   const [hovered, setHovered] = useState<{
     date: string;
     value: number;
@@ -160,4 +160,4 @@ function History2({ id }: { id: number }) {
   );
 }
 
-export default History2;
+export default History;
