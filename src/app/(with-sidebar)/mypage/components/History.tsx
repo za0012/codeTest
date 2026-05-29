@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Tooltip from "@/components/ui/Tooltip";
-import { getHeatmapData } from "@/lib/api/mypage";
+import { getHeatmapDataDaily } from "@/lib/api/mypage";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CELL = 12; // 원 지름 느낌
@@ -21,8 +21,8 @@ const HEATMAP_HEIGHT = 8 * STEP; // 7요일 * 16 = 112
 // result[key]는 "2025-05-28"이라는 키를 생성해서 base[key]에 값이 있으면 해당 값을, 없으면 0을 넣는 것.
 // 그리고 cur.setDate(cur.getDate() + 1)을 해서 지금 날짜에 + 1을 함으로써 날짜를 1일 더 추가하는...
 
-function fillActivityData(base: Record<string, number>) {
-  const result: Record<string, number> = {}; //Record 가 무엇인지 알아보기
+function createAndFillHeatmap(mySolves: Record<string, number>) {
+  const yearSolves: Record<string, number> = {}; //Record 가 무엇인지 알아보기
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth() - 11, 1);
   const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -37,10 +37,10 @@ function fillActivityData(base: Record<string, number>) {
   // console.log("---------------------------------------");
   while (cur <= end) {
     const key = cur.toISOString().slice(0, 10);
-    result[key] = base[key] ?? 0;
+    yearSolves[key] = mySolves[key] ?? 0;
     cur.setDate(cur.getDate() + 1);
   }
-  return result;
+  return yearSolves;
 }
 
 // 이건 그냥 value에 따라서 fill 색 달라지는 거
@@ -51,7 +51,7 @@ function getColor(value: number) {
   else return "#1B64FA";
 }
 
-function History({ id }: { id: number }) {
+function History2({ id }: { id: number }) {
   const [hovered, setHovered] = useState<{
     date: string;
     value: number;
@@ -61,8 +61,8 @@ function History({ id }: { id: number }) {
 
   const { data: heatmap, isLoading } = useQuery<Record<string, number>>({
     queryKey: ["heatmap"],
-    queryFn: () => getHeatmapData(id),
-    select: (heatmap) => fillActivityData(heatmap),
+    queryFn: () => getHeatmapDataDaily(id),
+    select: (heatmap) => createAndFillHeatmap(heatmap),
   });
 
   const today = new Date();
@@ -72,7 +72,7 @@ function History({ id }: { id: number }) {
   console.log(heatmap);
 
   if (isLoading || !heatmap) {
-    return <Skeleton className="w-96 h-36" />;
+    return <Skeleton className="w-225 h-50" />;
   }
 
   return (
@@ -201,4 +201,4 @@ function History({ id }: { id: number }) {
   );
 }
 
-export default History;
+export default History2;
