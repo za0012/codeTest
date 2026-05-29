@@ -165,6 +165,102 @@ B 컴포넌트에서 useAlert() 호출 → alertData_B 생성
 
 커스텀 훅과 zustand... 무엇이 더 좋을지 고민해보는 것이 좋을 것 같다.
 
+### 커스텀 훅에서 Jotai로
+
+4
+
+### handleSubmit과 trigger
+
+trigger는 react hook form에 있는 메서드 중 하나다.
+trigger안에 있는 필드가 유효성을 만족했는지 확인해주는 메서드이다.
+그래서 `const isEmail = await trigger("email");` 이런 식으로 true, false를 반환해준다.
+
+로그인 폼 제출 중에 비밀번호 자릿수와 이메일 유효성 검사를 넣었었는데, trigger가 필요한 줄 알고 trigger를 만족시키면 로그인 api를 호출하도록 코드를 짜놨었다.
+
+그런데 알아보니 handleSubmit(onSubmot)에서 onSubmit 안에서 trigger를 호출할 필요가 거의 없다. handleSubmit이 이미 validation을 통과한 데이터만 onSubmit에 넘겨주기 때문이다... 그래서 register와 같이 handleCheck으로 데이터를 넘겨주는 것이 아니라면 submit에는 trigger를 잘 사용하지 않게 될 것 같다...
+
+### tag의 값이 변하지 않는 문제
+
+provider와 context로 form을 받아와서 watch로 값을 넣어주고 있었는데 값이 안 들어감.
+
+```ts
+const { watch } = useForm({ defaultValues: { tags: [] } });
+
+const toggleTag = (tag: string) => {
+  const nextTags: string[] = selectedTags.includes(tag)
+    ? selectedTags.filter((t: string) => t !== tag)
+    : [...selectedTags, tag];
+  console.log(nextTags);
+  console.log(selectedTags);
+  setValue("tags", nextTags); //setValue가 통하지 않음... 그래서 아무리 값을 넣어도 undifined가 뜸
+  console.log(watch("tags"));
+};
+```
+
+원인은 여기서 찾아볼 수 있는데, useForm을 통해서 watch를 다시 호출해오고 있다.
+내 생각이지만, 이 react hook form은 커스텀 훅처럼 동일한 훅을 호출해도 다른 파일에서 호출하고 있기 때문에 값이 안 나오는 게 아닐까 생각했다.
+그래서 Provider로 훅을 가져와 넣어줬더니 값이 들어가는 게 보였다.
+
+문제는 보이기만 하고 그 가져온 값을 setValue가 덮어주는데, 그게 버튼을 누를 때마다 초기화 된다는 것이다.
+정확하게는 값이 들어가지 않는 것...
+
+```ts
+const { setValue, watch } = useFormContext();
+
+// const { watch } = useForm({ defaultValues: { tags: [] } });
+const selectedTags = watch("tags");
+
+const toggleTag = (tag: string) => {
+  const nextTags: string[] = selectedTags.includes(tag)
+    ? selectedTags.filter((t: string) => t !== tag)
+    : [...selectedTags, tag];
+  setValue("tags", nextTags);
+  //setValue가 통하지 않음... 그래서 아무리 값을 넣어도 undifined가 뜸
+  // 뭐 수정하고 렌더링이 바뀌면 바뀌긴 함... 그러니까 값이 실시간으로 바뀌진 않는다는 것.
+  // 선택 후 렌더링이 되고 나서 값이 적용이 된다.
+  // 그러니까 버튼 선택으로 값 삽입 후 리렌더링이 일어나야 selectedTags에 값이 들어간다는 것이댜.
+  console.log(watch("tags"));
+  console.log(selectedTags);
+};
+```
+
+이 문제를 해결하기 전 알고 가면 좋은 지식이 있다.
+RHF은 리렌더링 최소화의 이유로 react state를 거의 안 쓴다.
+즉 값이 바뀌어도 구독한 컴포넌트만 선택적으로 리렌더링 시키는 게 RHF의 핵심 철학이다.
+
+form state -> ref로 관리
+subscription 시스템 -> 변경 알림만 담당
+각 컴포넌트 -> 구독한 필드 변경 시에만 리렌더
+
+문제는 watch를 useWatch로 바꾸면서 해결이 되었는데, 왜 watch는 안 됐고 useWatch는 무엇이고 왜 됐는지 서술해볼까 한다.
+
+watch의 역할은 현재 값을 읽기, 해당 컴포넌트를 subscription에 등록(필드 변경 시 리렌더 유발)이다.
+
+### alternative text title element cannot be empty svg
+
+간단하게 biome 오류인데(경고 아님) svg안에 title이 없어서 발생하는 문제이다.
+
+```ts
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="1.5" cy="1.5" r="1.5" />
+</svg>
+```
+
+```ts
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <title className="text-white">Pass</title>
+  <circle cx="1.5" cy="1.5" r="1.5" />
+</svg>
+```
+
+이렇게 title넣어주면 된다.
+
+참고: [biome 공식](https://biomejs.dev/linter/rules/no-svg-without-title/)
+
+### 히트맵 관련
+
+히트맵은 라이브러리가 없어, 직접 구현하기로 했다.
+
 ## 기타
 
 ### 정책 수정
