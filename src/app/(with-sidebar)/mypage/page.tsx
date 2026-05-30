@@ -7,6 +7,7 @@ import type { UserProfile } from "@/lib/types/study";
 import DifficultCount from "./components/BarChart/view";
 import History from "./components/Heatmap/view";
 import MonthlySolve from "./components/LineChart/view";
+import MySolves from "./components/MySolves/view";
 import User from "./components/User";
 
 function page() {
@@ -24,6 +25,7 @@ function page() {
             <MonthlySolve id={userInfo.id} />
             <DifficultCount id={userInfo.id} />
           </div>
+          <MySolves id={userInfo.id} />
         </div>
       ) : (
         <div className="mx-auto flex w-full max-w-224.5 flex-col gap-6">
