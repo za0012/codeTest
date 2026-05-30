@@ -63,7 +63,7 @@ function DifficultCount({ id }: { id: number }) {
   return (
     <div>
       <p className="font-bold text-[#191F28] text-base tracking-tight mb-2">
-        월별 풀이
+        난이도별 풀이
       </p>
       <div className="w-full max-w-108 aspect-[1.618] bg-white rounded-3xl py-5 px-4 border border-[#F2F4F6]">
         <ResponsiveContainer>
