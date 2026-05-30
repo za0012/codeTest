@@ -58,7 +58,7 @@ export interface ProblemCardType {
   id: number;
   title: string;
   tags: string[];
-  study_members: memberNickname;
+  study_members?: memberNickname;
   time_spent: number;
   difficulty: string;
   platform: string;

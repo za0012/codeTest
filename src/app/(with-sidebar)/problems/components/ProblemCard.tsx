@@ -74,10 +74,12 @@ function ProblemCard({
 
       {/* 2. 오른쪽 영역: 멤버, 시간, 날짜 */}
       <div className="flex items-center gap-4 shrink-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm">{study_members.emoji}</span>
-          <span className="text-xs text-gray-400">{study_members.name}</span>
-        </div>
+        {study_members?.emoji && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">{study_members.emoji}</span>
+            <span className="text-xs text-gray-400">{study_members.name}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1 text-gray-300">
           <Clock size={11} />
           <span className="text-xs text-gray-400">{time_spent}분</span>
