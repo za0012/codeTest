@@ -1,5 +1,3 @@
-import { CustomTooltip } from "@/components/ChartToolTip";
-import { getDifficultyStatsCount } from "./service";
 import { useQuery } from "@tanstack/react-query";
 import {
   Bar,
@@ -14,6 +12,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CustomTooltip } from "@/components/ChartToolTip";
+import { getDifficultyStatsCount } from "./service";
+
 const COLORS = [
   "#8884d8",
   "#82ca9d",
@@ -70,19 +71,27 @@ function DifficultCount({ id }: { id: number }) {
             <CartesianGrid stroke="#f3f4f6" vertical={false} />
             <XAxis
               dataKey="difficulty"
+              axisLine={false}
+              tickLine={false}
               tick={{ fill: "#9ca3af", fontSize: 11 }}
             />
-            <YAxis width="auto" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+            <YAxis
+              width="auto"
+              dataKey="count"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#9ca3af", fontSize: 11 }}
+            />
             <Tooltip content={CustomTooltip} />
-            {/* <Bar dataKey="count" fill="#1B64FA" /> */}
-            <Bar
+            <Bar dataKey="count" fill="#1B64FA" radius={[4, 4, 0, 0]} />
+            {/* <Bar
               dataKey="uv"
               shape={TriangleBar}
               activeBar
               radius={[10, 10, 0, 0]}
             >
               <LabelList content={CustomColorLabel} position="top" />
-            </Bar>
+            </Bar> */}
           </BarChart>
         </ResponsiveContainer>
       </div>

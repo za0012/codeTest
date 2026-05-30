@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Area,
-  ResponsiveContainer,
-  AreaChart,
 } from "recharts";
+import { CustomTooltip } from "@/components/ChartToolTip";
 import { createSixMonthObject } from "./hook";
 import { getLineGhDataMonth } from "./service";
-import { CustomTooltip } from "@/components/ChartToolTip";
 
 function MonthlySolve({ id }: { id: number }) {
   const { data } = useQuery({
@@ -27,7 +27,7 @@ function MonthlySolve({ id }: { id: number }) {
       <p className="font-bold text-[#191F28] text-base tracking-tight mb-2">
         월별 풀이
       </p>
-      <div className="w-full max-w-108 aspect-[1.618] bg-white rounded-3xl py-5 px-4 border border-[#F2F4F6]">
+      <div className="w-full max-w-108 aspect-[1.618] bg-white rounded-3xl py-5 px-4 border border-[#F2F4F6] min-w-0">
         <ResponsiveContainer>
           <AreaChart
             data={data}
