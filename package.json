@@ -12,7 +12,9 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "bun test"
+    "*.{js,ts,jsx,tsx}": [
+      "bun biome check --write --no-errors-on-unmatched"
+    ]
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
