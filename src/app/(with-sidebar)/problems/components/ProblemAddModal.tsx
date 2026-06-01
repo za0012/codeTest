@@ -1,11 +1,11 @@
-import { FormProvider, useForm } from "react-hook-form";
 import { X } from "lucide-react";
-import TimeDateDiff from "./problem-add/TimeDateDiff";
+import { FormProvider, useForm } from "react-hook-form";
+import type { PlatformType } from "@/constants/problem";
+import { addProblem } from "@/lib/api/problems";
 import CodeMemo from "./problem-add/CodeMemo";
 import PlatformTitle from "./problem-add/PlatformTitle";
-import { addProblem } from "@/lib/api/problems";
-import type { PlatformType } from "@/constants/problem";
 import TagSection from "./problem-add/TagSection";
+import TimeDateDiff from "./problem-add/TimeDateDiff";
 
 interface problemType {
   platform: PlatformType;
@@ -40,6 +40,7 @@ const ProblemAddModal = ({
     // console.log(study_id);
     // console.log(member_id);
     // console.log(data);
+    const stringDate = `${data.date.getFullYear()}-${String(data.date.getMonth() + 1).padStart(2, "0")}-${String(data.date.getDate()).padStart(2, "0")}`;
     await addProblem({
       study_id: study_id,
       member_id: member_id,
@@ -47,7 +48,7 @@ const ProblemAddModal = ({
       platform: data.platform,
       difficulty: data.difficulty,
       tags: data.tags,
-      date: data.date,
+      date: stringDate,
       solution: data.code,
       memo: data.memo,
       time_spent: data.time,

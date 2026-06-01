@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { X, ExternalLink, Trash2, Pencil } from "lucide-react";
-import { deleteProblem, getProblemById } from "@/lib/api/problems";
-import type { problemType } from "@/lib/types/problems";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useSetAtom } from "jotai";
+import { ExternalLink, Pencil, Trash2, X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { deleteProblem, getProblemById } from "@/lib/api/problems";
 import { alertAtom } from "@/lib/store/alertStore";
+import type { problemType } from "@/lib/types/problems";
 
 interface modalType {
   id: number;
@@ -60,7 +60,7 @@ function ProblemModal({ id, onClose, user_id }: modalType) {
         {/* 상단 닫기 버튼 */}
         <div className="absolute top-8 right-8 flex items-center gap-4">
           {data?.member_id === user_id && (
-            <div className="flex items-center gap-3.5 border-r border-gray-100 pr-3.5">
+            <div className="flex items-center gap-4.5 border-r border-gray-100 pr-3.5">
               <button
                 type="button"
                 // onClick={handleEdit} // 수정 핸들러 연결
@@ -116,7 +116,7 @@ function ProblemModal({ id, onClose, user_id }: modalType) {
         {/* 스펙 섹션: 난이도 / 소요시간 / 푼 날짜 (가로 정렬) */}
         <div className="flex gap-8 mb-8 border-b border-gray-100 pb-4">
           {detail.map((item, idx) => (
-            <div key={idx}>
+            <div key={item.label}>
               <p className="text-[11px] text-gray-400 mb-1 font-bold uppercase tracking-tight">
                 {item.label}
               </p>
@@ -184,9 +184,9 @@ function ProblemModal({ id, onClose, user_id }: modalType) {
               {/* 태그 섹션 */}
               {data?.tags && (
                 <div className="flex flex-wrap gap-1.5 pt-2">
-                  {data.tags.map((tag, i) => (
+                  {data.tags.map((tag) => (
                     <span
-                      key={i}
+                      key={tag}
                       className="px-3 py-1.5 bg-[#f2f4f6] text-[#6b7684] text-[13px] font-medium rounded-lg hover:bg-gray-200 transition-colors cursor-default"
                     >
                       #{tag.trim()}
