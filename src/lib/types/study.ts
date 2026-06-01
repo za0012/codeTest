@@ -62,6 +62,7 @@ export interface ProblemCardType {
   time_spent: number;
   difficulty: string;
   platform: string;
+  url?: string;
   date: string;
   onClick: () => void;
 }

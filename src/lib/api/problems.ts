@@ -1,6 +1,6 @@
 // lib/api/problems.ts
 
-import { PlatformType } from "@/constants/problem";
+import type { PlatformType } from "@/constants/problem";
 import { supabase } from "../supabase";
 
 // 스터디 문제 전체 조회
@@ -131,7 +131,7 @@ export const addProblem = async (problem: {
   platform: PlatformType;
   difficulty: string;
   tags: string[];
-  date: Date;
+  date: string;
   solution: string;
   memo?: string;
   time_spent: number;
