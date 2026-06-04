@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
-import { getMyStudyInfo } from "@/lib/api/study";
+import { getMyMemberInfo } from "@/lib/api/study";
 import type { UserProfile } from "@/lib/types/study";
 
 function ProfileSetting() {
   const { data: MyInfoInStudy, isLoading } = useQuery<UserProfile>({
-    queryKey: ["getMyStudyInfo"],
-    queryFn: getMyStudyInfo,
+    queryKey: ["getMyMemberInfo"],
+    queryFn: getMyMemberInfo,
   });
 
   return (

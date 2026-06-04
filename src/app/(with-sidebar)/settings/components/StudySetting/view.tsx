@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Copy, Earth, Sparkle } from "lucide-react";
-import { getMyStudy } from "@/lib/api/study";
+import { getMyStudyInfo } from "@/lib/api/study";
 import type { Study } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
 
 function StudySetting() {
   const { data: studyInfo, isLoading: studyInfoLoading } = useQuery<Study>({
     queryKey: ["studyInfo"],
-    queryFn: getMyStudy,
+    queryFn: getMyStudyInfo,
   });
 
   if (studyInfoLoading) {
