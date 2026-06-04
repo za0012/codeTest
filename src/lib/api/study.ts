@@ -1,18 +1,23 @@
-// lib/api/study.ts
 import { supabase } from "../supabase";
 
-// 로그인 후 → 내 스터디 찾기 (라우팅용)
-// export const getMyStudy = async () => {
-//   const { data, error } = await supabase
-//     .from("study_members")
-//     .select("study_id, studies(id, name, emoji, description)")
-//     .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
-//     .single();
-//   if (error) return null; // 스터디 없으면 null → 스터디 생성/참여 페이지로
-//   return data;
-// };
+// 사용방법: const { user, member } = await checkIsOwner(studyId);
+// await checkIsOwner(studyId);
+const checkIsOwner = async (studyId: number) => {
+  const user = (await supabase.auth.getUser()).data.user;
+  if (!user) throw new Error("로그인 필요");
 
-export const getMyStudy = async () => {
+  const { data, error } = await supabase
+    .from("study_members")
+    .select("id, role")
+    .eq("study_id", studyId)
+    .eq("user_id", user.id)
+    .single();
+  if (error || data.role !== "스터디장") throw new Error("스터디장만 가능해요");
+
+  return { user, member: data };
+};
+
+export const getMyStudyInfo = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -39,7 +44,7 @@ export const getMyStudy = async () => {
   return study;
 };
 
-export const getMyStudyInfo = async () => {
+export const getMyMemberInfo = async () => {
   const { data, error } = await supabase
     .from("study_members")
     .select("*")
@@ -139,6 +144,108 @@ export const updateStudyInfo = async (
     .update(updates)
     .eq("id", studyId)
     .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+// 초대 코드 재발급
+export const regenerateInviteCode = async (studyId: number) => {
+  const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const { data, error } = await supabase
+    .from("studies")
+    .update({ invite_code: newCode })
+    .eq("id", studyId)
+    .select("invite_code")
+    .single();
+  if (error) throw error;
+  return data.invite_code;
+};
+
+// 스터디 탈퇴
+export const leaveStudy = async (studyId: number) => {
+  const user = (await supabase.auth.getUser()).data.user;
+  if (!user) throw new Error("로그인 필요");
+
+  const { data: member, error } = await supabase
+    .from("study_members")
+    .select("role")
+    .eq("study_id", studyId)
+    .eq("user_id", user.id)
+    .single();
+  if (error) throw error;
+  if (member.role === "스터디장")
+    throw new Error("스터디장은 위임 후 탈퇴할 수 있어요");
+
+  const { error: deleteError } = await supabase
+    .from("study_members")
+    .delete()
+    .eq("study_id", studyId)
+    .eq("user_id", user.id);
+  if (deleteError) throw deleteError;
+};
+
+// 스터디장 위임
+export const transferOwnership = async (
+  studyId: number,
+  targetMemberId: number,
+) => {
+  const { member: me } = await checkIsOwner(studyId);
+
+  // 트랜잭션처럼 처리 (둘 다 업데이트)
+  const [{ error: e1 }, { error: e2 }] = await Promise.all([
+    supabase.from("study_members").update({ role: "멤버" }).eq("id", me.id),
+    supabase
+      .from("study_members")
+      .update({ role: "스터디장" })
+      .eq("id", targetMemberId),
+  ]);
+  if (e1 || e2) throw new Error("위임 중 오류가 발생했어요");
+};
+
+// 멤버 강퇴 (스터디장만)
+export const kickMember = async (studyId: number, targetMemberId: number) => {
+  await checkIsOwner(studyId);
+
+  const { error } = await supabase
+    .from("study_members")
+    .delete()
+    .eq("id", targetMemberId);
+  if (error) throw error;
+};
+
+// 스터디 삭제 예약 (7일 후)
+export const scheduleDeleteStudy = async (studyId: number) => {
+  await checkIsOwner(studyId);
+
+  const deleteAt = new Date();
+  deleteAt.setDate(deleteAt.getDate() + 7);
+
+  const { data, error } = await supabase
+    .from("studies")
+    .update({ delete_scheduled_at: deleteAt.toISOString() })
+    .eq("id", studyId)
+    .select("delete_scheduled_at")
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+// 삭제 취소
+export const cancelDeleteStudy = async (studyId: number) => {
+  const { error } = await supabase
+    .from("studies")
+    .update({ delete_scheduled_at: null })
+    .eq("id", studyId);
+  if (error) throw error;
+};
+
+// 스터디 정보 조회할 때 delete_scheduled_at 있으면 팝업 띄우기
+export const getStudyInfo = async (studyId: number) => {
+  const { data, error } = await supabase
+    .from("studies")
+    .select("*")
+    .eq("id", studyId)
     .single();
   if (error) throw error;
   return data;
