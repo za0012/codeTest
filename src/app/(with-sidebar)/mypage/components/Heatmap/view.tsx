@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getHeatmapDataDaily } from "./service";
 import { Skeleton } from "@/components/ui/skeleton";
 import Tooltip from "@/components/ui/Tooltip";
 import { createAndFillHeatmap, getColor } from "./hook";
+import { getHeatmapDataDaily } from "./service";
 
 const CELL = 12; // 원 지름 느낌
 const GAP = 4; // 원 사이 간격

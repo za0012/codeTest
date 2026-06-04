@@ -15,8 +15,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { getUser, signOut } from "@/lib/api/auth";
-import { getMyStudy, getMyStudyInfo, getStudyMembers } from "@/lib/api/study";
+import { signOut } from "@/lib/api/auth";
+import {
+  getMyMemberInfo,
+  getMyStudyInfo,
+  getStudyMembers,
+} from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
 import type { Study, UserProfile } from "@/lib/types/study";
 
@@ -28,12 +32,12 @@ function Sidebar() {
   const { data: study } = useQuery({
     // 타입으로 <Study>를 붙이면 undifined일 수도 있다고 나옴...
     queryKey: ["studyInfo"],
-    queryFn: getMyStudy,
+    queryFn: getMyStudyInfo,
   });
 
   const { data: user } = useQuery<UserProfile>({
     queryKey: ["userInfo"],
-    queryFn: getMyStudyInfo,
+    queryFn: getMyMemberInfo,
   });
 
   const { data: members } = useQuery({

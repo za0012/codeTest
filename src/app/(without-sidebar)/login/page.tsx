@@ -1,17 +1,17 @@
 "use client";
 
+import { useSetAtom } from "jotai";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import Logo from "@/components/ui/Logo";
 import { signIn } from "@/lib/api/auth";
-import { getMyStudy } from "@/lib/api/study";
-import { useSetAtom } from "jotai";
+import { getMyStudyInfo } from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
-import { useForm } from "react-hook-form";
-import Input from "@/components/ui/Input";
 
 interface loginType {
   email: string;
@@ -38,7 +38,7 @@ function page() {
   const onSubmit = async (data: loginType) => {
     try {
       await signIn(data.email, data.password);
-      const study = await getMyStudy();
+      const study = await getMyStudyInfo();
       router.replace(study ? "/home" : "/find");
     } catch (error) {
       return setAlert({
