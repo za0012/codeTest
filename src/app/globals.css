@@ -175,7 +175,6 @@
 
   ::-webkit-scrollbar-thumb:hover {
     /* 마우스를 올렸을 때는 여백(border)을 줄여서 스크롤바가 일시적으로 두꺼워지게 만듭니다 (꿀팁!) */
-    border: 2px solid transparent;
     background: #006eff;
   }
 }
