@@ -1,4 +1,5 @@
-import { Clock } from "lucide-react";
+import { Clock, ExternalLink } from "lucide-react";
+import { useState } from "react";
 import { PLATFORM_TAGS, type PlatformType } from "@/constants/problem";
 import type { ProblemCardType } from "@/lib/types/study";
 
@@ -18,8 +19,8 @@ const Badge = ({ text, className, key }: BageType) => (
 );
 
 function ProblemCard({
-  id,
   title,
+  url,
   tags,
   study_members,
   time_spent,
@@ -29,24 +30,45 @@ function ProblemCard({
   onClick,
 }: ProblemCardType) {
   const color = PLATFORM_TAGS[platform as PlatformType];
+  const [hovered, setHovered] = useState(false);
+
+  const hasStudyMember = Boolean(study_members);
+
   return (
     <button
       type="button"
       className="flex items-center gap-4 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-[#e8f3ff] hover:bg-blue-50/20 transition-all text-left group w-full"
+      onMouseEnter={!hasStudyMember ? () => setHovered(true) : undefined}
+      onMouseLeave={!hasStudyMember ? () => setHovered(false) : undefined}
       onClick={onClick}
     >
       <div className="flex items-center gap-4 flex-1">
-        <div className="w-8 h-8 rounded-full bg-[#e8f3ff] flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
-          <span className="text-blue-600 group-hover:text-white text-xs transition-colors font-bold">
-            ✓
-          </span>
-        </div>
+        {hasStudyMember && (
+          <div className="w-8 h-8 rounded-full bg-[#e8f3ff] flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+            <span className="text-blue-600 group-hover:text-white text-xs transition-colors font-bold">
+              ✓
+            </span>
+          </div>
+        )}
 
         {/* 제목과 태그들 */}
         <div className="flex-1 min-w-0">
-          <p className="text-gray-800 truncate text-sm font-semibold leading-tight">
-            {title}
-          </p>
+          <div className="flex flex-row items-center gap-2">
+            <p className="text-gray-800 truncate text-sm font-semibold leading-tight">
+              {title}
+            </p>
+            {!hasStudyMember && hovered && (
+              <a
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center text-gray-400 hover:text-[#3182f6] transition-colors font-medium"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink size={12} />
+              </a>
+            )}
+          </div>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
             {/* 플랫폼 태그 (예: 프로그래머스) */}
             <span
@@ -73,7 +95,7 @@ function ProblemCard({
       </div>
 
       {/* 2. 오른쪽 영역: 멤버, 시간, 날짜 */}
-      <div className="flex items-center gap-4 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         {study_members?.emoji && (
           <div className="flex items-center gap-1.5">
             <span className="text-sm">{study_members.emoji}</span>
