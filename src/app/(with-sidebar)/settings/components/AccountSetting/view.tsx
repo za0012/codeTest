@@ -1,9 +1,6 @@
 import { ChevronRight, LogOut, Trash2 } from "lucide-react";
-import { useState } from "react";
 
 function AccountSetting() {
-  const [isEditing, setIsEditing] = useState(false);
-
   return (
     <div className="flex flex-col gap-2.5">
       <p className="text-xs text-gray-400 font-bold tracking-wider ml-1 uppercase">
