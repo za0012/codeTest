@@ -2,11 +2,12 @@ import { X } from "lucide-react";
 
 interface modalProps {
   title: string;
-  subTitle: string;
+  subTitle?: string;
+  onClose: () => void;
   children: React.ReactNode;
 }
 
-function Modal({ title, subTitle, children }: modalProps) {
+function Modal({ title, subTitle, onClose, children }: modalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 antialiased selection:bg-blue-100">
       {/* 1. 바깥쪽 카드: 여기 있던 no-scrollbar와 style 속성을 제거했습니다. */}
@@ -30,6 +31,7 @@ function Modal({ title, subTitle, children }: modalProps) {
           </div>
           <button
             type="button"
+            onClick={onClose}
             className="p-2 hover:bg-gray-100 active:bg-gray-200 text-gray-400 hover:text-gray-600 rounded-full transition-colors"
           >
             <X size={22} strokeWidth={2.5} />
