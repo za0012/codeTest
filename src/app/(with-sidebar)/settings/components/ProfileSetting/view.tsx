@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
+import { useState } from "react";
+import Input from "@/components/ui/Input";
+import Modal from "@/components/ui/Modal";
 import { getMyMemberInfo } from "@/lib/api/study";
 import type { UserProfile } from "@/lib/types/study";
 
@@ -9,6 +12,8 @@ function ProfileSetting() {
     queryFn: getMyMemberInfo,
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     MyInfoInStudy && (
       <div className="flex flex-col gap-2.5">
@@ -17,6 +22,7 @@ function ProfileSetting() {
         </p>
         <button
           type="button"
+          onClick={() => setIsEditing(true)}
           className="flex flex-row items-center justify-between p-5 bg-white rounded-3xl w-full text-left shadow-[0_4px_20px_rgba(0,0,0,0.015)] hover:bg-gray-50 active:scale-[0.99] transition-all duration-200 group"
         >
           <div className="flex flex-row items-center gap-4">
@@ -40,6 +46,48 @@ function ProfileSetting() {
             <Pencil size={16} strokeWidth={2.5} />
           </div>
         </button>
+        {isEditing && ( //이 아래에 넣는 내용 따로 컴포넌트로 빼야할 것 같음... 모달 고민 필요
+          <Modal
+            title="프로필 설정"
+            subTitle=""
+            onClose={() => setIsEditing(false)}
+          >
+            <div className="flex flex-col items-center justify-center gap-2 py-1">
+              <button
+                type="button"
+                className="relative group w-24 h-24 bg-[#F2F4F6] hover:bg-[#E5E8EB] rounded-full flex items-center justify-center text-5xl shadow-inner transition-colors"
+              >
+                {MyInfoInStudy.emoji}
+                <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Pencil size={22} strokeWidth={2.5} className="text-white" />
+                </div>
+              </button>
+              <span className="text-xs font-bold text-gray-400 tracking-tight mt-1">
+                이모지 변경
+              </span>
+            </div>
+            <Input
+              label="닉네임"
+              size={"sm"}
+              defaultValue={MyInfoInStudy.name}
+            />
+            <Input
+              label="한 줄 소개"
+              size={"sm"}
+              defaultValue={MyInfoInStudy.bio}
+            />
+            <Input
+              label="한 줄 소개"
+              size={"sm"}
+              defaultValue={MyInfoInStudy.bio}
+            />
+            <Input
+              label="한 줄 소개"
+              size={"sm"}
+              defaultValue={MyInfoInStudy.bio}
+            />
+          </Modal>
+        )}
       </div>
     )
   );
