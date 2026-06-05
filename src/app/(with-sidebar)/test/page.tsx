@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { AlertCustom } from "@/components/AlertCustom";
+// import { useState } from "react";
+// import { AlertCustom } from "@/components/AlertCustom";
 import { useSetAtom } from "jotai";
-import { alertAtom } from "@/lib/store/alertStore";
 import Input from "@/components/ui/Input";
-import SelectDemo from "@/components/SelectCustom";
-import { PLATFORM_TAGS } from "@/constants/problem";
-import { DatePickerDemo } from "@/components/ui/DatePicker";
+// import SelectDemo from "@/components/SelectCustom";
+// import { PLATFORM_TAGS } from "@/constants/problem";
+// import { DatePickerDemo } from "@/components/ui/DatePicker";
+import Modal from "@/components/ui/Modal";
+import { alertAtom } from "@/lib/store/alertStore";
+
 // import { useAlert } from "@/util/hook/useAlert";
 
 function page() {
-  const [isVisible, setIsVisible] = useState(false);
+  // const [isVisible, setIsVisible] = useState(false);
 
   // const { alertData, setAlert, closeAlert } = useAlert();
   const setAlert = useSetAtom(alertAtom);
@@ -68,6 +70,7 @@ function page() {
           <option>LeetCode</option>
         </select>
       </div> */}
+      <Modal />
     </div>
   );
 }
