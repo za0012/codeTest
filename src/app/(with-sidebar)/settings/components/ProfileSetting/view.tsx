@@ -77,12 +77,12 @@ function ProfileSetting() {
               defaultValue={MyInfoInStudy.bio}
             />
             <Input
-              label="한 줄 소개"
+              label="깃허브 주소"
               size={"sm"}
               defaultValue={MyInfoInStudy.bio}
             />
             <Input
-              label="한 줄 소개"
+              label="블로그 주소"
               size={"sm"}
               defaultValue={MyInfoInStudy.bio}
             />
