@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { ChevronRight, Copy, Earth, Sparkle, Trash2 } from "lucide-react";
+import Modal from "@/components/ui/Modal";
 import {
   getMyMemberInfo,
   getMyStudyInfo,
   scheduleDeleteStudy,
 } from "@/lib/api/study";
+import { alertAtom } from "@/lib/store/alertStore";
 import type { Study, UserProfile } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
 
 function StudySetting() {
+  const setAlert = useSetAtom(alertAtom);
   const { data: studyInfo, isLoading: studyInfoLoading } = useQuery<Study>({
     queryKey: ["studyInfo"],
     queryFn: getMyStudyInfo,
@@ -23,6 +27,31 @@ function StudySetting() {
   if (studyInfoLoading || myInfoLoading) {
     return <div></div>;
   }
+
+  const deleteStudy = () => {
+    if (!MyInfoInStudy?.id)
+      return setAlert({
+        title: "호출 실패",
+        content: "스터디 정보가 존재하지 않습니다",
+        variant: true,
+      });
+    console.log("들어오긴 했는지 확인");
+    return (
+      <Modal
+        title={"타타이틀"}
+        onClose={(): void => {
+          throw new Error("Function not implemented.");
+        }}
+      >
+        <h1>스터디 삭제</h1>
+        <p>정말 삭제할 것이냐 어쩌구저쩌구</p>
+        <button
+          type="button"
+          onClick={() => scheduleDeleteStudy(MyInfoInStudy.id)}
+        ></button>
+      </Modal>
+    );
+  };
 
   return (
     studyInfo &&
@@ -114,15 +143,7 @@ function StudySetting() {
                 {/* 삭제 버튼 - Red 계열 스타일링 */}
                 <button
                   type="button"
-                  onClick={() => {
-                    if (
-                      confirm(
-                        "정말로 이 스터디를 삭제하시겠습니까? 복구할 수 없습니다.",
-                      )
-                    ) {
-                      scheduleDeleteStudy(MyInfoInStudy.id);
-                    }
-                  }}
+                  onClick={deleteStudy}
                   className="flex flex-row items-center gap-1.5 bg-[#FEE2E2] hover:bg-[#FCA5A5] active:scale-95 transition-all px-3.5 py-2 rounded-xl text-red-600"
                 >
                   <span className="text-xs font-bold">삭제하기</span>
