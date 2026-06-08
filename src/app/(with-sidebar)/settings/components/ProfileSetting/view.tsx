@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
@@ -9,9 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getMyMemberInfo } from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
 import type { UserProfile } from "@/lib/types/study";
-import { updateMyMemberInfo } from "./service";
+import { updateMemberProfile } from "./service";
 
-interface changeInfoType {
+interface ProfileEditFormValues {
   name: string;
   bio?: string;
   github_url?: string;
@@ -20,40 +20,49 @@ interface changeInfoType {
 
 function ProfileSetting() {
   const [isEditing, setIsEditing] = useState(false);
+  // const mutation = useMutation({ mutationFn: updateMemberProfile });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<changeInfoType>();
+  } = useForm<ProfileEditFormValues>();
   const setAlert = useSetAtom(alertAtom);
+  const queryClient = useQueryClient();
 
-  const { data: MyInfoInStudy, isLoading } = useQuery<UserProfile>({
-    queryKey: ["getMyMemberInfo", isEditing],
+  const { data: MyInfoInStudy, isLoading } = useQuery<UserProfile | null>({
+    queryKey: ["getMyMemberInfo"],
     queryFn: getMyMemberInfo,
   });
 
-  const onSubmit = async (data: changeInfoType) => {
-    console.log(data);
-    if (!MyInfoInStudy?.id) return alert("사용자 정보가 없습니다");
-    try {
-      await updateMyMemberInfo(MyInfoInStudy.id, {
-        name: data.name,
-        bio: data.bio,
-        github_url: data.github_url,
-        blog_url: data.blog_url,
+  const submitProfileEditForm = async (formValues: ProfileEditFormValues) => {
+    if (!MyInfoInStudy?.id)
+      return setAlert({
+        title: "호출 실패",
+        content: "사용자 정보가 존재하지 않습니다",
+        variant: true,
       });
+    try {
+      await updateMemberProfile(MyInfoInStudy.id, {
+        name: formValues.name,
+        bio: formValues.bio,
+        github_url: formValues.github_url,
+        blog_url: formValues.blog_url,
+      });
+      queryClient.invalidateQueries({ queryKey: ["getMyMemberInfo"] });
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+      queryClient.invalidateQueries({ queryKey: ["getMembers"] });
       setIsEditing(false);
     } catch (error) {
       return setAlert({
-        title: "로그인 실패",
-        content: "이메일 또는 비밀번호를 확인해주세요",
+        title: "저장 실패",
+        content: "다시 시도해주세요",
         variant: true,
       });
     }
   };
 
   if (isLoading) {
-    return <Skeleton className="w-full h-5" />;
+    return <Skeleton className="w-full h-25" />;
   }
 
   return (
@@ -94,7 +103,7 @@ function ProfileSetting() {
             subTitle=""
             onClose={() => setIsEditing(false)}
           >
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(submitProfileEditForm)}>
               <div className="flex flex-col items-center justify-center gap-2 py-1">
                 <button
                   type="button"
@@ -165,6 +174,8 @@ function ProfileSetting() {
               <div className="flex flex-col pt-8">
                 <button
                   type="submit"
+                  // disabled={mutation.isPending}
+                  // onClick={() => mutation.mutate()}
                   className="w-full py-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-2xl transition-all text-base tracking-wide"
                 >
                   저장하기
