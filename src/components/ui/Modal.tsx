@@ -4,6 +4,7 @@ interface modalProps {
   title: string;
   subTitle?: string;
   onClose: () => void;
+  // onSubmit: () => void;
   children: React.ReactNode;
 }
 
@@ -40,14 +41,6 @@ function Modal({ title, subTitle, onClose, children }: modalProps) {
         {/* 2. 입력 필드 영역: 실제로 스크롤이 발생하는 여기에 no-scrollbar와 style을 넣어야 합니다! */}
         {children}
         {/* 하단 저장 버튼 */}
-        <div className="flex flex-col gap-2 pt-2">
-          <button
-            type="button"
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-2xl transition-all text-base tracking-wide"
-          >
-            저장하기
-          </button>
-        </div>
       </div>
     </div>
   );
