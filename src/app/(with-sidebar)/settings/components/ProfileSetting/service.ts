@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
 // 내 정보 수정
+// updateMyMemberInfo 업데이트
 export const updateMyMemberInfo = async (
   memberId: number,
   updates: {
@@ -11,6 +12,8 @@ export const updateMyMemberInfo = async (
     tier_color?: string;
     tier_bg?: string;
     favorite_tag?: string;
+    github_url?: string;
+    blog_url?: string;
   },
 ) => {
   const { data, error } = await supabase
