@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 
 // 내 정보 수정
 // updateMyMemberInfo 업데이트
-export const updateMyMemberInfo = async (
+export const updateMemberProfile = async (
   memberId: number,
   updates: {
     name?: string;
