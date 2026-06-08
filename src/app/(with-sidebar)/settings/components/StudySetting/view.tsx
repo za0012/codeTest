@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Copy, Earth, Sparkle } from "lucide-react";
-import { getMyStudyInfo } from "@/lib/api/study";
-import type { Study } from "@/lib/types/study";
+import { ChevronRight, Copy, Earth, Sparkle, Trash2 } from "lucide-react";
+import {
+  getMyMemberInfo,
+  getMyStudyInfo,
+  scheduleDeleteStudy,
+} from "@/lib/api/study";
+import type { Study, UserProfile } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
 
 function StudySetting() {
@@ -10,12 +14,19 @@ function StudySetting() {
     queryFn: getMyStudyInfo,
   });
 
-  if (studyInfoLoading) {
+  const { data: MyInfoInStudy, isLoading: myInfoLoading } =
+    useQuery<UserProfile | null>({
+      queryKey: ["getMyMemberInfo"],
+      queryFn: getMyMemberInfo,
+    });
+
+  if (studyInfoLoading || myInfoLoading) {
     return <div></div>;
   }
 
   return (
-    studyInfo && (
+    studyInfo &&
+    MyInfoInStudy && (
       <div className="flex flex-col gap-2.5">
         <p className="text-xs text-gray-400 font-bold tracking-wider ml-1 uppercase">
           스터디
@@ -47,34 +58,78 @@ function StudySetting() {
             />
           </button>
 
-          <div className="px-5">
-            <div className="w-full h-px bg-gray-100" />
-          </div>
-
-          {/* 초대 코드 로우 */}
-          <div className="flex flex-row items-center justify-between w-full p-5">
-            <div className="flex flex-row items-center gap-4">
-              <div className="bg-[#F2F4F6] p-3 rounded-2xl flex items-center justify-center text-gray-600">
-                <Sparkle strokeWidth={2} size={20} />
+          {MyInfoInStudy.role === "스터디장" && (
+            <>
+              <div className="px-5">
+                <div className="w-full h-px bg-gray-100" />
               </div>
-              <div className="flex flex-col gap-0.5">
-                <p className="text-xs text-gray-400 font-semibold">초대 코드</p>
-                <p className="text-[16px] font-bold text-blue-600 tracking-wide">
-                  {studyInfo?.invite_code}
-                </p>
-              </div>
-            </div>
 
-            {/* 메인 컬러인 파란색(blue-600) 계열로 변경하여 일관성 확보 */}
-            <button
-              type="button"
-              onClick={() => handleCopyClipBoard(studyInfo.invite_code)}
-              className="flex flex-row items-center gap-1.5 bg-[#E8F3FF] hover:bg-[#DAEBFF] active:scale-95 transition-all px-3.5 py-2 rounded-xl text-blue-600"
-            >
-              <Copy size={13} strokeWidth={2.5} />
-              <span className="text-xs font-bold">복사</span>
-            </button>
-          </div>
+              {/* 초대 코드 로우 */}
+              <div className="flex flex-row items-center justify-between w-full p-5">
+                <div className="flex flex-row items-center gap-4">
+                  <div className="bg-[#F2F4F6] p-3 rounded-2xl flex items-center justify-center text-gray-600">
+                    <Sparkle strokeWidth={2} size={20} />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-xs text-gray-400 font-semibold">
+                      초대 코드
+                    </p>
+                    <p className="text-[16px] font-bold text-blue-600 tracking-wide">
+                      {studyInfo?.invite_code}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 메인 컬러인 파란색(blue-600) 계열로 변경하여 일관성 확보 */}
+                <button
+                  type="button"
+                  onClick={() => handleCopyClipBoard(studyInfo.invite_code)}
+                  className="flex flex-row items-center gap-1.5 bg-[#E8F3FF] hover:bg-[#DAEBFF] active:scale-95 transition-all px-3.5 py-2 rounded-xl text-blue-600"
+                >
+                  <Copy size={13} strokeWidth={2.5} />
+                  <span className="text-xs font-bold">복사</span>
+                </button>
+              </div>
+
+              <div className="px-5">
+                <div className="w-full h-px bg-gray-100" />
+              </div>
+
+              {/* 스터디 삭제 로우 (수정된 부분) */}
+              <div className="flex flex-row items-center justify-between w-full p-5">
+                <div className="flex flex-row items-center gap-4">
+                  <div className="bg-[#FEE2E2] p-3 rounded-2xl flex items-center justify-center text-red-600">
+                    <Trash2 strokeWidth={2} size={20} />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-xs text-gray-400 font-semibold">
+                      위험 구역
+                    </p>
+                    <p className="text-[16px] font-bold text-gray-800">
+                      스터디 삭제
+                    </p>
+                  </div>
+                </div>
+
+                {/* 삭제 버튼 - Red 계열 스타일링 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (
+                      confirm(
+                        "정말로 이 스터디를 삭제하시겠습니까? 복구할 수 없습니다.",
+                      )
+                    ) {
+                      scheduleDeleteStudy(MyInfoInStudy.id);
+                    }
+                  }}
+                  className="flex flex-row items-center gap-1.5 bg-[#FEE2E2] hover:bg-[#FCA5A5] active:scale-95 transition-all px-3.5 py-2 rounded-xl text-red-600"
+                >
+                  <span className="text-xs font-bold">삭제하기</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )
