@@ -5,6 +5,8 @@ export interface Study {
   id: number;
   invite_code: string;
   name: string;
+  delete_scheduled_at: string | null; // 또는 Date | null
+  deleted_at: string | null;
 }
 
 export interface UserProfile {

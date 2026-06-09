@@ -2,7 +2,7 @@ import { supabase } from "../supabase";
 
 // 사용방법: const { user, member } = await checkIsOwner(studyId);
 // await checkIsOwner(studyId);
-const checkIsOwner = async (studyId: number) => {
+export const checkIsOwner = async (studyId: number) => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) throw new Error("로그인 필요");
 
@@ -211,32 +211,6 @@ export const kickMember = async (studyId: number, targetMemberId: number) => {
     .from("study_members")
     .delete()
     .eq("id", targetMemberId);
-  if (error) throw error;
-};
-
-// 스터디 삭제 예약 (7일 후)
-export const scheduleDeleteStudy = async (studyId: number) => {
-  await checkIsOwner(studyId);
-
-  const deleteAt = new Date();
-  deleteAt.setDate(deleteAt.getDate() + 7);
-
-  const { data, error } = await supabase
-    .from("studies")
-    .update({ delete_scheduled_at: deleteAt.toISOString() })
-    .eq("id", studyId)
-    .select("delete_scheduled_at")
-    .single();
-  if (error) throw error;
-  return data;
-};
-
-// 삭제 취소
-export const cancelDeleteStudy = async (studyId: number) => {
-  const { error } = await supabase
-    .from("studies")
-    .update({ delete_scheduled_at: null })
-    .eq("id", studyId);
   if (error) throw error;
 };
 
