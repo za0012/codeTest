@@ -1,14 +1,23 @@
 import { X } from "lucide-react";
+import { useEffect } from "react";
 
-interface modalProps {
+export interface modalProps {
   title: string;
   subTitle?: string;
-  onClose: () => void;
+  onClose?: () => void;
   // onSubmit: () => void;
   children: React.ReactNode;
 }
 
 function Modal({ title, subTitle, onClose, children }: modalProps) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    // 언마운트(모달이 닫힐 때)되거나 상태가 바뀌면 스크롤을 다시 복구
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 antialiased selection:bg-blue-100">
       {/* 1. 바깥쪽 카드: 여기 있던 no-scrollbar와 style 속성을 제거했습니다. */}
@@ -21,14 +30,18 @@ function Modal({ title, subTitle, onClose, children }: modalProps) {
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1.5 pl-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-[3.5px] h-6 bg-blue-600 rounded-full" />
-              <h2 className="text-[#191F28] text-2xl font-bold tracking-tight">
-                {title}
-              </h2>
+              {title.length > 0 && (
+                <>
+                  <div className="w-[3.5px] h-6 bg-blue-600 rounded-full" />
+                  <h2 className="text-[#191F28] text-2xl font-bold tracking-tight">
+                    {title}
+                  </h2>
+                  <p className="text-sm font-medium text-gray-400 ml-3.5">
+                    {subTitle}
+                  </p>
+                </>
+              )}
             </div>
-            <p className="text-sm font-medium text-gray-400 ml-3.5">
-              {subTitle}
-            </p>
           </div>
           <button
             type="button"
