@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from "next";
 import { alertAtom } from "@/lib/store/alertStore";
+import { modalAtom } from "@/lib/store/modalStore";
 import { AlertManager } from "@/util/hook/useAlert";
+import { ModalManager } from "@/util/hook/useModal";
+import "./globals.css";
 import Providers from "./providers";
 
 // const geistSans = Geist({
@@ -34,6 +36,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
         {alertAtom && <AlertManager />}
+        {modalAtom && <ModalManager />}
       </body>
     </html>
   );
