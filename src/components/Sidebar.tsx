@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   Circle,
   CircleCheckBig,
@@ -22,14 +22,17 @@ import {
   getStudyMembers,
 } from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
+import { deleteStudyAtom } from "@/lib/store/deleteStudyStore";
 import type { Study, UserProfile } from "@/lib/types/study";
 
 function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const setAlert = useSetAtom(alertAtom);
+  const setDeleteBanner = useSetAtom(deleteStudyAtom);
+  const isDeleteBanner = useAtomValue(deleteStudyAtom);
 
-  const { data: study } = useQuery({
+  const { data: study } = useQuery<Study>({
     // 타입으로 <Study>를 붙이면 undifined일 수도 있다고 나옴...
     queryKey: ["studyInfo"],
     queryFn: getMyStudyInfo,
@@ -54,6 +57,7 @@ function Sidebar() {
       content: "로그아웃 되었습니다",
       variant: false,
     });
+    setDeleteBanner(null);
     router.push("/login");
   };
   // console.log("getMyStudy", study);
@@ -68,6 +72,10 @@ function Sidebar() {
     { to: "/test", label: "테스트", icon: TestTubeDiagonal },
     { to: "/test2", label: "UI 테스트", icon: TestTubeDiagonal },
   ];
+
+  if (study?.delete_scheduled_at && !isDeleteBanner) {
+    setDeleteBanner(study.delete_scheduled_at);
+  }
 
   return (
     <aside className="w-56 min-w-56 flex h-screen sticky top-0 flex-col overflow-y-auto border-r border-gray-100 bg-white select-none">
