@@ -26,3 +26,22 @@ export const cancelDeleteStudy = async (studyId: number) => {
     .eq("id", studyId);
   if (error) throw error;
 };
+
+// 스터디 정보 수정 (스터디장만)
+export const updateStudyInfo = async (
+  studyId: number,
+  updates: {
+    name?: string;
+    description?: string;
+    emoji?: string;
+  },
+) => {
+  const { data, error } = await supabase
+    .from("studies")
+    .update(updates)
+    .eq("id", studyId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};

@@ -130,25 +130,6 @@ export const getStudyMembers = async (studyId: number) => {
   return data;
 };
 
-// 스터디 정보 수정 (스터디장만)
-export const updateStudyInfo = async (
-  studyId: number,
-  updates: {
-    name?: string;
-    description?: string;
-    emoji?: string;
-  },
-) => {
-  const { data, error } = await supabase
-    .from("studies")
-    .update(updates)
-    .eq("id", studyId)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-};
-
 // 초대 코드 재발급
 export const regenerateInviteCode = async (studyId: number) => {
   const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
