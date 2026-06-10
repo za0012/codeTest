@@ -1,24 +1,21 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
-import {
-  AlertTriangle,
-  ChevronRight,
-  Copy,
-  Earth,
-  Sparkle,
-  Trash2,
-} from "lucide-react";
-import Button from "@/components/ui/Button";
+import { ChevronRight, Copy, Earth, Sparkle, Trash2 } from "lucide-react";
+
 import { getMyMemberInfo, getMyStudyInfo } from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
+import { deleteStudyAtom } from "@/lib/store/deleteStudyStore";
 import { modalAtom } from "@/lib/store/modalStore";
 import type { Study, UserProfile } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
+import { DeleteStudyConfirmModal } from "./modal/DeleteStudyConfirmModal";
+import { EditStudyModal } from "./modal/EditStudyModal";
 import { cancelDeleteStudy, scheduleDeleteStudy } from "./service";
 
 function StudySetting() {
   const setAlert = useSetAtom(alertAtom);
   const setModal = useSetAtom(modalAtom);
+  const setDeleteBanner = useSetAtom(deleteStudyAtom);
   const queryClient = useQueryClient();
 
   const { data: studyInfo, isLoading: studyInfoLoading } = useQuery<Study>({
@@ -51,6 +48,7 @@ function StudySetting() {
       content: `${new Date(data.delete_scheduled_at).toLocaleDateString("ko-KR")}에 스터디가 삭제될 예정이에요.`,
       variant: false,
     });
+    setDeleteBanner(data.delete_scheduled_at);
   };
 
   const deleteStudy = () => {
@@ -64,44 +62,10 @@ function StudySetting() {
       setModal({
         title: "", // 타이틀은 무조건 비워두기!
         children: (
-          <div className="flex flex-col items-center justify-center pb-2 text-center select-none">
-            {/* 1. 이모지 대신 세련된 Lucide 아이콘 배치 (토스 경고용 소프트 핑크/레드 배경) */}
-            <div className="w-14 h-14 bg-[#FEE2E2] rounded-full flex items-center justify-center mb-5 animate-fade-in">
-              <AlertTriangle
-                className="w-6 h-6 text-[#F04452]"
-                strokeWidth={2.5}
-              />
-            </div>
-
-            {/* 2. 타이틀: 폰트 크기를 더 키우고 글자색을 아주 깊고 선명한 네이비/블랙 계열로 변경 */}
-            <h3 className="text-[20px] font-bold text-[#191F28] tracking-tight mb-2.5">
-              스터디를 삭제할까요?
-            </h3>
-
-            {/* 3. 설명문: 폰트 크기와 자간을 조절하고, '다시는 복구할 수 없어요'를 강조 */}
-            <p className="text-[15px] font-medium text-[#4E5968] leading-relaxed tracking-tight mb-9">
-              삭제된 스터디 정보는 <br />
-              <span className="text-[#F04452] font-semibold">
-                다시는 복구할 수 없어요.
-              </span>
-            </p>
-
-            {/* 4. 버튼: 높이를 더 넓히고 자간(tracking-wide)과 부드러운 텍스트 색상 매칭 */}
-            <div className="flex gap-3 w-full px-0.5">
-              <Button
-                type="button"
-                className="flex-1 py-4 px-2 rounded-[18px] bg-[#F2F4F6] text-[#4E5968] font-bold text-[16px] hover:bg-[#E5E8EB] active:scale-[0.97] transition-all duration-150"
-                onClick={() => setModal(null)}
-                label="취소"
-              />
-              <Button
-                type="button"
-                className="flex-1 py-4 px-2 rounded-[18px] bg-[#F04452] text-white font-bold text-[16px] hover:bg-[#DC3442] active:scale-[0.97] transition-all duration-150 shadow-sm"
-                onClick={() => deleteStudyFunction(studyInfo.id)}
-                label="삭제하기"
-              />
-            </div>
-          </div>
+          <DeleteStudyConfirmModal
+            onCancel={() => setModal(null)}
+            onConfirm={() => deleteStudyFunction(studyInfo.id)}
+          />
         ),
       });
     }
@@ -122,7 +86,28 @@ function StudySetting() {
         content: "스터디 삭제를 취소하였습니다.",
         variant: false,
       });
+      setDeleteBanner(null);
     }
+  };
+
+  const editStudyInfo = () => {
+    if (!studyInfo?.id) {
+      return setAlert({
+        title: "호출 실패",
+        content: "스터디 정보가 존재하지 않습니다",
+        variant: true,
+      });
+    }
+    setModal({
+      title: "스터디 정보 수정",
+      children: (
+        <EditStudyModal
+          onCancel={() => setModal(null)}
+          studyName={studyInfo.name}
+          studyDescription={studyInfo.description}
+        />
+      ),
+    });
   };
 
   return (
@@ -133,9 +118,9 @@ function StudySetting() {
           스터디
         </p>
         <div className="flex flex-col bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-          {/* 스터디 이름 로우 */}
           <button
             type="button"
+            onClick={editStudyInfo}
             className="flex flex-row items-center justify-between w-full p-5 text-left hover:bg-[#F9FAFB] active:bg-[#F2F4F6] transition-colors group"
           >
             <div className="flex flex-row items-center gap-4">
