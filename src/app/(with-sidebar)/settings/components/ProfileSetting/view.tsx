@@ -52,7 +52,7 @@ function ProfileSetting() {
       queryClient.invalidateQueries({ queryKey: ["userInfo"] });
       queryClient.invalidateQueries({ queryKey: ["getMembers"] });
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       return setAlert({
         title: "저장 실패",
         content: "다시 시도해주세요",

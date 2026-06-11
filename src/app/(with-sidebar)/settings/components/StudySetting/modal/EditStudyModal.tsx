@@ -1,40 +1,77 @@
-import { AlertCircle, AlertTriangle, Info } from "lucide-react";
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
+import { AlertCircle, Info } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { alertAtom } from "@/lib/store/alertStore";
+import { updateStudyInfo } from "../service";
 
 interface deleteStudyModalProp {
-  onCancel: () => void;
+  studyId: number;
   studyName: string;
   studyDescription: string;
 }
 
+interface studySubmitForm {
+  name: string;
+  description: string;
+}
+
 export function EditStudyModal({
-  onCancel,
+  studyId,
   studyName,
   studyDescription,
 }: deleteStudyModalProp) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm();
+  } = useForm<studySubmitForm>();
 
-  const submitStudyEditForm = (formValues: {
-    name: string;
-    description: string;
-  }) => {
-    // updateStudyInfo();
+  const setAlert = useSetAtom(alertAtom);
+  // const queryClient = QueryClientProvider();
+  const queryClient = useQueryClient();
+
+  const submitStudyEditForm = async (formValues: studySubmitForm) => {
+    setIsSubmitting(true);
+    if (!studyId) {
+      return setAlert({
+        title: "호출 실패",
+        content: "사용자 정보가 존재하지 않습니다",
+        variant: true,
+      });
+    }
+    try {
+      await updateStudyInfo(1, {
+        name: formValues.name,
+        description: formValues.description,
+      });
+      setAlert({
+        title: "저장 성공",
+        content: "변경한 스터디 정보가 저장되었습니다.",
+        variant: false,
+      });
+      setIsSubmitting(false);
+      queryClient.invalidateQueries({ queryKey: ["studyInfo"] });
+    } catch {
+      setIsSubmitting(false);
+      return setAlert({
+        title: "저장 실패",
+        content: "다시 시도해주세요",
+        variant: true,
+      });
+    }
   };
 
   return (
     <form
-      //   onSubmit={handleSubmit(submitStudyEditForm)}
+      onSubmit={handleSubmit(submitStudyEditForm)}
       className="flex flex-col h-full"
     >
-      {/* 1. 상단 안내 문구 수정: 스터디 정보 수정 목적에 맞게 변경 */}
       <div className="pb-6 pt-2">
         <p className="text-[15px] text-gray-500 leading-relaxed">
           팀원들이 보게 될 <br />
@@ -42,7 +79,6 @@ export function EditStudyModal({
           변경할게요.
         </p>
       </div>
-
       <div className="flex flex-col gap-8">
         {/* 스터디 이름 입력 섹션 */}
         <div className="flex flex-col gap-2">
@@ -66,14 +102,11 @@ export function EditStudyModal({
               </p>
             </div>
           ) : (
-            /* 2. 하단 가이드 텍스트 수정: 덤덤하면서 명확하게 */
             <p className="ml-1 text-[12px] text-gray-400">
               대시보드와 사이드바에 표시되는 이름이에요.
             </p>
           )}
         </div>
-
-        {/* 한 줄 소개 섹션 */}
         <div className="flex flex-col gap-2">
           <Input
             label="한 줄 소개"
@@ -97,7 +130,6 @@ export function EditStudyModal({
               </p>
             </div>
           ) : (
-            /* 3. 하단 가이드 텍스트 수정: 외부 비공개이므로 스터디 전용 문구로 변경 */
             <div className="flex items-center gap-1 ml-1 text-gray-400">
               <Info size={12} />
               <p className="text-[12px]">우리 스터디원들에게만 공유돼요.</p>
@@ -105,8 +137,6 @@ export function EditStudyModal({
           )}
         </div>
       </div>
-
-      {/* 하단 버튼 - 더 크고 쫀득하게 */}
       <div className="pt-8">
         <Button
           type="submit"

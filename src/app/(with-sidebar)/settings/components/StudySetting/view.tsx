@@ -102,7 +102,7 @@ function StudySetting() {
       title: "스터디 정보 수정",
       children: (
         <EditStudyModal
-          onCancel={() => setModal(null)}
+          studyId={studyInfo.id}
           studyName={studyInfo.name}
           studyDescription={studyInfo.description}
         />
