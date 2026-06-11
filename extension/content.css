@@ -1,0 +1,165 @@
+#codetest-study-uploader-open {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 2147483646;
+  border: 0;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font:
+    700 13px / 1 system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  padding: 12px 16px;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.28);
+}
+
+#codetest-study-uploader-panel {
+  position: fixed;
+  right: 22px;
+  bottom: 78px;
+  z-index: 2147483647;
+  width: min(360px, calc(100vw - 32px));
+  box-sizing: border-box;
+  border: 1px solid #d9e2f1;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  display: none;
+  padding: 18px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#codetest-study-uploader-panel[data-open="true"] {
+  display: block;
+}
+
+#codetest-study-uploader-panel * {
+  box-sizing: border-box;
+}
+
+.ctsu-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ctsu-eyebrow {
+  margin: 0 0 4px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.ctsu-title {
+  display: block;
+  max-width: 270px;
+  overflow: hidden;
+  color: #111827;
+  font-size: 16px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ctsu-close {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: #f3f6fb;
+  color: #607086;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.ctsu-field {
+  display: block;
+  margin-top: 12px;
+}
+
+.ctsu-field span {
+  display: block;
+  margin-bottom: 7px;
+  color: #607086;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ctsu-difficulty,
+.ctsu-memo {
+  width: 100%;
+  border: 1px solid #d9e2f1;
+  border-radius: 7px;
+  background: #f8fafc;
+  color: #172033;
+  font:
+    500 14px / 1.45 system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  outline: none;
+}
+
+.ctsu-difficulty {
+  height: 38px;
+  padding: 0 10px;
+}
+
+.ctsu-memo {
+  min-height: 112px;
+  padding: 10px;
+  resize: vertical;
+}
+
+.ctsu-difficulty:focus,
+.ctsu-memo:focus {
+  border-color: #2563eb;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.ctsu-status {
+  min-height: 18px;
+  margin: 12px 0;
+  color: #607086;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ctsu-status[data-variant="error"] {
+  color: #dc2626;
+}
+
+.ctsu-status[data-variant="success"] {
+  color: #15803d;
+}
+
+.ctsu-submit {
+  width: 100%;
+  height: 42px;
+  border: 0;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ctsu-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.64;
+}

@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "CodeTest Study Uploader",
+  "description": "프로그래머스 통과 문제를 개인 스터디에 업로드합니다.",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "CodeTest Study Uploader"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://school.programmers.co.kr/learn/courses/*/lessons/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*",
+    "https://school.programmers.co.kr/*"
+  ],
+  "permissions": ["storage"],
+  "web_accessible_resources": [
+    {
+      "matches": ["https://school.programmers.co.kr/*"],
+      "resources": ["page-bridge.js"]
+    }
+  ]
+}

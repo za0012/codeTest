@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeTest Study Uploader</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <strong>CodeTest Study Uploader</strong>
+        <p>프로그래머스 통과 문제를 스터디에 올립니다.</p>
+      </header>
+
+      <section id="logged-out" hidden>
+        <label>
+          <span>서버 주소</span>
+          <input id="api-base-url" type="url" value="http://localhost:3000" />
+        </label>
+        <label>
+          <span>이메일</span>
+          <input id="email" type="email" autocomplete="email" />
+        </label>
+        <label>
+          <span>비밀번호</span>
+          <input id="password" type="password" autocomplete="current-password" />
+        </label>
+        <button id="login" type="button">로그인</button>
+      </section>
+
+      <section id="logged-in" hidden>
+        <div class="account">
+          <span id="user-email"></span>
+          <strong id="member-name"></strong>
+        </div>
+        <button id="logout" type="button">로그아웃</button>
+      </section>
+
+      <p id="status" role="status"></p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
