@@ -1,6 +1,47 @@
+import { useQuery } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { ChevronRight, LogOut, Trash2 } from "lucide-react";
+import { getMyMemberInfo } from "@/lib/api/study";
+import { alertAtom } from "@/lib/store/alertStore";
+import { modalAtom } from "@/lib/store/modalStore";
+import type { UserProfile } from "@/lib/types/study";
+import { ExitStudy } from "./modal/ExitStudy";
+import { leaveStudy } from "./service";
 
 function AccountSetting() {
+  const setModal = useSetAtom(modalAtom);
+  const setAlert = useSetAtom(alertAtom);
+
+  const { data: myInfo } = useQuery<UserProfile | null>({
+    queryKey: ["myInfoInAccountSetting"],
+    queryFn: getMyMemberInfo,
+  });
+  const checkExitStudy = () => {
+    if (!myInfo?.id) return;
+
+    setModal({
+      title: "",
+      children: (
+        <ExitStudy
+          onCancel={() => setModal(null)}
+          onConfirm={() => exitStudy(myInfo.study_id)}
+        />
+      ),
+    });
+  };
+  const exitStudy = (id: number) => {
+    try {
+      leaveStudy(id);
+    } catch (error) {
+      setAlert({
+        title: " 실패",
+        content: "스터디 정보가 존재하지 않습니다",
+        variant: true,
+      });
+      console.log(error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2.5">
       <p className="text-xs text-gray-400 font-bold tracking-wider ml-1 uppercase">
@@ -28,6 +69,7 @@ function AccountSetting() {
         </div>
         <button
           type="button"
+          onClick={checkExitStudy}
           className="flex flex-row items-center justify-between w-full p-5 text-left hover:bg-red-50 active:bg-red-100 transition-colors group"
         >
           <div className="flex flex-row items-center gap-4">
