@@ -1,4 +1,4 @@
-import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { AlertCircle, Info } from "lucide-react";
 import { useState } from "react";
@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { alertAtom } from "@/lib/store/alertStore";
+import { modalAtom } from "@/lib/store/modalStore";
 import { updateStudyInfo } from "../service";
 
 interface deleteStudyModalProp {
@@ -33,7 +34,7 @@ export function EditStudyModal({
   } = useForm<studySubmitForm>();
 
   const setAlert = useSetAtom(alertAtom);
-  // const queryClient = QueryClientProvider();
+  const setModal = useSetAtom(modalAtom);
   const queryClient = useQueryClient();
 
   const submitStudyEditForm = async (formValues: studySubmitForm) => {
@@ -46,10 +47,11 @@ export function EditStudyModal({
       });
     }
     try {
-      await updateStudyInfo(1, {
+      await updateStudyInfo(studyId, {
         name: formValues.name,
         description: formValues.description,
       });
+      setModal(null);
       setAlert({
         title: "저장 성공",
         content: "변경한 스터디 정보가 저장되었습니다.",
@@ -59,6 +61,7 @@ export function EditStudyModal({
       queryClient.invalidateQueries({ queryKey: ["studyInfo"] });
     } catch {
       setIsSubmitting(false);
+      setModal(null);
       return setAlert({
         title: "저장 실패",
         content: "다시 시도해주세요",
