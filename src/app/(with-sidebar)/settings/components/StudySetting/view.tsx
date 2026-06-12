@@ -48,9 +48,8 @@ function StudySetting() {
       content: `${new Date(data.delete_scheduled_at).toLocaleDateString("ko-KR")}에 스터디가 삭제될 예정이에요.`,
       variant: false,
     });
-    setDeleteBanner(data.delete_scheduled_at);
+    // setDeleteBanner(data.delete_scheduled_at);
   };
-
   const deleteStudy = () => {
     if (!studyInfo?.id)
       return setAlert({
@@ -86,7 +85,6 @@ function StudySetting() {
         content: "스터디 삭제를 취소하였습니다.",
         variant: false,
       });
-      setDeleteBanner(null);
     }
   };
 
