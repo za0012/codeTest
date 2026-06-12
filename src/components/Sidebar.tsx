@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { signOut } from "@/lib/api/auth";
 import {
   getMyMemberInfo,
@@ -70,19 +71,23 @@ function Sidebar() {
     { to: "/mypage", label: "마이페이지", icon: User },
     { to: "/settings", label: "설정", icon: Settings },
     { to: "/test", label: "테스트", icon: TestTubeDiagonal },
-    { to: "/test2", label: "UI 테스트", icon: TestTubeDiagonal },
   ];
 
-  if (study?.delete_scheduled_at && !isDeleteBanner) {
-    setDeleteBanner(study.delete_scheduled_at);
-  }
+  console.log(study);
+
+  useEffect(() => {
+    if (study?.delete_scheduled_at && !isDeleteBanner) {
+      setDeleteBanner(study.delete_scheduled_at);
+    } else if (!study?.delete_scheduled_at && isDeleteBanner) {
+      setDeleteBanner(null);
+    }
+  }, [isDeleteBanner, setDeleteBanner, study?.delete_scheduled_at]);
 
   return (
     <aside className="w-56 min-w-56 flex h-screen sticky top-0 flex-col overflow-y-auto border-r border-gray-100 bg-white select-none">
       {/* Header Section */}
       <div className="px-6 pt-7 pb-5">
         <div className="flex items-center gap-3">
-          {/* 로고 박스: 둥근 모서리를 살짝 더 다듬고 그림자 제거 */}
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600">
             <Code2 size={18} className="text-white" />
           </div>
@@ -96,9 +101,7 @@ function Sidebar() {
           </div>
         </div>
       </div>
-
       {/* Navigation */}
-      {/* 패딩을 넓혀 시각적 안정감을 줍니다 */}
       <nav className="flex flex-col gap-1 px-3">
         {navItems.map(({ to, label, icon: Icon }) => {
           const isActive = to.includes(pathname);
@@ -123,10 +126,7 @@ function Sidebar() {
           );
         })}
       </nav>
-
-      {/* 구분선 지우고 큰 마진 여백으로 대체하여 공간 분리 */}
       <div className="mt-8" />
-
       {/* Members Section */}
       {/* 나중에 클릭 액션이 들어갈 예정이므로 cursor-pointer와 hover 효과 보강 */}
       <div className="flex-1 px-3">
@@ -166,7 +166,6 @@ function Sidebar() {
           ))}
         </div>
       </div>
-
       {/* Bottom Section */}
       <div className="mt-auto border-t border-gray-100 px-5 py-4.5 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
@@ -185,7 +184,6 @@ function Sidebar() {
             </p>
           </div>
         </div>
-
         <button
           type="button"
           onClick={handleLogout}
