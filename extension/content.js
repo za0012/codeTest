@@ -1,7 +1,18 @@
 const PROGRAMMERS_LEVELS = ["Lv.0", "Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"];
+const DEFAULT_CORNER = "bottom-right";
+const DIFFICULTY_CACHE_PREFIX = "programmersDifficulty:";
+const FLOATING_CORNERS = new Set([
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right",
+]);
+
 let panel;
 let observer;
 let autoOpened = false;
+let acceptedDetected = false;
+let currentCorner = DEFAULT_CORNER;
 
 function normalizeText(value) {
   return value?.replace(/\s+/g, " ").trim() || "";
@@ -34,10 +45,138 @@ function getProblemTags() {
   return Array.from(new Set(candidates)).slice(0, 5);
 }
 
-function getDifficultyFromPage() {
-  const text = normalizeText(document.body.innerText);
-  const match = text.match(/Lv\.?\s*([0-5])/i);
+function parseDifficultyFromText(text) {
+  const normalizedText = normalizeText(text);
+  const match =
+    normalizedText.match(/Lv\.?\s*([0-5])/i) ||
+    normalizedText.match(/level["'\s:=]+([0-5])/i) ||
+    normalizedText.match(/difficulty["'\s:=]+(?:Lv\.?)?\s*([0-5])/i);
+
   return match ? `Lv.${match[1]}` : "Lv.0";
+}
+
+function getLessonId() {
+  return location.pathname.match(/\/lessons\/(\d+)/)?.[1] ?? "";
+}
+
+function findDifficultyNearLessonLink(html, lessonId) {
+  if (!lessonId) {
+    return "Lv.0";
+  }
+
+  const lessonIndex = html.indexOf(`/lessons/${lessonId}`);
+  if (lessonIndex === -1) {
+    return "Lv.0";
+  }
+
+  const nearbyText = html.slice(
+    Math.max(0, lessonIndex - 3000),
+    Math.min(html.length, lessonIndex + 3000),
+  );
+
+  return parseDifficultyFromText(nearbyText);
+}
+
+function getDifficultyFromPage() {
+  const candidates = [
+    document.body.innerText,
+    document.documentElement.innerHTML,
+    ...Array.from(document.querySelectorAll("meta, script"))
+      .map((element) => element.getAttribute("content") || element.textContent)
+      .filter(Boolean),
+  ];
+
+  for (const candidate of candidates) {
+    const difficulty = parseDifficultyFromText(candidate);
+    if (difficulty !== "Lv.0") {
+      return difficulty;
+    }
+  }
+
+  return "Lv.0";
+}
+
+async function getCachedDifficulty(lessonId) {
+  if (!lessonId) {
+    return "";
+  }
+
+  const cacheKey = `${DIFFICULTY_CACHE_PREFIX}${lessonId}`;
+  const cached = await chrome.storage.local.get(cacheKey);
+  return cached[cacheKey] || "";
+}
+
+function setCachedDifficulty(lessonId, difficulty) {
+  if (!lessonId || !difficulty || difficulty === "Lv.0") {
+    return;
+  }
+
+  chrome.storage.local.set({
+    [`${DIFFICULTY_CACHE_PREFIX}${lessonId}`]: difficulty,
+  });
+}
+
+async function fetchDifficultyFromChallengeSearch(title, lessonId) {
+  if (!title || !lessonId) {
+    return "Lv.0";
+  }
+
+  const encodedTitle = encodeURIComponent(title);
+  const searchPaths = [
+    `/learn/challenges?order=recent&search=${encodedTitle}`,
+    `/learn/challenges?order=acceptance_desc&search=${encodedTitle}`,
+    `/learn/challenges?order=level_asc&search=${encodedTitle}`,
+  ];
+
+  for (const path of searchPaths) {
+    const response = await fetch(path, { credentials: "include" });
+    const html = await response.text();
+    const difficulty = findDifficultyNearLessonLink(html, lessonId);
+
+    if (difficulty !== "Lv.0") {
+      return difficulty;
+    }
+  }
+
+  for (const level of [0, 1, 2, 3, 4, 5]) {
+    const response = await fetch(
+      `/learn/challenges?order=recent&levels=${level}&search=${encodedTitle}`,
+      { credentials: "include" },
+    );
+    const html = await response.text();
+
+    if (html.includes(`/lessons/${lessonId}`)) {
+      return `Lv.${level}`;
+    }
+  }
+
+  return "Lv.0";
+}
+
+async function detectDifficulty() {
+  const lessonId = getLessonId();
+  const pageDifficulty = getDifficultyFromPage();
+
+  if (pageDifficulty !== "Lv.0") {
+    setCachedDifficulty(lessonId, pageDifficulty);
+    return pageDifficulty;
+  }
+
+  const cachedDifficulty = await getCachedDifficulty(lessonId);
+  if (cachedDifficulty) {
+    return cachedDifficulty;
+  }
+
+  try {
+    const fetchedDifficulty = await fetchDifficultyFromChallengeSearch(
+      getProblemTitle(),
+      lessonId,
+    );
+    setCachedDifficulty(lessonId, fetchedDifficulty);
+    return fetchedDifficulty;
+  } catch {
+    return "Lv.0";
+  }
 }
 
 function getProblemUrl() {
@@ -110,6 +249,110 @@ function looksAccepted() {
   );
 }
 
+function updateAcceptedState() {
+  if (looksAccepted()) {
+    acceptedDetected = true;
+  }
+
+  return acceptedDetected;
+}
+
+function isFloatingCorner(value) {
+  return FLOATING_CORNERS.has(value);
+}
+
+function nearestCorner(clientX, clientY) {
+  const vertical = clientY < window.innerHeight / 2 ? "top" : "bottom";
+  const horizontal = clientX < window.innerWidth / 2 ? "left" : "right";
+  return `${vertical}-${horizontal}`;
+}
+
+function applyFloatingCorner(corner) {
+  currentCorner = isFloatingCorner(corner) ? corner : DEFAULT_CORNER;
+
+  const button = document.getElementById("codetest-study-uploader-open");
+  if (button) {
+    button.dataset.corner = currentCorner;
+    button.style.left = "";
+    button.style.right = "";
+    button.style.top = "";
+    button.style.bottom = "";
+  }
+
+  if (panel) {
+    panel.dataset.corner = currentCorner;
+  }
+}
+
+async function restoreFloatingCorner() {
+  const { uploaderCorner } = await chrome.storage.local.get("uploaderCorner");
+  applyFloatingCorner(uploaderCorner);
+}
+
+function saveFloatingCorner(corner) {
+  chrome.storage.local.set({ uploaderCorner: corner });
+}
+
+function enableFloatingButtonDrag(button) {
+  let startX = 0;
+  let startY = 0;
+  let moved = false;
+
+  button.addEventListener("pointerdown", (event) => {
+    startX = event.clientX;
+    startY = event.clientY;
+    moved = false;
+    button.dataset.dragging = "true";
+    button.setPointerCapture(event.pointerId);
+  });
+
+  button.addEventListener("pointermove", (event) => {
+    if (button.dataset.dragging !== "true") {
+      return;
+    }
+
+    const distance = Math.hypot(event.clientX - startX, event.clientY - startY);
+    if (distance < 6 && !moved) {
+      return;
+    }
+
+    moved = true;
+    const rect = button.getBoundingClientRect();
+    const margin = 14;
+    const left = Math.min(
+      Math.max(event.clientX - rect.width / 2, margin),
+      window.innerWidth - rect.width - margin,
+    );
+    const top = Math.min(
+      Math.max(event.clientY - rect.height / 2, margin),
+      window.innerHeight - rect.height - margin,
+    );
+
+    button.style.left = `${left}px`;
+    button.style.top = `${top}px`;
+    button.style.right = "auto";
+    button.style.bottom = "auto";
+  });
+
+  button.addEventListener("pointerup", (event) => {
+    if (button.dataset.dragging !== "true") {
+      return;
+    }
+
+    button.dataset.dragging = "false";
+    button.releasePointerCapture(event.pointerId);
+
+    if (!moved) {
+      return;
+    }
+
+    const corner = nearestCorner(event.clientX, event.clientY);
+    button.dataset.dragged = "true";
+    applyFloatingCorner(corner);
+    saveFloatingCorner(corner);
+  });
+}
+
 function createFloatingButton() {
   if (document.getElementById("codetest-study-uploader-open")) {
     return;
@@ -119,8 +362,18 @@ function createFloatingButton() {
   button.id = "codetest-study-uploader-open";
   button.type = "button";
   button.textContent = "스터디 업로드";
-  button.addEventListener("click", () => openPanel(false));
+  button.addEventListener("click", (event) => {
+    if (button.dataset.dragged === "true") {
+      event.preventDefault();
+      button.dataset.dragged = "false";
+      return;
+    }
+
+    openPanel(false);
+  });
   document.body.appendChild(button);
+  enableFloatingButtonDrag(button);
+  restoreFloatingCorner();
 }
 
 function createPanel() {
@@ -131,6 +384,7 @@ function createPanel() {
       <div>
         <p class="ctsu-eyebrow">Programmers</p>
         <strong class="ctsu-title"></strong>
+        <span class="ctsu-subtitle">통과한 문제만 스터디에 올릴 수 있어요.</span>
       </div>
       <button class="ctsu-close" type="button" aria-label="닫기">×</button>
     </div>
@@ -162,22 +416,32 @@ async function openPanel(fromAccepted) {
     panel = createPanel();
   }
 
+  if (fromAccepted) {
+    acceptedDetected = true;
+  }
+
   const auth = await chrome.runtime.sendMessage({ type: "GET_AUTH_STATUS" });
+  const canUpload = updateAcceptedState();
   panel.dataset.open = "true";
+  panel.dataset.ready = String(canUpload);
+  panel.dataset.corner = currentCorner;
   panel.querySelector(".ctsu-title").textContent = getProblemTitle();
-  panel.querySelector(".ctsu-difficulty").value = getDifficultyFromPage();
+  panel.querySelector(".ctsu-difficulty").value = await detectDifficulty();
 
   const status = panel.querySelector(".ctsu-status");
+  const submitButton = panel.querySelector(".ctsu-submit");
   if (!auth?.loggedIn) {
+    submitButton.disabled = true;
     status.textContent = "확장 프로그램 아이콘을 눌러 먼저 로그인해주세요.";
     status.dataset.variant = "error";
     return;
   }
 
-  status.textContent = fromAccepted
-    ? "통과가 감지됐어요. 메모만 적고 올리면 됩니다."
-    : "메모를 적고 업로드할 수 있습니다.";
-  status.dataset.variant = "idle";
+  submitButton.disabled = !canUpload;
+  status.textContent = canUpload
+    ? "통과가 확인됐어요. 메모를 적고 업로드할 수 있습니다."
+    : "아직 통과가 확인되지 않았어요. 통과 후 업로드할 수 있습니다.";
+  status.dataset.variant = canUpload ? "success" : "idle";
 }
 
 function closePanel() {
@@ -190,13 +454,24 @@ async function submitProblem() {
   const submitButton = panel.querySelector(".ctsu-submit");
   const status = panel.querySelector(".ctsu-status");
 
+  if (!updateAcceptedState()) {
+    submitButton.disabled = true;
+    panel.dataset.ready = "false";
+    status.textContent = "문제가 통과된 뒤에만 업로드할 수 있습니다.";
+    status.dataset.variant = "error";
+    return;
+  }
+
   submitButton.disabled = true;
   status.textContent = "코드와 문제 정보를 읽는 중입니다...";
   status.dataset.variant = "idle";
 
   const code = await readCodeFromPage();
+  const selectedDifficulty = panel.querySelector(".ctsu-difficulty").value;
+  const detectedDifficulty = await detectDifficulty();
   const payload = {
-    difficulty: panel.querySelector(".ctsu-difficulty").value,
+    difficulty:
+      detectedDifficulty !== "Lv.0" ? detectedDifficulty : selectedDifficulty,
     memo: panel.querySelector(".ctsu-memo").value,
     solution: code,
     tags: getProblemTags(),
@@ -225,7 +500,7 @@ async function submitProblem() {
 
 function startAcceptedObserver() {
   observer = new MutationObserver(() => {
-    if (!autoOpened && looksAccepted()) {
+    if (!autoOpened && updateAcceptedState()) {
       autoOpened = true;
       openPanel(true);
     }
@@ -237,7 +512,7 @@ function startAcceptedObserver() {
   });
 
   window.setTimeout(() => {
-    if (!autoOpened && looksAccepted()) {
+    if (!autoOpened && updateAcceptedState()) {
       autoOpened = true;
       openPanel(true);
     }
