@@ -9,6 +9,14 @@ bugs, regressions, security issues, auth problems, CORS problems, token exposure
 missing validation, missing tests, broken API contracts, performance risks,
 and maintainability problems.
 
+## Primary Review Criteria
+
+Use these criteria as the first pass for every review:
+
+1. Meaningful variable and function naming
+2. Readability improvements through early returns when they reduce nesting
+3. Runtime performance and complexity risks
+
 ## Severity
 
 - P0: outage, data loss, critical security issue

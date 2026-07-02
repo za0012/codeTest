@@ -1,0 +1,46 @@
+name: Scheduled Study Review Report
+
+on:
+  schedule:
+    - cron: "0 23 * * *"
+    - cron: "30 23 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Publish scheduled review report
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_REVIEW_MODEL: ${{ vars.OPENAI_REVIEW_MODEL || 'gpt-5.5' }}
+          REVIEW_REPORT_TITLE: "Scheduled Study Code Review"
+          REVIEW_CADENCE: ${{ github.event.schedule == '30 23 * * 4' && 'weekly-friday' || 'daily-morning' }}
+          REVIEW_BASE: "HEAD~1"
+          REVIEW_HEAD: "HEAD"
+          REVIEW_EXPORT_NOTION: "1"
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_TITLE_PROPERTY: ${{ vars.NOTION_TITLE_PROPERTY || 'Name' }}
+        run: bun run review
+
+      - name: Upload scheduled report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-study-review-report
+          path: review-output/
