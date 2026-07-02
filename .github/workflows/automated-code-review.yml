@@ -30,8 +30,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_REVIEW_MODEL: ${{ vars.OPENAI_REVIEW_MODEL || 'gpt-5.5' }}
-          REVIEW_REPORT_TITLE: "Automated PR Code Review"
-          REVIEW_CADENCE: "pull-request"
+          REVIEW_REPORT_TITLE: "자동 PR 코드 리뷰"
+          REVIEW_CADENCE: "PR 리뷰"
           REVIEW_BASE: ${{ github.event.pull_request.base.sha }}
           REVIEW_HEAD: ${{ github.event.pull_request.head.sha }}
           REVIEW_GITHUB_COMMENT: "1"

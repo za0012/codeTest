@@ -107,7 +107,7 @@ async function main() {
         warnings,
       });
   const findings = mergeAndSortFindings([
-    ...checks.flatMap(checkResultToFinding),
+    ...checks.flatMap((check) => checkResultToFinding(check, changedFiles)),
     ...agentFindings,
   ]);
 
@@ -153,7 +153,7 @@ function parseArgs(args: string[]): CliOptions {
   const options: CliOptions = {
     base: process.env.REVIEW_BASE,
     head: process.env.REVIEW_HEAD,
-    title: process.env.REVIEW_REPORT_TITLE ?? "Automated Code Review",
+    title: process.env.REVIEW_REPORT_TITLE ?? "자동 코드 리뷰",
     cadence: process.env.REVIEW_CADENCE ?? "pull-request",
     failOn: parseSeverity(process.env.REVIEW_FAIL_ON),
     jsonOut: path.resolve(
@@ -350,7 +350,9 @@ async function runChecks(warnings: string[]) {
     });
 
     if (result.exitCode !== 0) {
-      warnings.push(`${check} failed with exit code ${result.exitCode}.`);
+      warnings.push(
+        `${getCheckLabel(check)} 실패: exit code ${result.exitCode}.`,
+      );
     }
   }
 
@@ -553,6 +555,7 @@ function buildAgentPrompt(input: {
       2,
     ),
     "Use an empty findings array if there are no actionable findings.",
+    "Write title, impact, suggestedFix, and verification in Korean for the final report.",
     "",
     "# Review context",
     `Base: ${input.base}`,
@@ -664,7 +667,10 @@ function extractJson(rawOutput: string) {
   return undefined;
 }
 
-function checkResultToFinding(check: CheckResult): Finding[] {
+function checkResultToFinding(
+  check: CheckResult,
+  changedFiles: string[],
+): Finding[] {
   if (check.skipped || check.exitCode === undefined || check.exitCode === 0) {
     return [];
   }
@@ -676,21 +682,64 @@ function checkResultToFinding(check: CheckResult): Finding[] {
       ? "P1"
       : "P2";
   const output = [check.stderr, check.stdout].filter(Boolean).join("\n").trim();
+  const referencedFiles = extractReferencedFiles(output);
+  const changedFileSet = new Set(changedFiles.map(normalizeFilePath));
+  const changedReferencedFile = referencedFiles.find((file) =>
+    changedFileSet.has(file),
+  );
+  const existingFailure =
+    referencedFiles.length === 0 ||
+    referencedFiles.every((file) => !changedFileSet.has(file));
+  const location =
+    changedReferencedFile ?? referencedFiles[0] ?? "package.json";
+  const checkLabel = getCheckLabel(check.name);
 
   return [
     {
       severity,
-      title: `${check.name} failed`,
-      file: "package.json",
-      impact: `The ${check.name} check exits with code ${check.exitCode}, so the change is not currently passing CI-equivalent verification.`,
+      title: `${checkLabel} 실패`,
+      file: location,
       suggestedFix: output
-        ? `Run \`${check.command}\` locally and fix the reported failure. First output:\n${trimOutput(output, 1_000)}`
-        : `Run \`${check.command}\` locally, fix the reported failure, and rerun the harness.`,
-      verification: `\`${check.command}\` exits with code 0.`,
+        ? `로컬에서 \`${check.command}\`를 실행한 뒤 아래 첫 출력부터 수정하세요.\n${trimOutput(output, 1_000)}`
+        : `로컬에서 \`${check.command}\`를 실행하고 실패 원인을 수정한 뒤 하네스를 다시 실행하세요.`,
+      impact: existingFailure
+        ? `${checkLabel} 검증이 실패했지만, 출력에 나타난 파일이 이번 PR 변경 파일 밖에 있어 기존 실패일 가능성이 큽니다.`
+        : `${checkLabel} 검증이 실패했고, 출력에 이번 PR 변경 파일이 포함되어 있어 변경 영향일 가능성이 있습니다.`,
+      verification: `\`${check.command}\`가 exit code 0으로 종료되면 해결된 것입니다.`,
       source: "harness",
-      existingFailure: false,
+      existingFailure,
     },
   ];
+}
+
+function extractReferencedFiles(output: string) {
+  const normalized = stripAnsi(output).replaceAll("\\", "/");
+  const matches = normalized.matchAll(
+    /(?:^|\s|["'(.])((?:\.\/)?(?:src|scripts|review-agents|docs|\.github)\/[^\s"'()]+?\.(?:tsx|ts|jsx|js|json|md|yaml|yml|css|mjs|cjs))/gmu,
+  );
+  const files = Array.from(matches, (match) => normalizeFilePath(match[1]));
+
+  return Array.from(new Set(files));
+}
+
+function normalizeFilePath(filePath: string) {
+  const normalized = filePath
+    .replaceAll("\\", "/")
+    .replace(/^\.\//u, "")
+    .replace(/^.*?(?=(src|scripts|review-agents|docs|\.github)\/)/u, "");
+
+  return normalized.replace(/[:),.]+$/u, "");
+}
+
+function getCheckLabel(checkName: string) {
+  const labels: Record<string, string> = {
+    lint: "Lint",
+    typecheck: "TypeScript 타입 검사",
+    test: "테스트",
+    build: "빌드",
+  };
+
+  return labels[checkName] ?? checkName;
 }
 
 function mergeAndSortFindings(findings: Finding[]) {
@@ -877,61 +926,83 @@ async function writeReport(report: ReviewReport, options: CliOptions) {
 }
 
 function renderMarkdown(report: ReviewReport) {
+  const newFindings = report.findings.filter(
+    (finding) => !finding.existingFailure,
+  );
+  const existingFindings = report.findings.filter(
+    (finding) => finding.existingFailure,
+  );
   const lines = [
     `# ${report.title}`,
     "",
-    `- Cadence: ${report.cadence}`,
-    `- Generated: ${report.generatedAt}`,
-    `- Base: \`${report.base}\``,
-    `- Head: \`${report.head}\``,
-    `- Changed files: ${report.changedFiles.length}`,
-    `- Findings: ${report.findings.length}`,
+    `- 실행 유형: ${report.cadence}`,
+    `- 생성 시각: ${report.generatedAt}`,
+    `- 기준 커밋: \`${report.base}\``,
+    `- 대상 커밋: \`${report.head}\``,
+    `- 변경 파일 수: ${report.changedFiles.length}`,
+    `- 발견 항목 수: ${report.findings.length}`,
+    `- 이번 PR 영향 가능 항목: ${newFindings.length}`,
+    `- 기존 실패 추정 항목: ${existingFindings.length}`,
     "",
-    "## Checks",
+    "## 검증 결과",
     "",
     ...report.checks.map((check) => {
       if (check.skipped) {
-        return `- ${check.name}: skipped (${check.reason})`;
+        return `- ${getCheckLabel(check.name)}: 건너뜀 (${check.reason})`;
       }
 
-      return `- ${check.name}: ${check.exitCode === 0 ? "passed" : `failed (${check.exitCode})`} - \`${check.command}\``;
+      return `- ${getCheckLabel(check.name)}: ${check.exitCode === 0 ? "통과" : `실패 (${check.exitCode})`} - \`${check.command}\``;
     }),
     "",
-    "## Findings",
+    "## 이번 PR 영향 가능 항목",
     "",
   ];
 
-  if (report.findings.length === 0) {
-    lines.push("No actionable findings.");
+  if (newFindings.length === 0) {
+    lines.push(
+      "이번 PR 변경 파일에서 직접 발생한 것으로 보이는 항목은 없습니다.",
+    );
   } else {
-    for (const finding of report.findings) {
-      const location = finding.file
-        ? `${finding.file}${finding.line ? `:${finding.line}` : ""}`
-        : "No file";
-      lines.push(
-        `### ${finding.severity} ${finding.title}`,
-        "",
-        `- Location: ${location}`,
-        `- Source: ${finding.source}`,
-        `- Existing failure: ${finding.existingFailure ? "yes" : "no"}`,
-        `- Impact: ${finding.impact}`,
-        `- Suggested fix: ${finding.suggestedFix}`,
-        `- Verification: ${finding.verification}`,
-        "",
-      );
-    }
+    appendFindings(lines, newFindings);
+  }
+
+  lines.push("", "## 기존 실패로 추정되는 항목", "");
+
+  if (existingFindings.length === 0) {
+    lines.push("기존 실패로 분류된 항목은 없습니다.");
+  } else {
+    appendFindings(lines, existingFindings);
   }
 
   if (report.warnings.length > 0) {
     lines.push(
       "",
-      "## Warnings",
+      "## 경고",
       "",
       ...report.warnings.map((warning) => `- ${warning}`),
     );
   }
 
   return `${lines.join("\n")}\n`;
+}
+
+function appendFindings(lines: string[], findings: Finding[]) {
+  for (const finding of findings) {
+    const location = finding.file
+      ? `${finding.file}${finding.line ? `:${finding.line}` : ""}`
+      : "파일 위치 없음";
+    lines.push(
+      `### ${finding.severity} ${finding.title}`,
+      "",
+      `- 위치: ${location}`,
+      `- 출처: ${finding.source}`,
+      `- 분류: ${finding.existingFailure ? "기존 실패 추정" : "이번 PR 영향 가능"}`,
+      `- 영향: ${finding.impact}`,
+      `- 제안 수정: ${finding.suggestedFix}`,
+      `- 확인 방법: ${finding.verification}`,
+      "",
+    );
+  }
 }
 
 function renderGitHubComment(report: ReviewReport) {
@@ -1028,6 +1099,13 @@ async function runShellCommand(
     (resolve, reject) => {
       const child = spawn(command, {
         cwd: repoRoot,
+        env: {
+          ...process.env,
+          FORCE_COLOR: "0",
+          NEXT_TELEMETRY_DISABLED: "1",
+          NO_COLOR: "1",
+          TERM: "dumb",
+        },
         shell: true,
         stdio: ["pipe", "pipe", "pipe"],
         timeout: options.timeoutMs,
@@ -1104,8 +1182,24 @@ function chunkText(value: string, chunkSize: number) {
   return chunks;
 }
 
+function stripAnsi(value: string) {
+  const escapeCode = "\\x1B";
+  const csiPattern = new RegExp(`${escapeCode}\\[[0-?]*[ -/]*[@-~]`, "gu");
+  const escapePattern = new RegExp(`${escapeCode}[@-_]`, "gu");
+  const c1Pattern = /\x9B[0-?]*[ -/]*[@-~]/gu;
+
+  return value
+    .replace(csiPattern, "")
+    .replace(escapePattern, "")
+    .replace(c1Pattern, "");
+}
+
 function trimOutput(value = "", maxLength = 4_000) {
-  const normalized = value.trim();
+  const normalized = stripAnsi(value)
+    .replace(/\r/gmu, "")
+    .replace(/[␍]/gmu, "")
+    .replace(/[·]/gmu, " ")
+    .trim();
   if (normalized.length <= maxLength) {
     return normalized;
   }

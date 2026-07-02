@@ -28,8 +28,8 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_REVIEW_MODEL: ${{ vars.OPENAI_REVIEW_MODEL || 'gpt-5.5' }}
-          REVIEW_REPORT_TITLE: "Scheduled Study Code Review"
-          REVIEW_CADENCE: ${{ github.event.schedule == '30 23 * * 4' && 'weekly-friday' || 'daily-morning' }}
+          REVIEW_REPORT_TITLE: "정기 스터디 코드 리뷰"
+          REVIEW_CADENCE: ${{ github.event.schedule == '30 23 * * 4' && '금요일 주간 보고서' || '매일 아침 보고서' }}
           REVIEW_BASE: "HEAD~1"
           REVIEW_HEAD: "HEAD"
           REVIEW_EXPORT_NOTION: "1"
