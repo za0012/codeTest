@@ -66,7 +66,7 @@ type CliOptions = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.resolve(__dirname, "..");
+const repoRoot = path.resolve(__dirname, "../..");
 const severityRank: Record<Severity, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
 const githubCommentMarker = "<!-- automated-code-review -->";
 
@@ -82,7 +82,7 @@ async function main() {
   }
 
   const agentPrompts = await readAgentPrompts(
-    path.join(repoRoot, "review-agents"),
+    path.join(__dirname, "agents"),
     warnings,
   );
   const refs = await computeRefs(options);
@@ -158,11 +158,11 @@ function parseArgs(args: string[]): CliOptions {
     failOn: parseSeverity(process.env.REVIEW_FAIL_ON),
     jsonOut: path.resolve(
       repoRoot,
-      process.env.REVIEW_JSON_OUT ?? "review-output/report.json",
+      process.env.REVIEW_JSON_OUT ?? "tools/code-review/output/report.json",
     ),
     markdownOut: path.resolve(
       repoRoot,
-      process.env.REVIEW_MARKDOWN_OUT ?? "review-output/report.md",
+      process.env.REVIEW_MARKDOWN_OUT ?? "tools/code-review/output/report.md",
     ),
     skipChecks: process.env.REVIEW_SKIP_CHECKS === "1",
     skipAgents: process.env.REVIEW_SKIP_AGENTS === "1",
@@ -286,7 +286,7 @@ async function collectChangedFiles(base: string, head: string) {
 
 async function readAgentPrompts(agentDir: string, warnings: string[]) {
   if (!existsSync(agentDir)) {
-    warnings.push("review-agents directory was not found.");
+    warnings.push("tools/code-review/agents directory was not found.");
     return [];
   }
 
@@ -715,7 +715,7 @@ function checkResultToFinding(
 function extractReferencedFiles(output: string) {
   const normalized = stripAnsi(output).replaceAll("\\", "/");
   const matches = normalized.matchAll(
-    /(?:^|\s|["'(.])((?:\.\/)?(?:src|scripts|review-agents|docs|\.github)\/[^\s"'()]+?\.(?:tsx|ts|jsx|js|json|md|yaml|yml|css|mjs|cjs))/gmu,
+    /(?:^|\s|["'(.])((?:\.\/)?(?:src|tools\/code-review|docs|\.github)\/[^\s"'()]+?\.(?:tsx|ts|jsx|js|json|md|yaml|yml|css|mjs|cjs))/gmu,
   );
   const files = Array.from(matches, (match) => normalizeFilePath(match[1]));
 
@@ -726,7 +726,7 @@ function normalizeFilePath(filePath: string) {
   const normalized = filePath
     .replaceAll("\\", "/")
     .replace(/^\.\//u, "")
-    .replace(/^.*?(?=(src|scripts|review-agents|docs|\.github)\/)/u, "");
+    .replace(/^.*?(?=(src|tools\/code-review|docs|\.github)\/)/u, "");
 
   return normalized.replace(/[:),.]+$/u, "");
 }

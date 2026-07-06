@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: scheduled-study-review-report
-          path: review-output/
+          path: tools/code-review/output/

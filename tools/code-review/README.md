@@ -1,4 +1,4 @@
-# Automated Code Review Pipeline
+# Code Review Harness
 
 This repository uses an LLM-backed review harness to review pull request diffs
 and publish structured feedback.
@@ -9,7 +9,7 @@ and publish structured feedback.
 2. GitHub Actions checks out the repository and installs dependencies with Bun.
 3. `bun run review` collects the base/head diff and changed files.
 4. The harness runs local verification checks such as lint, typecheck, test, and build.
-5. `AGENTS.md` and `review-agents/*.md` are sent with the diff to the OpenAI Responses API.
+5. `AGENTS.md` and `tools/code-review/agents/*.md` are sent with the diff to the OpenAI Responses API.
 6. Findings are normalized into JSON and Markdown reports.
 7. The workflow creates or updates a single automated PR comment.
 8. Scheduled runs can publish the same report format to Notion.
@@ -44,6 +44,13 @@ maintainability risks.
   a review comment.
 - `.github/workflows/scheduled-study-report.yml` runs every morning and once
   again on Friday morning for a weekly study report cadence.
+
+## Layout
+
+- `review-harness.ts`: main review runner.
+- `agents/*.md`: reviewer prompts used by the harness.
+- `integrations/`: placeholders for external publishing integrations.
+- `output/`: generated JSON and Markdown reports. This directory is ignored by Git.
 
 ## Local Verification
 
