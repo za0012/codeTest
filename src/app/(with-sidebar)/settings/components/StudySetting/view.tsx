@@ -4,7 +4,6 @@ import { ChevronRight, Copy, Earth, Sparkle, Trash2 } from "lucide-react";
 
 import { getMyMemberInfo, getMyStudyInfo } from "@/lib/api/study";
 import { alertAtom } from "@/lib/store/alertStore";
-import { deleteStudyAtom } from "@/lib/store/deleteStudyStore";
 import { modalAtom } from "@/lib/store/modalStore";
 import type { Study, UserProfile } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
@@ -15,7 +14,6 @@ import { cancelDeleteStudy, scheduleDeleteStudy } from "./service";
 function StudySetting() {
   const setAlert = useSetAtom(alertAtom);
   const setModal = useSetAtom(modalAtom);
-  const setDeleteBanner = useSetAtom(deleteStudyAtom);
   const queryClient = useQueryClient();
 
   const { data: studyInfo, isLoading: studyInfoLoading } = useQuery<Study>({

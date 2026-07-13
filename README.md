@@ -260,6 +260,55 @@ watch의 역할은 현재 값을 읽기, 해당 컴포넌트를 subscription에 
 ### 히트맵 관련
 
 히트맵은 라이브러리가 없어, 직접 구현하기로 했다.
+준비물은 간단하다. svg와 툴팁. 처음 구현이 좀 막막했다. 어디서부터 어떻게 시작해야할지 몰라서...
+대강 느낌은 알겠는데, 그 느낌을 어떻게 구현을 해야할지 모르겠다고 해야할까
+svg안에 원을 map으로 출력하고 그 circle에 tooltip을 hover시 visible하면 생기도록 설정...
+tooltip 때문에 좀 많이 멀리 돌아서 왔다.
+
+### avoid passing children using a prop
+
+biome 에러인데, 간단하게 내가 컴포넌트의 props로 ReactElement를 넘겨주었다.
+그런데 `children={<div></div>}` 이런 식으로 할당해서 나온 오류이다.
+해결 방법은 간단한데, 그냥 children=~이런 식으로 넣는 게 아니라
+
+```ts
+<Component><div></div></Component>
+```
+
+이렇게 넣으면 바로 오류가 사라진다.
+
+### invalidateQueries로 api함수를 다시 호출했음에도 불구하고 데이터가 다르게 출력된 것
+
+```ts
+  const deleteStudyFunction = async (studyId: number) => {
+    await scheduleDeleteStudy(studyId);
+    await queryClient.invalidateQueries({ queryKey: ["studyInfo"] });
+    if (!studyInfo?.delete_scheduled_at)
+      return setAlert({
+        title: "스터디 삭제",
+        content: "다시 시도해주세요",
+        variant: true,
+      });
+    setModal(null);
+    setAlert({
+      title: "스터디 삭제",
+      content: ${new Date(studyInfo.delete_scheduled_at).toLocaleDateString("ko-KR")}에 스터디가 삭제될 예정이에요.,
+      variant: false,
+    });
+  };
+```
+
+우선 코드는 이러하다. 코드 흐름 상 scheduleDeleteStudy로 스터디를 삭제하고
+invalidateQueries로 해당 쿼리키를 가진 queryFn을 다시 불러와 해당 데이터를 다시 가져온 뒤,
+그 데이터에 삭제일 여부에 따라 스터디 삭제 안내 alert가 나타날 예정이었다.
+
+그런데 계속 여부 확인에서 false가 나와 setAlert가 작동하게 되었다. 분명 invalidateQueries로 데이터를 다시 호출했는데, 무슨 일인가 싶어 좀 알아봤다.
+
+원인은 생각보다 간단한데, 해당 함수를 호출한 시점의 스냅샷, 즉 데이터를 가져오기 때문에 아무리 데이터를 갱신해도 해당 데이터를 가져올 수 없는 것이었다.
+
+invalidateQueries는 React Query 캐시를 무효화하고 다시 가져오게 만들지만, 현재 실행 중인 함수 안의 studyInfo 변수 자체를 새 값으로 바꿔주지는 않기 때문...
+
+다행인 건 해당 api가 데이터를 반환하기 떄문에 해당 데이터로 처리함으로써 해결했다.
 
 ## 기타
 
@@ -305,6 +354,8 @@ bun --bun은 next.js가 내부적으로 node.js 대신 bun 런타임을 강제�
 충돌의 핵심: bun --bun 명령어가 실행되는 순간, Bun은 시스템의 NODE_OPTIONS라는 환경 변수에 --bun을 몰래 집어넣음. "앞으로 실행될 모든 Node 프로세스는 나(Bun)처럼 행동해!"라고 명령을 내리는 셈.
 
 Node.js의 거부 반응: 그런데 Next.js(Turbopack)가 내부적으로 "이건 진짜 순수 Node.js가 처리해야 해"라며 특정 작업을 실행할 때, Node.js는 이 환경 변수를 읽게 됩니다. 이때 Node.js 입장에선 "듣도 보도 못한 --bun이라는 옵션이 왜 내 설정에 들어있어?"라며 실행을 거부하고 뻗어버리는 것.
+
+### 하네스 관련
 
 ## 참고
 

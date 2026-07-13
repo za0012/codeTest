@@ -42,6 +42,7 @@ function ProblemModal({ id, onClose, user_id }: modalType) {
       });
     }
   };
+
   const detail = [
     { label: "난이도", width: "w-16" },
     { label: "소요 시간", width: "w-20" },
@@ -51,7 +52,7 @@ function ProblemModal({ id, onClose, user_id }: modalType) {
   return (
     <div className="fixed inset-0 bg-black/25 backdrop-blur-[2px] flex items-center justify-center z-50 p-6">
       <div
-        className="bg-white rounded-4xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar p-10 relative"
+        className="bg-white rounded-4xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar p-10 relative"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",

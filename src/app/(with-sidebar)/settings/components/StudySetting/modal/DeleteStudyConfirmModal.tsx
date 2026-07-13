@@ -24,16 +24,16 @@ export function DeleteStudyConfirmModal({
           다시는 복구할 수 없어요.
         </span>
       </p>
-      <div className="flex gap-3 w-full px-0.5">
+      <div className="flex gap-5 w-2/3 px-0.5">
         <Button
           type="button"
-          className="flex-1 py-4 px-2 rounded-[18px] bg-[#F2F4F6] text-[#4E5968] font-bold text-[16px] hover:bg-[#E5E8EB] active:scale-[0.97] transition-all duration-150"
+          className="flex-1 py-3 px-4 rounded-2xl bg-[#F2F4F6] text-[#4E5968] font-bold text-[14px] hover:bg-[#E5E8EB] active:scale-[0.97] transition-all duration-150"
           onClick={onCancel}
           label="취소"
         />
         <Button
           type="button"
-          className="flex-1 py-4 px-2 rounded-[18px] bg-[#F04452] text-white font-bold text-[16px] hover:bg-[#DC3442] active:scale-[0.97] transition-all duration-150 shadow-sm"
+          className="flex-1 py-3 px-4 rounded-2xl bg-[#F04452] text-white font-bold text-[14px] hover:bg-[#DC3442] active:scale-[0.97] transition-all duration-150 shadow-sm"
           onClick={onConfirm}
           label="삭제하기"
         />

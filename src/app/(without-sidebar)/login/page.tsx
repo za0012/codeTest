@@ -39,8 +39,9 @@ function page() {
     try {
       await signIn(data.email, data.password);
       const study = await getMyStudyInfo();
+      console.log(study);
       router.replace(study ? "/home" : "/find");
-    } catch (error) {
+    } catch {
       return setAlert({
         title: "로그인 실패",
         content: "이메일 또는 비밀번호를 확인해주세요",
@@ -159,6 +160,7 @@ function page() {
               회원가입
             </Link>
           </p>
+          <p>ddong@jj.com || ddong!</p>
         </div>
       </div>
     </div>
