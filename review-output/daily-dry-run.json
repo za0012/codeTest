@@ -1,0 +1,24 @@
+{
+  "title": "자동 코드 리뷰",
+  "cadence": "pull-request",
+  "generatedAt": "2026-07-03T00:05:32.017Z",
+  "repoRoot": "C:\\Users\\yhj\\Desktop\\개인용\\codeTest",
+  "base": "ad3850b",
+  "head": "HEAD",
+  "changedFiles": [
+    ".github/workflows/automated-code-review.yml",
+    ".github/workflows/scheduled-study-report.yml",
+    ".gitignore",
+    "AGENTS.md",
+    "docs/automated-code-review.md",
+    "package.json",
+    "review-agents/architecture-reviewer.md",
+    "review-agents/bug-reviewer.md",
+    "review-agents/performance-reviewer.md",
+    "review-agents/reporter.md",
+    "scripts/review-harness.ts"
+  ],
+  "checks": [],
+  "findings": [],
+  "warnings": []
+}

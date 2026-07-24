@@ -1,0 +1,24 @@
+{
+  "title": "자동 PR 코드 리뷰",
+  "cadence": "PR 리뷰",
+  "generatedAt": "2026-07-02T07:03:03.326Z",
+  "repoRoot": "C:\\Users\\yhj\\Desktop\\개인용\\codeTest",
+  "base": "codeTests/Nexts",
+  "head": "HEAD",
+  "changedFiles": [
+    ".github/workflows/automated-code-review.yml",
+    ".github/workflows/scheduled-study-report.yml",
+    ".gitignore",
+    "AGENTS.md",
+    "docs/automated-code-review.md",
+    "package.json",
+    "review-agents/architecture-reviewer.md",
+    "review-agents/bug-reviewer.md",
+    "review-agents/performance-reviewer.md",
+    "review-agents/reporter.md",
+    "scripts/review-harness.ts"
+  ],
+  "checks": [],
+  "findings": [],
+  "warnings": []
+}
