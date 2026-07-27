@@ -28,6 +28,9 @@ codeTest/
 
   extension/
     manifest.json
+    shared.js
+    api-client.js
+    programmers.js
     popup.html
     popup.css
     popup.js
@@ -216,6 +219,59 @@ https://school.programmers.co.kr/learn/courses/30/lessons/12901
 
 ## 파일별 역할
 
+## 유지보수 가이드
+
+기능을 바꿀 때는 아래 기준으로 파일을 찾으면 됩니다.
+
+```text
+로그인/업로드 API 주소가 바뀐다
+  -> shared.js, api-client.js
+
+Chrome storage key나 message type이 바뀐다
+  -> shared.js
+
+프로그래머스에서 제목/난이도/태그/코드가 잘못 들어온다
+  -> programmers.js
+
+오른쪽 아래 버튼, 드래그 위치, 업로드 패널 동작을 바꾼다
+  -> content.js
+
+업로드 패널 디자인을 바꾼다
+  -> content.css
+
+확장 popup 로그인 UI 동작을 바꾼다
+  -> popup.js
+
+확장 popup 디자인을 바꾼다
+  -> popup.css
+
+확장 프로그램 권한이나 주입 파일 순서를 바꾼다
+  -> manifest.json
+
+프로그래머스 에디터 코드 추출 방식이 바뀐다
+  -> programmers.js, page-bridge.js
+```
+
+새 코테 사이트를 추가할 때는 `programmers.js`와 비슷한 `baekjoon.js`, `leetcode.js` 같은 파일을 만들고 `CodeTestUploader.sites.register()`로 adapter를 등록하면 됩니다. `content.js`는 현재 URL에 맞는 adapter를 자동으로 골라 공통 업로드 UI를 띄웁니다.
+
+새 사이트 adapter는 아래 형태를 맞춥니다.
+
+```js
+CodeTestUploader.sites.register({
+  label: "Baekjoon",
+  levels: ["Bronze", "Silver", "Gold"],
+  matches(currentLocation) {
+    return currentLocation.hostname === "www.acmicpc.net";
+  },
+  getProblemTitle() {},
+  getProblemTags() {},
+  detectDifficulty() {},
+  getProblemUrl() {},
+  looksAccepted() {},
+  readCodeFromPage() {},
+});
+```
+
 ### `manifest.json`
 
 Chrome 확장 프로그램 설정 파일입니다.
@@ -225,9 +281,54 @@ Chrome 확장 프로그램 설정 파일입니다.
 - `manifest_version: 3`
 - popup: `popup.html`
 - background service worker: `background.js`
-- 프로그래머스 문제 페이지에 `content.js`, `content.css` 주입
+- 프로그래머스 문제 페이지에 `shared.js`, `programmers.js`, `content.js`, `content.css` 주입
 - 로컬 Next 서버 호출 권한: `http://localhost:3000/*`
 - 프로그래머스 페이지 접근 권한: `https://school.programmers.co.kr/*`
+
+### `shared.js`
+
+확장 프로그램 전체에서 같이 쓰는 공통 설정과 작은 유틸입니다.
+
+담당하는 것:
+
+- 기본 API 주소
+- API path
+- Chrome message type
+- Chrome storage key
+- 업로드 버튼 모서리 위치 목록
+- 사이트 adapter registry
+- 공백 정리용 텍스트 유틸
+- 로그인 정보 저장/조회/삭제 helper
+
+새 저장값이나 메시지 타입이 필요하면 먼저 이 파일에 추가합니다.
+
+### `api-client.js`
+
+Next.js 확장 전용 API를 호출하는 파일입니다.
+
+담당하는 것:
+
+- `/api/extension/auth/login`
+- `/api/extension/auth/refresh`
+- `/api/extension/problems`
+- access token 만료 시 refresh 후 업로드 재시도
+
+popup과 background가 같은 API 호출 로직을 공유하기 위해 분리했습니다.
+
+### `programmers.js`
+
+프로그래머스 페이지에서 문제 정보를 읽는 파일입니다.
+
+담당하는 것:
+
+- 문제 제목 추출
+- 문제 URL 정규화
+- breadcrumb 기반 태그 후보 추출
+- 화면/HTML/검색 페이지 기반 난이도 추정
+- 통과 문구 감지
+- `page-bridge.js`를 통한 코드 읽기
+
+프로그래머스 DOM 구조가 바뀌어서 값이 잘못 들어오면 대부분 이 파일을 수정하면 됩니다.
 
 ### `popup.html`, `popup.css`, `popup.js`
 
@@ -262,8 +363,7 @@ chrome.storage.local
 하는 일:
 
 - content script에서 온 업로드 요청 받기
-- 저장된 access token으로 Next API 호출
-- 401 응답이 오면 refresh token으로 세션 갱신 후 재시도
+- 저장된 access token을 가져와 `api-client.js`에 업로드 요청 위임
 - popup/content script 사이에서 로그인 상태 전달
 
 ### `content.js`
@@ -272,12 +372,14 @@ chrome.storage.local
 
 하는 일:
 
-- 오른쪽 아래 `스터디 업로드` 버튼 추가
-- 통과 결과 문구 감지
+- `스터디 업로드` 버튼 추가
+- 버튼을 네 모서리 중 원하는 위치로 이동
 - 업로드 패널 표시
-- 문제 제목, URL, 난이도, 태그 후보 수집
-- `page-bridge.js`를 통해 에디터 코드 읽기 시도
+- 통과 여부에 따라 업로드 버튼 활성/비활성 처리
+- `programmers.js`에서 읽은 문제 정보로 payload 구성
 - 최종 payload를 `background.js`로 전송
+
+통과 감지 문구 자체는 `programmers.js`에 있습니다.
 
 통과 감지에 사용하는 후보 문구:
 
@@ -313,7 +415,7 @@ content script는 Chrome 격리 환경에서 실행되기 때문에 페이지의
 
 - 프로그래머스 페이지 DOM 구조가 바뀌면 제목, 난이도, 코드 추출이 틀릴 수 있습니다.
 - 통과 감지는 화면 텍스트 기반이라 프로그래머스 결과 문구가 바뀌면 놓칠 수 있습니다.
-- 난이도는 페이지에서 `Lv.0`~`Lv.5` 텍스트를 찾지 못하면 `Lv.0`으로 둡니다.
+- 난이도는 페이지 텍스트, HTML, 프로그래머스 문제 목록 검색, 캐시 순서로 찾고 끝까지 실패하면 `Lv.0`으로 둡니다.
 - 문제 태그는 breadcrumb와 링크 텍스트에서 후보만 가져옵니다.
 - 풀이 시간은 아직 자동 측정하지 않고 기본값 `0`으로 보냅니다.
 - Chrome Web Store 출시용 아이콘, 설명, 권한 최소화, 개인정보 처리 문구는 아직 없습니다.
