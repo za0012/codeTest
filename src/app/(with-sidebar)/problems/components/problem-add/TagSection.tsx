@@ -25,7 +25,7 @@ function TagSection() {
     // 선택 후 렌더링이 되고 나서 값이 적용이 된다.
     // 그러니까 버튼 선택으로 값 삽입 후 리렌더링이 일어나야 selectedTags에 값이 들어간다는 것이댜. da
 
-    console.log(selectedTags);
+    // console.log(selectedTags);
   };
 
   return (

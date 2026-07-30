@@ -7,7 +7,7 @@ import { DIFFICULT_TAGS, type PlatformType } from "@/constants/problem";
 function TimeDateDiff() {
   const { register, control, watch } = useFormContext();
   const platform = useWatch({ control, name: "platform" });
-  console.log(platform);
+  // console.log(platform);
   return (
     <section className="grid grid-cols-3 gap-4 bg-[#f9fafb] rounded-2xl p-5 border border-gray-50">
       <div>

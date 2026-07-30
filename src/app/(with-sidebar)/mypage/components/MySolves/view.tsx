@@ -22,7 +22,7 @@ function MySolves({ id }: { id: number }) {
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error occurred</div>;
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div>

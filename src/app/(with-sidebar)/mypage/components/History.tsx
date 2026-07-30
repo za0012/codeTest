@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import Tooltip from "@/components/ui/Tooltip";
 import { getHeatmapDataDaily } from "@/lib/api/mypage";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const CELL = 12; // 원 지름 느낌
 const GAP = 4; // 원 사이 간격
@@ -69,7 +69,7 @@ function History2({ id }: { id: number }) {
   const startDate = new Date(today.getFullYear(), today.getMonth() - 11, 1); //상황에 따라 유동적으로 길이 줄이기와 관련해 고민 해봐야 함. 안에 스크롤바를 두면 될듯 지금은 사이드바까지 침범함.
   const startDayOfWeek = startDate.getDay(); // 첫날 요일 (offset용)
 
-  console.log(heatmap);
+  // console.log(heatmap);
 
   if (isLoading || !heatmap) {
     return <Skeleton className="w-225 h-50" />;

@@ -59,7 +59,7 @@ function DifficultCount({ id }: { id: number }) {
     queryKey: ["barChart"],
     queryFn: () => getDifficultyStatsCount(id),
   });
-  console.log(data);
+  // console.log(data);
   return (
     <div>
       <p className="font-bold text-[#191F28] text-base tracking-tight mb-2">
