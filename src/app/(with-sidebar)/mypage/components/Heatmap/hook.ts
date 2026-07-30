@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function createAndFillHeatmap(mySolves: Record<string, number>) {
   const yearSolves: Record<string, number> = {}; //Record 가 무엇인지 알아보기
   const today = new Date();
@@ -6,7 +8,8 @@ export function createAndFillHeatmap(mySolves: Record<string, number>) {
 
   const cur = new Date(start);
   while (cur <= end) {
-    const key = cur.toISOString().slice(0, 10);
+    // const key = cur.toISOString().slice(0, 10);
+    const key = format(cur, "yyyy-MM-dd");
     yearSolves[key] = mySolves[key] ?? 0;
     cur.setDate(cur.getDate() + 1);
   }

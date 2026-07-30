@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 interface lineDataType {
   date: string;
   value: number;
@@ -6,12 +8,13 @@ interface lineDataType {
 export function createSixMonthObject(lineData: lineDataType[] | undefined) {
   const result: lineDataType[] = [];
   const today = new Date();
-  const startMonth = new Date(today.getFullYear(), today.getMonth() - 4);
-  const endMonth = new Date(today.getFullYear(), today.getMonth() + 1);
+  const startMonth = new Date(today.getFullYear(), today.getMonth() - 5);
+  const endMonth = new Date(today.getFullYear(), today.getMonth());
   const curMonth = new Date(startMonth);
 
   while (curMonth <= endMonth) {
-    const key = curMonth.toISOString().slice(0, 7);
+    // const key = curMonth.toISOString().slice(0, 7);
+    const key = format(curMonth, "yyyy-MM");
     const lineValue = lineData?.find((item) => item.date === key)?.value ?? 0;
     const newKey = new Date(key);
     const changeKey =
