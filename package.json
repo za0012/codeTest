@@ -7,6 +7,7 @@
     "build": "bun next build",
     "start": "bun ext start",
     "lint": "bun biome check --apply .",
+    "review": "bun tools/code-review/review-harness.ts",
     "test": "bun test ./src/**/*.test.ts",
     "format": "biome format --write",
     "prepare": "husky"
