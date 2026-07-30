@@ -4,13 +4,15 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# 기본은 읽기 전용. secrets가 필요한 publish 권한은 ai-review job에서만 올린다.
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
-  review:
+  # 1) 검증 단계: PR 브랜치 코드를 실제로 실행(lint/typecheck/test/build)한다.
+  #    untrusted PR 코드가 도는 곳이므로 어떤 secret도 주입하지 않는다.
+  #    브랜치 보호에서 필수로 걸 체크는 이 job(checks)이다.
+  checks:
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +27,53 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Run automated review
+      - name: Run checks (lint/typecheck/test/build)
+        env:
+          REVIEW_REPORT_TITLE: "자동 PR 코드 리뷰"
+          REVIEW_CADENCE: "PR 리뷰"
+          REVIEW_BASE: ${{ github.event.pull_request.base.sha }}
+          REVIEW_HEAD: ${{ github.event.pull_request.head.sha }}
+          # NEXT_PUBLIC_* 는 원래 브라우저에 노출되는 공개 값이다.
+          # 빌드(프리렌더)에서 supabase 클라이언트 생성이 throw하지 않도록 플레이스홀더를 준다.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+        run: bun run review -- --skip-agents --fail-on P1
+
+      - name: Upload check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automated-code-review-checks
+          path: tools/code-review/output/
+
+  # 2) LLM 리뷰 + Notion/GitHub publish: secrets가 필요하다.
+  #    checks(untrusted 코드 실행)와 분리하고, environment 승인 게이트 뒤에 둔다.
+  #    --skip-checks 로 코드 실행 없이 diff 수집·리뷰·publish만 수행한다.
+  ai-review:
+    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    runs-on: ubuntu-latest
+    # Settings > Environments 에서 이 환경에 required reviewers 를 추가하면
+    # secrets가 실린 이 job이 수동 승인 후에만 실행된다.
+    environment: ai-review
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      # 설치 단계에는 secrets를 노출하지 않는다(postinstall 스크립트 방어).
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run AI review & publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -40,11 +88,11 @@ jobs:
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           NOTION_TITLE_PROPERTY: ${{ vars.NOTION_TITLE_PROPERTY || 'Name' }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: bun run review -- --fail-on P1
+        run: bun run review -- --skip-checks
 
       - name: Upload review report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automated-code-review
+          name: automated-code-review-ai
           path: tools/code-review/output/
