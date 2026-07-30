@@ -122,7 +122,6 @@ function RegisterPhase2({ moveStep }: phaseType) {
           가입하기
         </motion.button>
       </div>
-      <p>test789@test.com, test789!@</p>
     </div>
   );
 }
