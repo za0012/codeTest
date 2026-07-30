@@ -35,6 +35,9 @@ const DIFFICULTY_MAP: Record<string, string> = {
   "Div.1": "플래티넘",
   Master: "다이아몬드", // 마스터 이상은 백준 루비~측정불가(다이아몬드 티어)입니다.
   Grandmaster: "다이아몬드",
+  "International Grandmaster": "마스터",
+  "Legendary Grandmaster": "마스터",
+  Headquarters: "마스터",
 
   // SWEA (Samsung Expert Academy)
   D1: "아이언",
