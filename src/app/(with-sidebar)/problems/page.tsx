@@ -46,12 +46,11 @@ function page() {
   const { data: problems, isLoading: isProblemLoading } = useQuery<Problem[]>({
     queryKey: [
       "problems",
+      myInfo?.study_id,
       platform,
       difficulty,
       memberName,
       search,
-      openProblem,
-      openAddProblem,
     ],
     queryFn: () =>
       getProblems(myInfo.study_id, {
@@ -62,7 +61,7 @@ function page() {
       }),
     enabled: !!myInfo?.study_id,
   });
-  console.log(myInfo);
+  // console.log(myInfo);
   const { data: members } = useQuery({
     queryKey: ["memberList"],
     queryFn: () => getStudyMembers(myInfo.study_id),

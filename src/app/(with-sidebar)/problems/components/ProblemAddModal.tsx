@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { PlatformType } from "@/constants/problem";
@@ -35,6 +36,7 @@ const ProblemAddModal = ({
       tags: [],
     },
   });
+  const queryClient = useQueryClient();
 
   const onSubmit = async (data: problemType) => {
     // console.log(study_id);
@@ -54,6 +56,7 @@ const ProblemAddModal = ({
       time_spent: data.time,
       url: data.url,
     });
+    queryClient.invalidateQueries({ queryKey: ["problems"] });
     onClose(false);
   };
 
