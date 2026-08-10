@@ -1,12 +1,18 @@
-export function createAndFillHeatmap(mySolves: Record<string, number>) {
+import { format } from "date-fns";
+
+export function createAndFillHeatmap(
+  mySolves: Record<string, number>,
+  today = new Date(),
+) {
   const yearSolves: Record<string, number> = {}; //Record 가 무엇인지 알아보기
-  const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth() - 11, 1);
   const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
   const cur = new Date(start);
   while (cur <= end) {
-    const key = cur.toISOString().slice(0, 10);
+    // toISOString()은 UTC로 변환돼 KST에서 하루가 밀리고 말일이 누락된다.
+    // DB의 date(YYYY-MM-DD)와 맞추려면 로컬 기준으로 포맷해야 한다.
+    const key = format(cur, "yyyy-MM-dd");
     yearSolves[key] = mySolves[key] ?? 0;
     cur.setDate(cur.getDate() + 1);
   }

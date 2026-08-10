@@ -46,7 +46,7 @@ function Sidebar() {
 
   const { data: members } = useQuery({
     queryKey: ["getMembers"],
-    queryFn: () => getStudyMembers(study.id),
+    queryFn: () => getStudyMembers(study?.id ?? 0),
     enabled: !!study,
   });
 

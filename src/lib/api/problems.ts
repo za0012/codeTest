@@ -73,7 +73,7 @@ export const getProblems = async (
     .eq("study_id", studyId)
     .order("date", { ascending: false });
 
-  console.log("memberNamememberName", filters?.memberName);
+  // console.log("memberNamememberName", filters?.memberName);
 
   if (filters?.platform && filters.platform !== "all") {
     query = query.eq("platform", filters.platform);

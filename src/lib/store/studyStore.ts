@@ -2,7 +2,17 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { Study } from "../types/study";
 
-const studyAtom = atomWithStorage<Study>("study_storage", {
+// 스터디에 참여하기 전 초기 상태에서는 값이 아직 없어 모두 null이다.
+interface StoredStudy {
+  created_at: string | null;
+  description: string | null;
+  emoji: string | null;
+  id: number | null;
+  invite_code: string | null;
+  name: string | null;
+}
+
+const studyAtom = atomWithStorage<StoredStudy>("study_storage", {
   created_at: null,
   description: null,
   emoji: null,

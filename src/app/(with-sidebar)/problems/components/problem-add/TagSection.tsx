@@ -1,14 +1,14 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { ALGORITHM_TAGS } from "@/constants/problem";
 
 function TagSection() {
   const [isOpen, setIsOpen] = useState(false);
-  const { setValue, control, watch } = useFormContext();
+  const { setValue, control } = useFormContext();
 
   // const { watch } = useForm({ defaultValues: { tags: [] } });
-  const selectedTags = useWatch({ control, name: "tags" });
+  const selectedTags: string[] = useWatch({ control, name: "tags" }) ?? [];
   // const selectedTags = watch("tags") ?? [];
 
   const toggleTag = (tag: string) => {
@@ -25,7 +25,7 @@ function TagSection() {
     // 선택 후 렌더링이 되고 나서 값이 적용이 된다.
     // 그러니까 버튼 선택으로 값 삽입 후 리렌더링이 일어나야 selectedTags에 값이 들어간다는 것이댜. da
 
-    console.log(selectedTags);
+    // console.log(selectedTags);
   };
 
   return (
