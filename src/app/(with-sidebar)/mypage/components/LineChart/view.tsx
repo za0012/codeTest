@@ -54,7 +54,7 @@ function MonthlySolve({ id }: { id: number }) {
               dy={10}
             />
             <YAxis
-              width="auto"
+              width={32}
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#9ca3af", fontSize: 11 }}
