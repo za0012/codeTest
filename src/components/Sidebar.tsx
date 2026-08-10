@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   Circle,
@@ -33,6 +33,8 @@ function Sidebar() {
   const setDeleteBanner = useSetAtom(deleteStudyAtom);
   const isDeleteBanner = useAtomValue(deleteStudyAtom);
 
+  const queryClient = useQueryClient();
+
   const { data: study } = useQuery<Study>({
     // 타입으로 <Study>를 붙이면 undifined일 수도 있다고 나옴...
     queryKey: ["studyInfo"],
@@ -59,6 +61,7 @@ function Sidebar() {
       variant: false,
     });
     setDeleteBanner(null);
+    queryClient.clear(); //계정 전환 시 이전 사용자 데이터 완전 제거
     router.push("/login");
   };
   // console.log("getMyStudy", study);
@@ -73,7 +76,7 @@ function Sidebar() {
     { to: "/test", label: "테스트", icon: TestTubeDiagonal },
   ];
 
-  console.log(study);
+  // console.log(study);
 
   useEffect(() => {
     if (study?.delete_scheduled_at && !isDeleteBanner) {
