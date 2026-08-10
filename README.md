@@ -97,6 +97,13 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
+로그인 화면의 `데모 계정 채우기` 버튼을 쓰려면 아래 두 값을 추가합니다. 개발 환경에서만 동작하고, 값이 없으면 버튼 자체가 렌더되지 않습니다.
+
+```
+NEXT_PUBLIC_DEMO_EMAIL=
+NEXT_PUBLIC_DEMO_PASSWORD=
+```
+
 Chrome 확장은 `chrome://extensions` → 개발자 모드 → **압축해제된 확장 프로그램을 로드**로 불러옵니다.
 
 ---

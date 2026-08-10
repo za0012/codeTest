@@ -6,7 +6,7 @@
     "dev": "bun next dev",
     "build": "bun next build",
     "start": "bun next start",
-    "lint": "bun biome check --apply .",
+    "lint": "bun biome check --write .",
     "review": "bun tools/code-review/review-harness.ts",
     "test": "TZ=Asia/Seoul bun test src",
     "format": "biome format --write",
