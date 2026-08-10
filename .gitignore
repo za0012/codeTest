@@ -12,7 +12,11 @@
 
 # testing
 /coverage
-/review-output
+# 하네스 실행 산출물은 추적하지 않는다.
+# 다만 일간 리뷰 리포트는 자동 리뷰가 실제로 무엇을 잡아내는지 보여주는
+# 참고 자료라 README에서 링크하므로 예외로 남긴다.
+/review-output/*
+!/review-output/daily-engineering-review-*.md
 /tools/code-review/output
 
 # next.js

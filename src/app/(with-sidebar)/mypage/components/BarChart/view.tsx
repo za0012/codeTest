@@ -76,7 +76,7 @@ function DifficultCount({ id }: { id: number }) {
               tick={{ fill: "#9ca3af", fontSize: 11 }}
             />
             <YAxis
-              width="auto"
+              width={32}
               dataKey="count"
               axisLine={false}
               tickLine={false}
