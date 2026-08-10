@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun next dev",
     "build": "bun next build",
-    "start": "bun ext start",
+    "start": "bun next start",
     "lint": "bun biome check --apply .",
     "review": "bun tools/code-review/review-harness.ts",
     "test": "TZ=Asia/Seoul bun test src",
