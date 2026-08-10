@@ -1,24 +1,24 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { FileCode2, Plus } from "lucide-react";
+import { useState } from "react";
 import SelectDemo from "@/components/SelectCustom";
-import { getMyMemberInfo } from "@/lib/api/members";
-import { getProblems } from "@/lib/api/problems";
-import ProblemCard from "./components/ProblemCard";
-import type { Problem, UserProfile } from "@/lib/types/study";
+import Input from "@/components/ui/Input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ALGORITHM_TAGS,
   DIFFICULT_TAGS,
   PLATFORM_TAGS,
   type PlatformType,
 } from "@/constants/problem";
-import { useState } from "react";
-import Input from "@/components/ui/Input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { FileCode2, Plus } from "lucide-react";
+import { getMyMemberInfo } from "@/lib/api/members";
+import { getProblems } from "@/lib/api/problems";
 import { getStudyMembers } from "@/lib/api/study";
-import ProblemModal from "./components/ProblemModal";
+import type { Problem } from "@/lib/types/study";
 import ProblemAddModal from "./components/ProblemAddModal";
+import ProblemCard from "./components/ProblemCard";
+import ProblemModal from "./components/ProblemModal";
 
 function page() {
   // const [platform, setPlatform] = useState("all");
@@ -87,7 +87,7 @@ function page() {
       placeholder: "난이도",
     },
     {
-      array: members,
+      array: members ?? [],
       value: memberName,
       change: setMemberName,
       placeholder: "풀이자",
@@ -163,9 +163,9 @@ function page() {
       </div>
       <div className="flex flex-col gap-3 overflow-y-auto">
         {isProblemLoading ? (
-          new Array(3)
-            .fill(0)
-            .map((_, i) => <Skeleton key={`${i}`} className="h-18 w-full" />)
+          ["s1", "s2", "s3"].map((skeletonKey) => (
+            <Skeleton key={skeletonKey} className="h-18 w-full" />
+          ))
         ) : problems?.length === 0 ? (
           <div className="flex flex-col items-center justify-center mt-20 text-center">
             <FileCode2 size={40} className="text-gray-200 mb-3" />

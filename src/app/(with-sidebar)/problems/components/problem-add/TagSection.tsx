@@ -1,14 +1,14 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { ALGORITHM_TAGS } from "@/constants/problem";
 
 function TagSection() {
   const [isOpen, setIsOpen] = useState(false);
-  const { setValue, control, watch } = useFormContext();
+  const { setValue, control } = useFormContext();
 
   // const { watch } = useForm({ defaultValues: { tags: [] } });
-  const selectedTags = useWatch({ control, name: "tags" });
+  const selectedTags: string[] = useWatch({ control, name: "tags" }) ?? [];
   // const selectedTags = watch("tags") ?? [];
 
   const toggleTag = (tag: string) => {
