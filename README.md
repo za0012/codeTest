@@ -55,7 +55,31 @@
 
 데이터 조회(`service`) · 상태(`hook`) · 화면(`view`)을 분리해, 기능을 추가해도 화면과 로직이 뒤섞이지 않도록 구성했습니다.
 
-Figma Make로 만든 초기 코드는 700줄이 넘는 페이지 컴포넌트에 폼·상태·모달 로직이 뒤섞여 있었습니다. 컴포넌트 분리와 React Hook Form·TanStack Query 적용을 시도했지만 기존 구조를 유지하며 고치는 방식으로는 복잡도를 줄이기 어렵다고 판단해, 기존 코드는 별도 브랜치에 보관하고 App Router 프로젝트에서 다시 시작했습니다.
+Figma Make로 만든 초기 코드는 600줄 이상의 페이지 컴포넌트에 폼·상태·모달 로직이 뒤섞여 있었습니다. 컴포넌트 분리와 React Hook Form·TanStack Query 적용을 시도했지만 기존 구조를 유지하며 고치는 방식으로는 복잡도를 줄이기 어렵다고 판단해, 기존 코드는 별도 브랜치에 보관하고 App Router 프로젝트에서 다시 시작했습니다.
+
+---
+
+## 만드는 방식
+
+웹 서비스(화면 · 상태 · API · 차트 · SVG 히트맵)는 **직접 구현**했습니다.
+아래 두 가지는 **코드를 Codex가 작성**했고, 저는 무엇을 만들지와 어디까지 허용할지를 정하고 결과를 검토했습니다.
+
+**Chrome 확장**
+`CustomEvent → content script → service worker → Next.js API` 전달 흐름과 저장 시점을 설계하고 동작을 확인했습니다.
+통과를 감지해도 자동 저장하지 않고, 난이도·메모를 사용자가 확인한 뒤 저장하도록 범위를 정했습니다.
+
+**자동 코드 리뷰**
+두 갈래로 나뉩니다.
+
+- **일간 리뷰 리포트** — Codex 자동화가 커밋·작업 트리·의존성 변경을 읽고 리포트를 만들어 Notion에 누적합니다.
+  점검 항목(네이밍, Early Return, SRP, 타입 안정성, API 시그니처 명확성, 접근성, 보안)과 보고서 구조는 자동화 프롬프트에 정의했습니다.
+- **PR 검증** — GitHub Actions에서 lint·typecheck·test·build를 실행하고, build·typecheck·test 실패는 P1로 분류해 병합을 차단합니다.
+  LLM 리뷰 단계는 `OPENAI_API_KEY`가 있을 때만 동작하며, 현재는 비용 때문에 꺼 두었습니다.
+
+`tools/code-review/`의 하네스 코드는 Codex가 작성했습니다.
+초기 워크플로는 PR 코드를 실행하는 job에 `OPENAI_API_KEY`·`NOTION_TOKEN`을 함께 주입하고 있었는데,
+**이 구조를 위 일간 리뷰 리포트가 리스크로 지적했습니다**([예시](review-output/daily-engineering-review-2026-07-03.md)).
+검사와 게시를 두 job으로 분리해 검사 job에는 어떤 secret도 넣지 않고, 게시 job은 `environment` 승인 게이트 뒤로 옮겼습니다.
 
 ---
 
