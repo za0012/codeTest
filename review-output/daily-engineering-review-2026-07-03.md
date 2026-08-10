@@ -34,7 +34,7 @@
 
 - `README.md`: 히트맵 구현 메모, Biome children prop 오류 메모, React Query `invalidateQueries` 스냅샷 이슈 설명 추가
 - `src/app/(with-sidebar)/settings/components/AccountSetting/service.ts`: 계정 설정 서비스 파일에 알고리즘 풀이용 `solution2`, `solution` 함수와 디버그 로그가 추가됨
-- `src/app/(without-sidebar)/login/page.tsx`: 로그인 성공 후 `console.log(study)` 추가, catch 인자 제거, 로그인 화면 하단에 `ddong@jj.com || ddong!` 텍스트 추가
+- `src/app/(without-sidebar)/login/page.tsx`: 로그인 성공 후 `console.log(study)` 추가, catch 인자 제거, 로그인 화면 하단에 `테스트 계정 문자열(삭제됨)` 텍스트 추가
 
 ### TODO/FIXME/보안 키워드
 
@@ -111,7 +111,7 @@
 ### 접근성
 
 - `login/page.tsx:111-113`의 비밀번호 보기/숨기기 버튼은 `aria-label`이 있어 기본 접근성은 괜찮다.
-- 다만 `login/page.tsx:161`의 `ddong@jj.com || ddong!`는 화면 하단에 의미 없이 노출되는 테스트 계정처럼 보인다. 스크린리더와 사용자 모두에게 제품 UI의 일부처럼 읽히며, 계정 정보 노출 리스크가 있다.
+- 다만 `login/page.tsx:161`의 `테스트 계정 문자열(삭제됨)`는 화면 하단에 의미 없이 노출되는 테스트 계정처럼 보인다. 스크린리더와 사용자 모두에게 제품 UI의 일부처럼 읽히며, 계정 정보 노출 리스크가 있다.
   - 수정 제안: 개발 전용 자동 채우기 영역 안으로 옮기거나 제거한다.
 
 ### 성능 / 속도
@@ -222,7 +222,7 @@
 
 - 우선 보안: `.github/workflows/automated-code-review.yml`에서 secrets가 untrusted PR 코드와 함께 실행되지 않도록 workflow를 재설계한다.
 - 우선 빌드: `AccountSetting/service.ts`의 연습 코드를 제거하고 `TagSection.tsx`의 form 타입을 명시해 `bunx.cmd tsc --noEmit --pretty false`를 다시 실행한다.
-- 우선 노출: `login/page.tsx`의 `ddong@jj.com || ddong!`와 `console.log(study)`를 제거한다.
+- 우선 노출: `login/page.tsx`의 `테스트 계정 문자열(삭제됨)`와 `console.log(study)`를 제거한다.
 - 검증 명령:
   - `bun.cmd biome check .`
   - `bunx.cmd tsc --noEmit --pretty false`

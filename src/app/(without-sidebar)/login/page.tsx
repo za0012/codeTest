@@ -160,7 +160,6 @@ function page() {
               회원가입
             </Link>
           </p>
-          <p>ddong@jj.com || ddong!</p>
         </div>
       </div>
     </div>
