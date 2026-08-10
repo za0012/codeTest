@@ -18,6 +18,13 @@ interface loginType {
   password: string;
 }
 
+// 데모 계정은 소스에 두지 않고 .env에서 읽는다.
+// 값이 없으면 아래 '데모 계정 채우기' 블록 자체를 렌더하지 않는다.
+const DEMO_EMAIL = process.env.NEXT_PUBLIC_DEMO_EMAIL;
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
+const isDemoFillAvailable =
+  process.env.NODE_ENV === "development" && !!DEMO_EMAIL && !!DEMO_PASSWORD;
+
 function page() {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const router = useRouter();
@@ -31,8 +38,9 @@ function page() {
   } = useForm<loginType>();
 
   const handleFill = () => {
-    setValue("email", "test123@test.com");
-    setValue("password", "test123!@");
+    if (!DEMO_EMAIL || !DEMO_PASSWORD) return;
+    setValue("email", DEMO_EMAIL);
+    setValue("password", DEMO_PASSWORD);
   };
 
   const onSubmit = async (data: loginType) => {
@@ -127,8 +135,8 @@ function page() {
           <Button type="submit" variant="blue" size="full2" label="로그인" />
         </form>
 
-        {/* 데모 계정 채우기 - 깔끔한 스타일로 추가, dev일 때만 보이도록 수정 */}
-        {process.env.NODE_ENV === "development" && (
+        {/* 데모 계정 채우기 - dev이면서 .env에 데모 계정이 있을 때만 노출 */}
+        {isDemoFillAvailable && (
           <div className="w-full mt-5 p-5 bg-slate-50 rounded-2xl">
             <p className="text-sm text-slate-500 font-normal">
               테스트 계정으로 빠르게 시작하기
