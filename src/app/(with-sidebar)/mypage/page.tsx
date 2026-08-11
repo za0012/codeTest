@@ -1,9 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMyMemberInfo } from "@/lib/api/members";
-import type { UserProfile } from "@/lib/types/study";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import DifficultCount from "./components/BarChart/view";
 import History from "./components/Heatmap/view";
 import MonthlySolve from "./components/LineChart/view";
@@ -12,10 +10,7 @@ import PieChartWithCustomizedLabel from "./components/PlatformChart/view";
 import User from "./components/User";
 
 function page() {
-  const { data: userInfo } = useQuery<UserProfile>({
-    queryKey: ["userInfo"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: userInfo } = useMyMemberInfo();
   return (
     <div className="min-h-screen bg-[#f9fafb]">
       {userInfo ? (

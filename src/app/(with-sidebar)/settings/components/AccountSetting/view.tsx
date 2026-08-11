@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { ChevronRight, LogOut, Trash2 } from "lucide-react";
-import { getMyMemberInfo } from "@/lib/api/study";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import { alertAtom } from "@/lib/store/alertStore";
 import { modalAtom } from "@/lib/store/modalStore";
-import type { UserProfile } from "@/lib/types/study";
 import { ExitStudy } from "./modal/ExitStudy";
 import { leaveStudy } from "./service";
 
@@ -12,10 +10,7 @@ function AccountSetting() {
   const setModal = useSetAtom(modalAtom);
   const setAlert = useSetAtom(alertAtom);
 
-  const { data: myInfo } = useQuery<UserProfile | null>({
-    queryKey: ["myInfoInAccountSetting"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: myInfo } = useMyMemberInfo();
   const checkExitStudy = () => {
     if (!myInfo?.id) return;
 

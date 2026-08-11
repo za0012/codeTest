@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
@@ -6,9 +6,11 @@ import { useForm } from "react-hook-form";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMyMemberInfo } from "@/lib/api/study";
+import {
+  MY_MEMBER_INFO_KEY,
+  useMyMemberInfo,
+} from "@/lib/query/useMyMemberInfo";
 import { alertAtom } from "@/lib/store/alertStore";
-import type { UserProfile } from "@/lib/types/study";
 import { updateMemberProfile } from "./service";
 
 interface ProfileEditFormValues {
@@ -29,10 +31,7 @@ function ProfileSetting() {
   const setAlert = useSetAtom(alertAtom);
   const queryClient = useQueryClient();
 
-  const { data: MyInfoInStudy, isLoading } = useQuery<UserProfile | null>({
-    queryKey: ["getMyMemberInfo"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: MyInfoInStudy, isLoading } = useMyMemberInfo();
 
   const submitProfileEditForm = async (formValues: ProfileEditFormValues) => {
     if (!MyInfoInStudy?.id)
@@ -48,8 +47,8 @@ function ProfileSetting() {
         github_url: formValues.github_url,
         blog_url: formValues.blog_url,
       });
-      queryClient.invalidateQueries({ queryKey: ["getMyMemberInfo"] });
-      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+      // 내 멤버 정보를 보는 화면이 여럿이지만 키가 하나라 한 줄이면 전부 갱신된다.
+      queryClient.invalidateQueries({ queryKey: MY_MEMBER_INFO_KEY });
       queryClient.invalidateQueries({ queryKey: ["getMembers"] });
       setIsEditing(false);
     } catch {

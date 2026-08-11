@@ -17,14 +17,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signOut } from "@/lib/api/auth";
-import {
-  getMyMemberInfo,
-  getMyStudyInfo,
-  getStudyMembers,
-} from "@/lib/api/study";
+import { getMyStudyInfo, getStudyMembers } from "@/lib/api/study";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import { alertAtom } from "@/lib/store/alertStore";
 import { deleteStudyAtom } from "@/lib/store/deleteStudyStore";
-import type { Study, UserProfile } from "@/lib/types/study";
+import type { Study } from "@/lib/types/study";
 
 function Sidebar() {
   const router = useRouter();
@@ -41,10 +38,7 @@ function Sidebar() {
     queryFn: getMyStudyInfo,
   });
 
-  const { data: user } = useQuery<UserProfile>({
-    queryKey: ["userInfo"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: user } = useMyMemberInfo();
 
   const { data: members } = useQuery({
     queryKey: ["getMembers"],

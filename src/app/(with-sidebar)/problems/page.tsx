@@ -12,9 +12,9 @@ import {
   PLATFORM_TAGS,
   type PlatformType,
 } from "@/constants/problem";
-import { getMyMemberInfo } from "@/lib/api/members";
 import { getProblems } from "@/lib/api/problems";
 import { getStudyMembers } from "@/lib/api/study";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import type { Problem } from "@/lib/types/study";
 import ProblemAddModal from "./components/ProblemAddModal";
 import ProblemCard from "./components/ProblemCard";
@@ -36,35 +36,27 @@ function page() {
   // };
 
   // 내 멤버 정보 먼저
-  // const { data: myInfo } = useQuery<UserProfile>({
-  const { data: myInfo } = useQuery({
-    queryKey: ["myInfo"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: myInfo } = useMyMemberInfo();
+  const studyId = myInfo?.study_id;
 
   // memberInfo 있으면 problems 조회
   const { data: problems, isLoading: isProblemLoading } = useQuery<Problem[]>({
-    queryKey: [
-      "problems",
-      myInfo?.study_id,
-      platform,
-      difficulty,
-      memberName,
-      search,
-    ],
+    queryKey: ["problems", studyId, platform, difficulty, memberName, search],
     queryFn: () =>
-      getProblems(myInfo.study_id, {
+      getProblems(studyId ?? 0, {
         platform,
         difficulty,
         memberName,
         search,
       }),
-    enabled: !!myInfo?.study_id,
+    enabled: !!studyId,
   });
-  // console.log(myInfo);
+  // 조회 인자가 studyId이므로 키에도 넣는다. enabled 없이 두면 첫 렌더에서
+  // studyId가 undefined인 채로 실행돼 에러 상태로 굳는다(키가 고정이라 재조회도 안 된다).
   const { data: members } = useQuery({
-    queryKey: ["memberList"],
-    queryFn: () => getStudyMembers(myInfo.study_id),
+    queryKey: ["memberList", studyId],
+    queryFn: () => getStudyMembers(studyId ?? 0),
+    enabled: !!studyId,
     select: (data) => data.map((member) => member.name),
   });
 
@@ -190,14 +182,14 @@ function page() {
           ))
         )}
       </div>
-      {openProblem !== 0 && (
+      {openProblem !== 0 && myInfo && (
         <ProblemModal
           id={openProblem}
           onClose={setOpenProblem}
           user_id={myInfo.id}
         />
       )}
-      {openAddProblem && (
+      {openAddProblem && myInfo && (
         <ProblemAddModal
           onClose={setOpenAddProblem}
           study_id={myInfo.study_id}
