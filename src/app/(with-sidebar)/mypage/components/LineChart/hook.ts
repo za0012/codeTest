@@ -5,6 +5,20 @@ interface lineDataType {
   value: number;
 }
 
+// 날짜 문자열 목록을 [{ date: 'YYYY-MM', value: 개수 }]로 집계한다.
+// 'YYYY-MM-DD'에서 앞 7자를 자르면 되므로 Date로 변환했다 되돌리지 않는다.
+export function countByMonth(dates: string[]): lineDataType[] {
+  const counts = dates.reduce(
+    (acc, date) => {
+      const month = date.slice(0, 7);
+      acc[month] = (acc[month] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  return Object.entries(counts).map(([date, value]) => ({ date, value }));
+}
+
 export function createSixMonthObject(
   lineData: lineDataType[] | undefined,
   today = new Date(),

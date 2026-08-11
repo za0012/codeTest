@@ -189,6 +189,17 @@ export const getProblemsByMember = async (memberId: number) => {
   return data;
 };
 
+// 멤버가 푼 날짜 목록. 히트맵과 월별 차트가 같이 쓴다.
+// 두 화면 모두 date 컬럼만 필요하고 가공 방식만 달라, 원본은 한 번만 받아온다.
+export const getProblemDates = async (memberId: number) => {
+  const { data, error } = await supabase
+    .from("problems")
+    .select("date")
+    .eq("member_id", memberId);
+  if (error) throw error;
+  return data.map((row: { date: string }) => row.date);
+};
+
 // 날짜별 문제 조회 (대시보드 캘린더용)
 export const getProblemsByDate = async (studyId: number, date: string) => {
   const { data, error } = await supabase
