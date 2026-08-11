@@ -106,10 +106,17 @@ function History({ id }: { id: number }) {
                 const cx = weekIndex * STEP + STEP / 2;
                 const cy = dayOfWeek * STEP + STEP / 2;
 
+                // 마우스와 키보드가 같은 동작을 하도록 핸들러를 하나로 두고 양쪽에 건다.
+                const showTooltip = () => setHovered({ date, value, cx, cy });
+                const hideTooltip = () => setHovered(null);
+
                 return (
                   <button
                     //버튼으로 한 이유... 우선 아래에 있는 onMouse이벤트를 circle같은 정적인 svg도형에 넣으면 접근성 규칙에 걸린다.
                     // biome측에서 button에 넣는 것이 좋다고 하여 button안에 넣게 되었다. 구조는 svg위에 button이 올라가있는 구조이다.
+                    // 그 규칙이 요구하는 건 태그 교체가 아니라 "마우스로 되는 일은 키보드로도 될 것"이다.
+                    // mouseenter/mouseleave는 포인터 장치에서만 발생하고 키보드 이동은 focus/blur를 발생시키므로,
+                    // 같은 핸들러를 focus/blur에도 걸어야 Tab으로 이동했을 때 툴팁이 뜬다.
                     // 기존에 hover시 툴팁이 굉장히 두꺼워지고 테두리도 블러처리된 것처럼 되었었는데
                     // 이는 hovered && <foreignObject />가 map안에 있어서 hover한 번에 툴팁이 날짜 개수만큼 중복 렌더링 되어서 일어난 것이었다.
                     // 같은 자리에 여러 개가 겹쳐서... 그렇게 보이는 것이었다.
@@ -118,8 +125,10 @@ function History({ id }: { id: number }) {
                     key={`${date}-hit-area`}
                     type="button"
                     aria-label={`${date}: ${value}문제`}
-                    onMouseEnter={() => setHovered({ date, value, cx, cy })}
-                    onMouseLeave={() => setHovered(null)}
+                    onMouseEnter={showTooltip}
+                    onMouseLeave={hideTooltip}
+                    onFocus={showTooltip}
+                    onBlur={hideTooltip}
                     className="absolute cursor-pointer appearance-none rounded-full border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B64FA]"
                     style={{
                       left: cx - CELL / 2,
