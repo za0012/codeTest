@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ProblemCard from "@/app/(with-sidebar)/problems/components/ProblemCard";
 import ProblemModal from "@/app/(with-sidebar)/problems/components/ProblemModal";
-import { getMyMemberInfo } from "@/lib/api/members";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import type { Problem } from "@/lib/types/study";
 import { getMySolves } from "./service";
 
@@ -14,10 +14,7 @@ function MySolves({ id }: { id: number }) {
     queryFn: () => getMySolves(id),
   });
 
-  const { data: myInfo } = useQuery({
-    queryKey: ["myInfo"],
-    queryFn: getMyMemberInfo,
-  });
+  const { data: myInfo } = useMyMemberInfo();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error occurred</div>;
@@ -50,7 +47,7 @@ function MySolves({ id }: { id: number }) {
           />
         ))}
       </div>
-      {openProblem !== 0 && (
+      {openProblem !== 0 && myInfo && (
         <ProblemModal
           id={openProblem}
           onClose={setOpenProblem}

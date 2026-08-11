@@ -1,10 +1,22 @@
 import { format } from "date-fns";
 
+// 날짜 문자열 목록을 { 'YYYY-MM-DD': 개수 }로 집계한다.
+// DB의 date 컬럼이 이미 'YYYY-MM-DD'라 Date로 변환하지 않고 그대로 키로 쓴다.
+export function countByDate(dates: string[]) {
+  return dates.reduce(
+    (acc, date) => {
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+}
+
 export function createAndFillHeatmap(
   mySolves: Record<string, number>,
   today = new Date(),
 ) {
-  const yearSolves: Record<string, number> = {}; //Record 가 무엇인지 알아보기
+  const yearSolves: Record<string, number> = {};
   const start = new Date(today.getFullYear(), today.getMonth() - 11, 1);
   const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 

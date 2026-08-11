@@ -2,10 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { ChevronRight, Copy, Earth, Sparkle, Trash2 } from "lucide-react";
 
-import { getMyMemberInfo, getMyStudyInfo } from "@/lib/api/study";
+import { getMyStudyInfo } from "@/lib/api/study";
+import { useMyMemberInfo } from "@/lib/query/useMyMemberInfo";
 import { alertAtom } from "@/lib/store/alertStore";
 import { modalAtom } from "@/lib/store/modalStore";
-import type { Study, UserProfile } from "@/lib/types/study";
+import type { Study } from "@/lib/types/study";
 import { handleCopyClipBoard } from "./hook";
 import { DeleteStudyConfirmModal } from "./modal/DeleteStudyConfirmModal";
 import { EditStudyModal } from "./modal/EditStudyModal";
@@ -21,11 +22,7 @@ function StudySetting() {
     queryFn: getMyStudyInfo,
   });
 
-  const { data: MyInfoInStudy, isLoading: myInfoLoading } =
-    useQuery<UserProfile | null>({
-      queryKey: ["getMyMemberInfo"],
-      queryFn: getMyMemberInfo,
-    });
+  const { data: MyInfoInStudy, isLoading: myInfoLoading } = useMyMemberInfo();
 
   if (studyInfoLoading || myInfoLoading) {
     return <div></div>;

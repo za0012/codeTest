@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { createAndFillHeatmap, getColor } from "./hook";
+import { countByDate, createAndFillHeatmap, getColor } from "./hook";
 
 // bun test는 타임존을 UTC로 강제한다.
 // toISOString() 기반의 말일 누락 버그는 KST에서만 재현되므로 KST로 고정한다.
@@ -11,6 +11,22 @@ describe("테스트 환경", () => {
   test("KST(UTC+9)로 실행된다", () => {
     // getTimezoneOffset은 KST에서 -540분이다. TZ 고정이 적용됐는지 확인한다.
     expect(new Date().getTimezoneOffset()).toBe(-540);
+  });
+});
+
+describe("countByDate", () => {
+  test("같은 날짜를 세고, 날짜 문자열을 그대로 키로 쓴다", () => {
+    const result = countByDate(["2026-07-31", "2026-07-31", "2026-07-01"]);
+    expect(result).toEqual({ "2026-07-31": 2, "2026-07-01": 1 });
+  });
+
+  test("말일이 Date 변환 없이 그대로 보존된다", () => {
+    // toISOString()을 거치면 KST에서 하루 밀려 말일이 사라지던 자리다.
+    expect(countByDate(["2026-07-31"])["2026-07-31"]).toBe(1);
+  });
+
+  test("빈 목록은 빈 객체", () => {
+    expect(countByDate([])).toEqual({});
   });
 });
 

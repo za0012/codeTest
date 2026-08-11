@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
 import {
   Area,
   AreaChart,
@@ -9,18 +9,18 @@ import {
   YAxis,
 } from "recharts";
 import { CustomTooltip } from "@/components/ChartToolTip";
-import { createSixMonthObject } from "./hook";
-import { getLineGhDataMonth } from "./service";
+import { useProblemDates } from "@/lib/query/useProblemDates";
+import { countByMonth, createSixMonthObject } from "./hook";
 
 function MonthlySolve({ id }: { id: number }) {
-  const { data } = useQuery({
-    queryKey: ["lineGraph"],
-    queryFn: () => getLineGhDataMonth(id),
-    select: (data) =>
-      createSixMonthObject(
-        Object.entries(data).map(([date, value]) => ({ date, value })),
-      ),
-  });
+  // 원본(날짜 목록)은 히트맵과 같은 키로 한 번만 받고, 집계만 여기서 한다.
+  const { data } = useProblemDates(
+    id,
+    useCallback(
+      (dates: string[]) => createSixMonthObject(countByMonth(dates)),
+      [],
+    ),
+  );
 
   return (
     <div>

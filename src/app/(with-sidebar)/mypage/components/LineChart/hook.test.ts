@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { createSixMonthObject } from "./hook";
+import { countByMonth, createSixMonthObject } from "./hook";
 
 // bun test는 타임존을 UTC로 강제한다.
 // toISOString()/new Date(key)의 월 밀림 버그는 KST에서만 재현되므로 KST로 고정한다.
@@ -10,6 +10,28 @@ beforeAll(() => {
 describe("테스트 환경", () => {
   test("KST(UTC+9)로 실행된다", () => {
     expect(new Date().getTimezoneOffset()).toBe(-540);
+  });
+});
+
+describe("countByMonth", () => {
+  test("같은 달끼리 세어 'YYYY-MM'으로 묶는다", () => {
+    const result = countByMonth(["2026-07-01", "2026-07-31", "2026-06-15"]);
+    expect(result).toEqual([
+      { date: "2026-07", value: 2 },
+      { date: "2026-06", value: 1 },
+    ]);
+  });
+
+  test("말일도 같은 달로 묶인다", () => {
+    // new Date(date).toISOString()을 거치면 월이 밀릴 수 있던 자리다.
+    // 문자열을 자르므로 타임존과 무관하다.
+    expect(countByMonth(["2026-12-31"])).toEqual([
+      { date: "2026-12", value: 1 },
+    ]);
+  });
+
+  test("빈 목록은 빈 배열", () => {
+    expect(countByMonth([])).toEqual([]);
   });
 });
 
